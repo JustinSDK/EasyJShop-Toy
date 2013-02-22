@@ -1,5 +1,5 @@
-EasyJShop-Toy
-=============
+EasyJShop
+=========
 
 A simple implementation of an image processor using Java 2D. Written in 2005.
 
