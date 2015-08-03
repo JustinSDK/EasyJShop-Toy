@@ -48,6 +48,7 @@ import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
+import cc.openhome.main.ImageInternalFrame;
 
 
 public class EditMenu extends EasyJShopMenu {
@@ -684,7 +685,8 @@ public class EditMenu extends EasyJShopMenu {
             return;
         
         // new a internalFrame for the copied image
-        JInternalFrame internalFrame = createImageInternalFrame("*untitled", image); 
+        JInternalFrame internalFrame = new ImageInternalFrame(parent, "*untitled", image);
+
         getDesktopPane().add(internalFrame);
         
         try {

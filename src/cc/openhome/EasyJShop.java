@@ -79,12 +79,6 @@ public class EasyJShop extends JFrame {
     public JDesktopPane getDesktopPane() {
         return desktopPane;
     }
-
-    // create an JInternalFrame and set image into it by
-    // using JLabel and ImageIcon
-    public JInternalFrame createImageInternalFrame(String title, Image image) {
-        return new ImageInternalFrame(this, title, image);
-    }
     
     public CanvasComponent getCanvasOfInternalFrame(JInternalFrame internalFrame) {
         JScrollPane scrollPanel = (JScrollPane) internalFrame.getContentPane().getComponent(0);

@@ -42,6 +42,7 @@ import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
+import cc.openhome.main.ImageInternalFrame;
 import javax.swing.event.InternalFrameAdapter;
 
 public class ImageMenu extends EasyJShopMenu {
@@ -289,7 +290,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void newInternalFrame(String title, Image image) {
-        JInternalFrame internalFrame = createImageInternalFrame(title, image);
+        JInternalFrame internalFrame =  new ImageInternalFrame(parent, title, image);
 
         getDesktopPane().add(internalFrame);
 
@@ -314,7 +315,7 @@ public class ImageMenu extends EasyJShopMenu {
                         // bring it to top
                         try {
                             Image image = ImageIO.read(files[i]);
-                            JInternalFrame internalFrame = createImageInternalFrame(files[i].getAbsolutePath(), image);
+                            JInternalFrame internalFrame =  new ImageInternalFrame(parent, files[i].getAbsolutePath(), image);
 
                             getDesktopPane().add(internalFrame);
 

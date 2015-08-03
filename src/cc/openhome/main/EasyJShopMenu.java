@@ -72,12 +72,6 @@ public abstract class EasyJShopMenu {
         }
     }
     
-    // methods below are delegated to parent.
-    
-    protected JInternalFrame createImageInternalFrame(String title, Image image) {
-        return parent.createImageInternalFrame(title, image);
-    }
-    
     protected JDesktopPane getDesktopPane() {
         return parent.getDesktopPane();
     }
