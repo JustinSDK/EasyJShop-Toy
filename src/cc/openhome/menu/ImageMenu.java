@@ -387,7 +387,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void save(String filename) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
+        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
         Image image = canvas.getImage();
 
         // create BufferedImage for ImageIO
@@ -483,7 +483,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void removeMementoAndDispose(JInternalFrame internalFrame) {
-        CanvasComponent canvas = getCanvasOfInternalFrame(internalFrame);
+        CanvasComponent canvas = ((ImageInternalFrame) internalFrame).getCanvas();
         getMementoManagers().remove(canvas);
         internalFrame.setVisible(false);
         internalFrame.dispose();

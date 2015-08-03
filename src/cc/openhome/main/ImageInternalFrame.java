@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cc.openhome.main;
 
 import cc.openhome.EasyJShop;
@@ -22,17 +17,22 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
-    private EasyJShop easyJShop;
+    private EasyJShop parent;
     private CanvasComponent canvas;
-    public ImageInternalFrame(EasyJShop easyJShop, String title, Image image) {
+
+    public CanvasComponent getCanvas() {
+        return canvas;
+    }
+    
+    public ImageInternalFrame(EasyJShop parent, String title, Image image) {
         super(title, true, true, true, true);
 
-        this.easyJShop = easyJShop;
+        this.parent = parent;
         canvas = new CanvasComponent(image);
         
-        setFrameIcon(easyJShop.getIcon());
+        setFrameIcon(parent.getIcon());
         
-        easyJShop.getMementoManagers().put(canvas, new ImageMementoManager());
+        parent.getMementoManagers().put(canvas, new ImageMementoManager());
 
         JPanel panel = new JPanel();
         canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -53,14 +53,14 @@ public class ImageInternalFrame extends JInternalFrame {
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
                 // image menu
-                easyJShop.getImageMenu().enableSaveMenuItem();
+                parent.getImageMenu().enableSaveMenuItem();
 
                 // edit menu
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
                 if (getDesktopPane().getSelectedFrame() == null) {
                     return;
                 }
-                easyJShop.getEditMenu().setEditInfo(easyJShop.getEditMenu().getCanvasOfSelectedFrame());
+                parent.getEditMenu().setEditInfo(parent.getCanvasOfSelectedFrame());
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -70,30 +70,30 @@ public class ImageInternalFrame extends JInternalFrame {
                     internalFrame.setIcon(false);
                     internalFrame.setSelected(true);
                 } catch (PropertyVetoException ex) {
-                    easyJShop.getImageMenu().infoMessageBox(ex.getMessage());
+                    parent.getImageMenu().infoMessageBox(ex.getMessage());
                 }
 
-                easyJShop.getImageMenu().checkUnsavedImage(internalFrame);
+                parent.getImageMenu().checkUnsavedImage(internalFrame);
             }
 
             public void internalFrameClosed(InternalFrameEvent e) {
-                easyJShop.getImageMenu().checkImageMenuItem();
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getImageMenu().checkImageMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameIconified(InternalFrameEvent e) {
-                easyJShop.getImageMenu().checkImageMenuItem();
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getImageMenu().checkImageMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameDeiconified(InternalFrameEvent e) {
-                easyJShop.getImageMenu().checkImageMenuItem();
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getImageMenu().checkImageMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameActivated(InternalFrameEvent e) {
-                easyJShop.getImageMenu().checkImageMenuItem();
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getImageMenu().checkImageMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
             }
         });
 
@@ -101,8 +101,8 @@ public class ImageInternalFrame extends JInternalFrame {
             public void mouseEntered(MouseEvent e) {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
 
-                if (easyJShop.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
-                    canvas.setCursor(easyJShop.getEditMenu().getViewCursor());
+                if (parent.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
+                    canvas.setCursor(parent.getEditMenu().getViewCursor());
                 } else {
                     canvas.setCursor(null);
                 }
@@ -112,30 +112,30 @@ public class ImageInternalFrame extends JInternalFrame {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
 
                 if (canvas.getEditMode() == CanvasComponent.PasteMode) {
-                    if (easyJShop.getEditMenu().mergeImage(canvas) != JOptionPane.NO_OPTION) {
-                        easyJShop.getEditMenu().setEditInfo(canvas);
+                    if (parent.getEditMenu().mergeImage(canvas) != JOptionPane.NO_OPTION) {
+                        parent.getEditMenu().setEditInfo(canvas);
                     }
                     return;
                 }
 
-                easyJShop.getEditMenu().setEditInfo(canvas);
+                parent.getEditMenu().setEditInfo(canvas);
 
                 switch (canvas.getEditMode()) {
                     case 0: // SelectionMode
                         canvas.setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
-                        easyJShop.getMementoManager(canvas).addImage(easyJShop.getEditMenu().copyImage(canvas));
+                        parent.getMementoManager(canvas).addImage(parent.getEditMenu().copyImage(canvas));
                         canvas.resetRect();
                         canvas.setStart(e.getPoint());
                         canvas.repaint();
-                        easyJShop.setStarBeforeTitle();
+                        parent.setStarBeforeTitle();
                         break;
                     case 3: // TextMode
                         if (canvas.getText() != null) {
-                            easyJShop.getEditMenu().mergeText(canvas);
+                            parent.getEditMenu().mergeText(canvas);
                         } else {
-                            easyJShop.getEditMenu().inputText(canvas);
+                            parent.getEditMenu().inputText(canvas);
                         }
                         break;
                     case 4: // ViewMode
@@ -144,7 +144,7 @@ public class ImageInternalFrame extends JInternalFrame {
                         } else if (e.getButton() == MouseEvent.BUTTON3) {
                             canvas.decreaseViewScale();
                         }
-                        easyJShop.getEditMenu().fitAppSize(canvas.getImage());
+                        parent.getEditMenu().fitAppSize(canvas.getImage());
                         canvas.repaint();
                         break;
                     default: // SelectionMode
@@ -157,7 +157,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 canvas.setStart(null);
                 canvas.setEnd(null);
 
-                easyJShop.getEditMenu().checkEditMenuItem();
+                parent.getEditMenu().checkEditMenuItem();
             }
         });
 
@@ -184,8 +184,7 @@ public class ImageInternalFrame extends JInternalFrame {
             public void mouseMoved(MouseEvent e) {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
 
-                if (canvas.getEditMode() == CanvasComponent.PasteMode
-                        || canvas.getEditMode() == CanvasComponent.TextMode) {
+                if (canvas.getEditMode() == CanvasComponent.PasteMode || canvas.getEditMode() == CanvasComponent.TextMode) {
                     canvas.setStart(e.getPoint());
                     canvas.repaint();
                 }

@@ -8,15 +8,11 @@ import java.util.Map;
 import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
-import java.beans.PropertyVetoException;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
 
 public class EasyJShop extends JFrame {
     private JDesktopPane desktopPane;
@@ -80,11 +76,6 @@ public class EasyJShop extends JFrame {
         return desktopPane;
     }
     
-    public CanvasComponent getCanvasOfInternalFrame(JInternalFrame internalFrame) {
-        JScrollPane scrollPanel = (JScrollPane) internalFrame.getContentPane().getComponent(0);
-        return (CanvasComponent) ((JPanel) scrollPanel.getViewport().getComponent(0)).getComponent(0);
-    }
-    
     public void setStarBeforeTitle() {
         String title = desktopPane.getSelectedFrame().getTitle();
         if (!title.startsWith("*")) {
@@ -100,6 +91,10 @@ public class EasyJShop extends JFrame {
         return mementoManagers;
     }
     
+    public CanvasComponent getCanvasOfSelectedFrame() {
+        return ((ImageInternalFrame) getDesktopPane().getSelectedFrame()).getCanvas();
+    }    
+    
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -110,6 +105,4 @@ public class EasyJShop extends JFrame {
         
         new EasyJShop().setVisible(true);
     }
-    
-    
 }
