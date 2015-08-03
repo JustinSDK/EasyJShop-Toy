@@ -1,5 +1,6 @@
 package cc.openhome.menu;
 
+import cc.openhome.EasyJShop;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -43,13 +44,13 @@ import cc.openhome.dialog.ResizeDialog;
 import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
-import cc.openhome.main.AbstractChild;
+import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
 
 
-public class EditMenu extends AbstractChild {
+public class EditMenu extends EasyJShopMenu {
     private ImageProcessor imageProcessor;
     private TransferableImage transferableImage;
     
@@ -80,7 +81,8 @@ public class EditMenu extends AbstractChild {
     private int editMode;
     private boolean resizeLocker;
     
-    public EditMenu() {
+    public EditMenu(EasyJShop easyJShop) {
+        super(easyJShop);
         initResource();
         setupUIComponent();
         setupEventListener();

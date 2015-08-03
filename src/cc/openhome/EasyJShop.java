@@ -3,14 +3,12 @@ package cc.openhome;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.HashMap;
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.main.AbstractChild;
+import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
@@ -20,13 +18,12 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class EasyJShop extends JFrame {
-
     private JDesktopPane desktopPane;
     
     private Map mementoManagers = new HashMap();
     
-    private ImageMenu imageMenu = new ImageMenu();
-    private EditMenu editMenu = new EditMenu();
+    private ImageMenu imageMenu = new ImageMenu(this);
+    private EditMenu editMenu = new EditMenu(this);
     
     private ImageIcon icon = new ImageIcon(EasyJShop.class.getResource("images/appIcon.gif"));
     
@@ -43,22 +40,16 @@ public class EasyJShop extends JFrame {
         
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         
-        setJMenuBar(new JMenuBar());
-        
-        addMenu(imageMenu);
-        
-        addMenu(editMenu);
+        JMenuBar bar = new JMenuBar();
+        bar.add(imageMenu.getMenu());
+        bar.add(editMenu.getMenu());
         getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
+        bar.add(new AboutMenu(this).getMenu());
         
-        addMenu(new AboutMenu());
+        setJMenuBar(bar);
         
         desktopPane = new JDesktopPane();
         getContentPane().add(desktopPane);
-    }
-    
-    private void addMenu(AbstractChild menu) {
-        menu.setParent(this);
-        getJMenuBar().add(menu.getMenu());
     }
     
     private void setUpEventListener() {
@@ -70,7 +61,6 @@ public class EasyJShop extends JFrame {
                 imageMenu.checkUnsavedImages();
             }
         });
-        
     }
     
     public JDesktopPane getDesktopPane() {
@@ -161,7 +151,6 @@ public class EasyJShop extends JFrame {
             }
             
             public void mousePressed(MouseEvent e) {
-                
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
                 
                 if (canvas.getEditMode() == CanvasComponent.PasteMode) {

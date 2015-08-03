@@ -1,5 +1,6 @@
 package cc.openhome.menu;
 
+import cc.openhome.EasyJShop;
 import java.awt.AWTException;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -37,13 +38,13 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import cc.openhome.img.ScreenCaptureHelper;
-import cc.openhome.main.AbstractChild;
+import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
 import javax.swing.event.InternalFrameAdapter;
 
-public class ImageMenu extends AbstractChild {
+public class ImageMenu extends EasyJShopMenu {
 
     private ScreenCaptureHelper captureHelper;
 
@@ -62,7 +63,8 @@ public class ImageMenu extends AbstractChild {
     private JFileChooser openFileChooser, saveFileChooser;
 
     //private InternalFrameListener internalFrameListener;
-    public ImageMenu() {
+    public ImageMenu(EasyJShop easyJShop) {
+        super(easyJShop);
         initResource();
         setupUIComponent();
         setupEventListener();

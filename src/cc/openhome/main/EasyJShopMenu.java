@@ -3,9 +3,6 @@ package cc.openhome.main;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowListener;
 import java.beans.PropertyVetoException;
 import java.util.Map;
 
@@ -15,26 +12,19 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 import javax.swing.JToolBar;
-import javax.swing.event.InternalFrameListener;
 
 import cc.openhome.EasyJShop;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.menu.EditMenu;
 
 
-public abstract class AbstractChild {
+public abstract class EasyJShopMenu {
     protected EasyJShop parent;
     protected ImageIcon smallLogo = new ImageIcon(EditMenu.class.getResource("../images/smallLogo.gif"));
     
-    public JMenu getMenu() {
-        return null;
-    }
+    public abstract JMenu getMenu();
     
-    public JToolBar getToolBar() {
-        return null;
-    }
-    
-    public void setParent(EasyJShop parent) {
+    public EasyJShopMenu(EasyJShop parent) {
         this.parent = parent;
     }
     
