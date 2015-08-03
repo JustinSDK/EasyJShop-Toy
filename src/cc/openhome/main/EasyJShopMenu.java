@@ -1,8 +1,5 @@
 package cc.openhome.main;
 
-import java.awt.Dimension;
-import java.awt.Image;
-import java.awt.Toolkit;
 import java.beans.PropertyVetoException;
 import java.util.Map;
 
@@ -27,12 +24,10 @@ public abstract class EasyJShopMenu {
     }
 
     protected void batch(IBatcher batcher) {
-        JInternalFrame[] internalFrames = getDesktopPane().getAllFrames();
-
-        for (int i = 0; i < internalFrames.length; i++) {
+        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
             try {
-                internalFrames[i].setIcon(true);
-                internalFrames[i].pack();
+                internalFrame.setIcon(true);
+                internalFrame.pack();
                 batcher.execute();
             } catch (PropertyVetoException e) {
                 infoMessageBox(e.getMessage());
