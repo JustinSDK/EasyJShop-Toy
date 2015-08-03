@@ -13,11 +13,9 @@ import cc.openhome.EasyJShop;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.menu.EditMenu;
 
-public abstract class EasyJShopMenu {
+public abstract class EasyJShopMenu extends JMenu {
     protected EasyJShop parent;
     protected ImageIcon smallLogo = new ImageIcon(EditMenu.class.getResource("../images/smallLogo.gif"));
-
-    public abstract JMenu getMenu();
 
     public EasyJShopMenu(EasyJShop parent) {
         this.parent = parent;

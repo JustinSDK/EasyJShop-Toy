@@ -60,8 +60,6 @@ public class EditMenu extends EasyJShopMenu {
     
     private Cursor viewCursor;
     
-    private JMenu editMenu;
-    
     private JMenuItem undoMenuItem, redoMenuItem;
     private JMenuItem cutMenuItem, cropMenuItem;
     private JMenuItem copyMenuItem;
@@ -136,7 +134,7 @@ public class EditMenu extends EasyJShopMenu {
     
     private void setupUIComponent() {
         // set up menuitem
-        editMenu = new JMenu("Edit");
+        setText("Edit");
         
         undoMenuItem = new JMenuItem("Undo");
         redoMenuItem = new JMenuItem("Redo");
@@ -156,30 +154,30 @@ public class EditMenu extends EasyJShopMenu {
         counterClockwiseMenuItem = new JMenuItem("Rotate counter-clockwise");
         batchMenuItem = new JMenuItem("Batch..");
         
-        editMenu.add(undoMenuItem);
-        editMenu.add(redoMenuItem);
-        editMenu.addSeparator();
+        add(undoMenuItem);
+        add(redoMenuItem);
+        addSeparator();
         
-        editMenu.add(cutMenuItem);
-        editMenu.add(copyMenuItem);
+        add(cutMenuItem);
+        add(copyMenuItem);
         
         JMenu pasteMenu = new JMenu("Paste");
         pasteMenu.add(pasteMenuItem);
         pasteMenu.add(pasteToNewMenuItem);
-        editMenu.add(pasteMenu);
-        editMenu.addSeparator();
+        add(pasteMenu);
+        addSeparator();
         
         
-        editMenu.add(cropMenuItem);
-        editMenu.addSeparator();
+        add(cropMenuItem);
+        addSeparator();
         
-        editMenu.add(resizeMenuItem);
-        editMenu.add(horizontalMirrorMenuItem);
-        editMenu.add(verticalMirrorMenuItem);
-        editMenu.add(clockwiseMenuItem);
-        editMenu.add(counterClockwiseMenuItem);
-        editMenu.addSeparator();
-        editMenu.add(batchMenuItem);
+        add(resizeMenuItem);
+        add(horizontalMirrorMenuItem);
+        add(verticalMirrorMenuItem);
+        add(clockwiseMenuItem);
+        add(counterClockwiseMenuItem);
+        addSeparator();
+        add(batchMenuItem);
         
         // batch box
         String[] items = {"Resize", 
@@ -540,10 +538,6 @@ public class EditMenu extends EasyJShopMenu {
                 }
             );
         
-    }
-    
-    public JMenu getMenu() {
-        return editMenu;
     }
     
     public JToolBar getToolBar() {

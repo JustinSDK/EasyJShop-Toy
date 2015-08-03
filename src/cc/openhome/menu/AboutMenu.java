@@ -14,12 +14,12 @@ import javax.swing.KeyStroke;
 import cc.openhome.main.EasyJShopMenu;
 
 public class AboutMenu extends EasyJShopMenu {
-    private JMenu aboutMenu;
+    //private JMenu aboutMenu;
     private ImageIcon logoImage;
     private JMenuItem aboutEasyJShopMenuItem;
     
-    public AboutMenu(EasyJShop easyJShop) {
-        super(easyJShop);
+    public AboutMenu(EasyJShop parent) {
+        super(parent);
         initResource();
         setupUIComponent();
         setupEventListener();
@@ -30,9 +30,10 @@ public class AboutMenu extends EasyJShopMenu {
     }
     
     public void setupUIComponent() {
-        aboutMenu = new JMenu("About");
+        //aboutMenu = new JMenu();
+        setText("About");
         aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
-        aboutMenu.add(aboutEasyJShopMenuItem);
+        add(aboutEasyJShopMenuItem);
     }
     
     public void setupEventListener() {
@@ -53,9 +54,5 @@ public class AboutMenu extends EasyJShopMenu {
                     }
                 }   
             );
-    }
-    
-    public JMenu getMenu() {
-        return aboutMenu;
     }
 }

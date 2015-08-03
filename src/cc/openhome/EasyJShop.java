@@ -50,10 +50,10 @@ public class EasyJShop extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         JMenuBar bar = new JMenuBar();
-        bar.add(imageMenu.getMenu());
-        bar.add(editMenu.getMenu());
+        bar.add(imageMenu);
+        bar.add(editMenu);
         getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
-        bar.add(new AboutMenu(this).getMenu());
+        bar.add(new AboutMenu(this));
         
         setJMenuBar(bar);
         

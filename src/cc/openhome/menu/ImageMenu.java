@@ -44,8 +44,6 @@ public class ImageMenu extends EasyJShopMenu {
 
     private ScreenCaptureHelper captureHelper;
 
-    private JMenu imageMenu;
-
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
     private JMenuItem exitMenuItem;
@@ -90,7 +88,7 @@ public class ImageMenu extends EasyJShopMenu {
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
 
-        imageMenu = new JMenu("Image");
+        setText("Image");
         captureMenuItem = new JMenuItem("Get screen");
         newImageMenuItem = new JMenuItem("New");
         openMenuItem = new JMenuItem("Open..");
@@ -99,15 +97,15 @@ public class ImageMenu extends EasyJShopMenu {
         saveAllMenuItem = new JMenuItem("Save all");
         exitMenuItem = new JMenuItem("Exit");
 
-        imageMenu.add(captureMenuItem);
-        imageMenu.add(newImageMenuItem);
-        imageMenu.addSeparator();
-        imageMenu.add(openMenuItem);
-        imageMenu.add(saveMenuItem);
-        imageMenu.add(saveAsMenuItem);
-        imageMenu.add(saveAllMenuItem);
-        imageMenu.addSeparator();
-        imageMenu.add(exitMenuItem);
+        add(captureMenuItem);
+        add(newImageMenuItem);
+        addSeparator();
+        add(openMenuItem);
+        add(saveMenuItem);
+        add(saveAsMenuItem);
+        add(saveAllMenuItem);
+        addSeparator();
+        add(exitMenuItem);
 
         saveMenuItem.setEnabled(false);
         saveAsMenuItem.setEnabled(false);
@@ -239,10 +237,6 @@ public class ImageMenu extends EasyJShopMenu {
             saveAsMenuItem.setEnabled(true);
             saveAllMenuItem.setEnabled(true);
         }
-    }
-
-    public JMenu getMenu() {
-        return imageMenu;
     }
 
     private void captureScreen() {
