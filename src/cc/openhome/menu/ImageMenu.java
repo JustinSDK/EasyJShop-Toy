@@ -10,8 +10,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
@@ -30,8 +28,6 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import java.awt.Color;
 import javax.swing.JPanel;
@@ -43,7 +39,6 @@ import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
 import cc.openhome.main.ImageInternalFrame;
-import javax.swing.event.InternalFrameAdapter;
 
 public class ImageMenu extends EasyJShopMenu {
 
@@ -119,9 +114,9 @@ public class ImageMenu extends EasyJShopMenu {
         saveAllMenuItem.setEnabled(false);
 
         widthSpinner = new JSpinner();
-        widthSpinner.setValue(new Integer(640));
+        widthSpinner.setValue(640);
         heightSpinner = new JSpinner();
-        heightSpinner.setValue(new Integer(480));
+        heightSpinner.setValue(480);
         backgroundColorBox = new ColorDemoBox(Color.white);
         newImagePanel = new JPanel();
         newImagePanel.add(new JLabel("Width"));
@@ -387,7 +382,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void save(String filename) {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         Image image = canvas.getImage();
 
         // create BufferedImage for ImageIO

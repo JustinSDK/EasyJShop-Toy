@@ -299,16 +299,16 @@ public class EditMenu extends EasyJShopMenu {
                         if(getDesktopPane().getSelectedFrame() == null)
                             return;
                         
-                        if(getMementoManager(parent.getCanvasOfSelectedFrame()).isFirstUndo()) {
-                            getMementoManager(parent.getCanvasOfSelectedFrame())
-                                  .addImage(parent.getCanvasOfSelectedFrame().getImage());
-                            getMementoManager(parent.getCanvasOfSelectedFrame()).undoImage();
+                        if(getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
+                            getMementoManager(getCanvasOfSelectedFrame())
+                                  .addImage(getCanvasOfSelectedFrame().getImage());
+                            getMementoManager(getCanvasOfSelectedFrame()).undoImage();
                         }
                         
-                        Image image = getMementoManager(parent.getCanvasOfSelectedFrame()).undoImage();
+                        Image image = getMementoManager(getCanvasOfSelectedFrame()).undoImage();
                         
                         if(image != null) {
-                            parent.getCanvasOfSelectedFrame().setImage(image);
+                            getCanvasOfSelectedFrame().setImage(image);
                             
                             // if the image is full screen size, resize it to fit the frame size.
                             fitAppSize(image);
@@ -325,10 +325,10 @@ public class EditMenu extends EasyJShopMenu {
                         if(getDesktopPane().getSelectedFrame() == null)
                             return;
                             
-                        Image image = getMementoManager(parent.getCanvasOfSelectedFrame()).redoImage();
+                        Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
                         
                         if(image != null) {
-                            parent.getCanvasOfSelectedFrame().setImage(image);
+                            getCanvasOfSelectedFrame().setImage(image);
                             
                             // if the image is full screen size, resize it to fit the frame size.
                             fitAppSize(image);
@@ -449,7 +449,7 @@ public class EditMenu extends EasyJShopMenu {
                     JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
                     
                     if(internalFrame != null) {
-                        parent.getCanvasOfSelectedFrame().setForeground(color);
+                        getCanvasOfSelectedFrame().setForeground(color);
                     }
                 }
             }
@@ -464,7 +464,7 @@ public class EditMenu extends EasyJShopMenu {
                     JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
                     
                     if(internalFrame != null) {
-                        parent.getCanvasOfSelectedFrame().setBackground(color);
+                        getCanvasOfSelectedFrame().setBackground(color);
                     }
                 }
             }
@@ -589,7 +589,7 @@ public class EditMenu extends EasyJShopMenu {
             batchMenuItem.setEnabled(true);
         }
         
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         
         // check cut, copy and paste menuitem
         if(canvas.getSelectedRect().getWidth() <= 0) {
@@ -639,7 +639,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private Image copySelectedImage() {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         Rectangle2D rect = canvas.getSelectedRect();
         
         if(rect.getWidth() <= 0 || rect.getWidth() <=0) {
@@ -661,7 +661,7 @@ public class EditMenu extends EasyJShopMenu {
         ClipboardHelper.imageToClipboard(transferableImage);
         
         if(cut) {
-            CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+            CanvasComponent canvas = getCanvasOfSelectedFrame();
 
             image = copyImage(canvas);
             
@@ -669,11 +669,11 @@ public class EditMenu extends EasyJShopMenu {
             getMementoManager(canvas).addImage(image);
             
             Graphics g = canvas.getImage().getGraphics();
-            Rectangle2D rect = parent.getCanvasOfSelectedFrame().getSelectedRect();
-            g.setColor(parent.getCanvasOfSelectedFrame().getBackground());
+            Rectangle2D rect = getCanvasOfSelectedFrame().getSelectedRect();
+            g.setColor(getCanvasOfSelectedFrame().getBackground());
             g.fillRect((int)rect.getX(), (int)rect.getY(), 
             (int)rect.getWidth(),(int)rect.getHeight());
-            parent.getCanvasOfSelectedFrame().repaint();
+            getCanvasOfSelectedFrame().repaint();
             setStarBeforeTitle();
         }
     }
@@ -706,7 +706,7 @@ public class EditMenu extends EasyJShopMenu {
         if(image == null)
             return;
         
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
@@ -723,7 +723,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private void paste() {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
 
         if(canvas == null)
             return;
@@ -792,7 +792,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private void resize() {
-        Image image = parent.getCanvasOfSelectedFrame().getImage();
+        Image image = getCanvasOfSelectedFrame().getImage();
         
         int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), smallLogo);
         
@@ -800,12 +800,12 @@ public class EditMenu extends EasyJShopMenu {
             try {
                 if(ResizeDialog.isPercentage()) {
                     int scale = ResizeDialog.getScalePercentage(); 
-                    resize(scale);    
+                    resizeImage(scale);    
                 }
                 else if(ResizeDialog.isCustomWidthHeight()) {
                     int width = ResizeDialog.getPixelWidth();
                     int height = ResizeDialog.getPixelHeight();
-                    resize(width, height);
+                    resizeImage(width, height);
                 }
             }
             catch(Exception e) {
@@ -815,7 +815,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private Image preResize() {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         canvas.resetRect();
         
         // set up undo
@@ -824,7 +824,7 @@ public class EditMenu extends EasyJShopMenu {
         return canvas.getImage();
     }
     
-    private void resize(int scale) {
+    private void resizeImage(int scale) {
         Image image = preResize();
         
         image = imageProcessor.resize(image, scale * 0.01, null);
@@ -832,7 +832,7 @@ public class EditMenu extends EasyJShopMenu {
         postResize(image);
     }
     
-    private void resize(int width, int height) {
+    private void resizeImage(int width, int height) {
         Image image = preResize();
         
         image = imageProcessor.resize(image, width, height, null);
@@ -841,7 +841,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private void postResize(Image image) {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         
         canvas.setImage(image);
         
@@ -851,7 +851,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private void mirror(boolean horizontal) {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
@@ -870,7 +870,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     private void clockwise(boolean counter) {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         canvas.resetRect();
         
         // set up undo
@@ -900,7 +900,7 @@ public class EditMenu extends EasyJShopMenu {
             IBatcher batcher = null;
             switch(selected) {
                 case 0: // resize
-                    Image image = parent.getCanvasOfSelectedFrame().getImage();
+                    Image image = getCanvasOfSelectedFrame().getImage();
                     
                     option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), smallLogo);
                     
@@ -910,7 +910,7 @@ public class EditMenu extends EasyJShopMenu {
                                 final int scale = ResizeDialog.getScalePercentage(); 
                                 batcher = new IBatcher() {
                                     public void execute() {
-                                        resize(scale);
+                                        resizeImage(scale);
                                     }
                                 };
                             }
@@ -919,7 +919,7 @@ public class EditMenu extends EasyJShopMenu {
                                 final int height = ResizeDialog.getPixelHeight();
                                 batcher = new IBatcher() {
                                     public void execute() {
-                                        resize(width, height);
+                                        resizeImage(width, height);
                                     }
                                 };
                             }

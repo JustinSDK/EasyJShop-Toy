@@ -46,7 +46,7 @@ public abstract class EasyJShopMenu {
     }
 
     public void fitAppSize(Image image) {
-        CanvasComponent canvas = parent.getCanvasOfSelectedFrame();
+        CanvasComponent canvas = getCanvasOfSelectedFrame();
         double scale = canvas.getScale();
         canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
         JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
@@ -63,6 +63,10 @@ public abstract class EasyJShopMenu {
         }
     }
 
+    protected CanvasComponent getCanvasOfSelectedFrame() {
+        return parent.getCanvasOfSelectedFrame();
+    }
+    
     protected JDesktopPane getDesktopPane() {
         return parent.getDesktopPane();
     }
