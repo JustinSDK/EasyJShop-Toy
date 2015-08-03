@@ -34,22 +34,6 @@ public abstract class AbstractChild {
         return null;
     }
     
-    public WindowListener getWindowListener() {
-        return null;
-    }
-    
-    public InternalFrameListener getInternalFrameListener() {
-        return null;
-    }
-    
-    public MouseListener getCanvasMouseListener() {
-        return null;
-    }
-    
-    public MouseMotionListener getCanvasMouseMotionListener() {
-        return null;
-    }
-    
     public void setParent(EasyJShop parent) {
         this.parent = parent;
     }
@@ -69,12 +53,12 @@ public abstract class AbstractChild {
        }
     }
     
-    protected void infoMessageBox(String message) {
+    public void infoMessageBox(String message) {
         JOptionPane.showMessageDialog(null, message,
                 "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
     
-    protected void fitAppSize(Image image) {
+    public void fitAppSize(Image image) {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
         double scale = canvas.getScale();
         canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
@@ -108,7 +92,7 @@ public abstract class AbstractChild {
         return parent.getDesktopPane();
     }
     
-    protected CanvasComponent getCanvasOfSelectedFrame() {
+    public CanvasComponent getCanvasOfSelectedFrame() {
         if(getDesktopPane() != null)
             return parent.getCanvasOfInternalFrame(getDesktopPane().getSelectedFrame());
         else

@@ -70,10 +70,6 @@ public class EditMenu extends AbstractChild {
     
     private JComboBox batchComboBox;
     
-    private InternalFrameListener internalFrameListener;
-    private MouseListener mouseListener;
-    private MouseMotionListener mouseMotionListener;
-    
     private JToolBar toolBar;
     private ColorDemoBox foreColorBox, backColorBox;
     private JSpinner brushSpinner;
@@ -540,134 +536,6 @@ public class EditMenu extends AbstractChild {
                 }
             );
         
-        // canvas care listener
-        internalFrameListener = new InternalFrameListener() {
-
-            public void internalFrameOpened(InternalFrameEvent e) {
-                checkEditMenuItem();
-                
-                if(getDesktopPane().getSelectedFrame() == null)
-                    return;    
-                
-                setEditInfo(getCanvasOfSelectedFrame());
-            }
-
-            public void internalFrameClosing(InternalFrameEvent e) {
-
-            }
-
-            public void internalFrameClosed(InternalFrameEvent e) {
-                checkEditMenuItem();
-            }
-
-            public void internalFrameIconified(InternalFrameEvent e) {
-                checkEditMenuItem();
-            }
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-                checkEditMenuItem();
-            }
-            public void internalFrameActivated(InternalFrameEvent e) {
-                checkEditMenuItem();
-            }
-            public void internalFrameDeactivated(InternalFrameEvent e) {
-            }
-        };
-        
-        mouseListener = new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if(editMode == CanvasComponent.ViewMode) {
-                    canvas.setCursor(viewCursor);
-                }
-                else {
-                    canvas.setCursor(null);
-                }   
-            }
-            
-            public void mousePressed(MouseEvent e) {
-                
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if(canvas.getEditMode() == CanvasComponent.PasteMode) {
-                    if(mergeImage(canvas) != JOptionPane.NO_OPTION) 
-                        setEditInfo(canvas);
-                    return;
-                }
-                
-                setEditInfo(canvas);
-                
-                switch(canvas.getEditMode()) {
-                    case 0: // SelectionMode
-                        canvas.setStart(e.getPoint());
-                        break;
-                    case 1: // BrushMode
-                        getMementoManager(canvas).addImage(copyImage(canvas));
-                        canvas.resetRect();
-                        canvas.setStart(e.getPoint());
-                        canvas.repaint();
-                        setStarBeforeTitle();
-                        break;
-                    case 3: // TextMode
-                        if(canvas.getText() != null) {
-                            mergeText(canvas);
-                        }
-                        else {
-                            inputText(canvas);
-                        }
-                        break;
-                     case 4: // ViewMode
-                         if(e.getButton() == MouseEvent.BUTTON1)
-                             canvas.increaseViewScale();
-                         else if(e.getButton() == MouseEvent.BUTTON3)
-                             canvas.decreaseViewScale();
-                         fitAppSize(canvas.getImage());
-                         canvas.repaint();
-                         break;
-                    default: // SelectionMode
-                        canvas.setStart(e.getPoint());
-                }
-            }
-            
-            public void mouseReleased(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource(); 
-                canvas.setStart(null);
-                canvas.setEnd(null);
-
-                checkEditMenuItem();
-            }
-        };
-        
-        mouseMotionListener = new MouseMotionListener() {
-            public void mouseDragged(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                switch(canvas.getEditMode()) {
-                    case 0: // SelectionMode
-                        canvas.dragRect(e.getPoint());
-                        break;
-                    case 1: // BrushMode
-                        canvas.setEnd(e.getPoint());
-                        canvas.repaint();
-                        break;
-                    case 3:
-                    case 4:
-                        break;
-                    default: // SelectionMode
-                        canvas.dragRect(e.getPoint());
-                }
-            }
-
-            public void mouseMoved(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if(canvas.getEditMode() == CanvasComponent.PasteMode ||
-                   canvas.getEditMode() == CanvasComponent.TextMode) {
-                    canvas.setStart(e.getPoint());
-                    canvas.repaint();
-                }
-            }
-        };
     }
     
     public JMenu getMenu() {
@@ -678,19 +546,15 @@ public class EditMenu extends AbstractChild {
         return toolBar;
     }
     
-    public InternalFrameListener getInternalFrameListener() {
-        return internalFrameListener;
+    public int getEditMode() {
+        return editMode;
     }
     
-    public MouseListener getCanvasMouseListener() {
-        return mouseListener;
+    public Cursor getViewCursor() {
+        return viewCursor;
     }
     
-    public MouseMotionListener getCanvasMouseMotionListener() {
-        return mouseMotionListener;
-    }
-    
-    private void checkEditMenuItem() {
+    public void checkEditMenuItem() {
         // check all
         if(getDesktopPane().getSelectedFrame() == null) {
             undoMenuItem.setEnabled(false);
@@ -868,7 +732,7 @@ public class EditMenu extends AbstractChild {
         }
     }
     
-    private int mergeImage(CanvasComponent canvas) {
+    public int mergeImage(CanvasComponent canvas) {
         int option = JOptionPane.showOptionDialog(null, 
                 "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
@@ -892,7 +756,7 @@ public class EditMenu extends AbstractChild {
     }
     
 
-    private int mergeText(CanvasComponent canvas) {
+    public int mergeText(CanvasComponent canvas) {
         int option = JOptionPane.showOptionDialog(null, 
                 "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
@@ -915,7 +779,7 @@ public class EditMenu extends AbstractChild {
         return option;
     }
     
-    private void inputText(CanvasComponent canvas) {
+    public void inputText(CanvasComponent canvas) {
         int option = FontDialog.showDialog(null, "Font information", smallLogo);
         
         if(option == JOptionPane.OK_OPTION) {
@@ -1101,7 +965,7 @@ public class EditMenu extends AbstractChild {
         
     }
     
-    private Image copyImage(CanvasComponent canvas) {
+    public Image copyImage(CanvasComponent canvas) {
         // copy the original            
         Image image = canvas.getImage();
         Rectangle2D rect = new Rectangle2D.Double(); 
@@ -1110,7 +974,7 @@ public class EditMenu extends AbstractChild {
         return image;
     }
     
-    private void setEditInfo(CanvasComponent canvas) {
+    public void setEditInfo(CanvasComponent canvas) {
         canvas.setEditMode(editMode);
         canvas.setForeground(foreColorBox.getColor());
         canvas.setBackground(backColorBox.getColor());
