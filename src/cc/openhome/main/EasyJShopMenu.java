@@ -45,24 +45,10 @@ public abstract class EasyJShopMenu {
                 "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    public void fitAppSize(Image image) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-        double scale = canvas.getScale();
-        canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
-        JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
-        internalFrame.pack();
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        // if the frame is larger than app size, resize it to fit the app size.
-        if (internalFrame.getWidth() >= screenSize.getWidth() - 20 && internalFrame.getHeight() >= screenSize.getHeight() - 120) {
-            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - 120);
-        } else if (internalFrame.getWidth() >= screenSize.getWidth() - 20) {
-            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, internalFrame.getHeight());
-        } else if (internalFrame.getHeight() >= screenSize.getHeight() - 120) {
-            getDesktopPane().getSelectedFrame().setSize(internalFrame.getWidth(), (int) screenSize.getHeight() - 120);
-        }
+     protected ImageInternalFrame getSelectedFrame() {
+        return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
     }
-
+        
     protected CanvasComponent getCanvasOfSelectedFrame() {
         return parent.getCanvasOfSelectedFrame();
     }

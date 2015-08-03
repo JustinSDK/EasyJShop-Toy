@@ -3,7 +3,9 @@ package cc.openhome.main;
 import cc.openhome.EasyJShop;
 import cc.openhome.img.ImageMementoManager;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -17,21 +19,22 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
+
     private EasyJShop parent;
     private CanvasComponent canvas;
 
     public CanvasComponent getCanvas() {
         return canvas;
     }
-    
+
     public ImageInternalFrame(EasyJShop parent, String title, Image image) {
         super(title, true, true, true, true);
 
         this.parent = parent;
         canvas = new CanvasComponent(image);
-        
+
         setFrameIcon(parent.getIcon());
-        
+
         parent.getMementoManagers().put(canvas, new ImageMementoManager());
 
         JPanel panel = new JPanel();
@@ -144,7 +147,7 @@ public class ImageInternalFrame extends JInternalFrame {
                         } else if (e.getButton() == MouseEvent.BUTTON3) {
                             canvas.decreaseViewScale();
                         }
-                        parent.getEditMenu().fitAppSize(canvas.getImage());
+                        fitAppSize(canvas.getImage());
                         canvas.repaint();
                         break;
                     default: // SelectionMode
@@ -190,6 +193,23 @@ public class ImageInternalFrame extends JInternalFrame {
                 }
             }
         });
+    }
+
+    public void fitAppSize(Image image) {
+        double scale = canvas.getScale();
+        canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
+        JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
+        internalFrame.pack();
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // if the frame is larger than app size, resize it to fit the app size.
+        if (internalFrame.getWidth() >= screenSize.getWidth() - 20 && internalFrame.getHeight() >= screenSize.getHeight() - 120) {
+            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - 120);
+        } else if (internalFrame.getWidth() >= screenSize.getWidth() - 20) {
+            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, internalFrame.getHeight());
+        } else if (internalFrame.getHeight() >= screenSize.getHeight() - 120) {
+            getDesktopPane().getSelectedFrame().setSize(internalFrame.getWidth(), (int) screenSize.getHeight() - 120);
+        }
     }
 
 }

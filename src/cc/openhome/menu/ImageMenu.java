@@ -297,7 +297,7 @@ public class ImageMenu extends EasyJShopMenu {
             infoMessageBox(e.getMessage());
         }
 
-        fitAppSize(image);
+        getSelectedFrame().fitAppSize(image);
     }
 
     private void openImageFile() {
@@ -317,7 +317,7 @@ public class ImageMenu extends EasyJShopMenu {
                             internalFrame.setVisible(true);
                             internalFrame.setSelected(true);
 
-                            fitAppSize(image);
+                            getSelectedFrame().fitAppSize(image);
                         } catch (IOException e) {
                             infoMessageBox(e.getMessage());
                         } catch (PropertyVetoException e) {

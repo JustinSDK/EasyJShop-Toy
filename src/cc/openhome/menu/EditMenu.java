@@ -311,7 +311,8 @@ public class EditMenu extends EasyJShopMenu {
                             getCanvasOfSelectedFrame().setImage(image);
                             
                             // if the image is full screen size, resize it to fit the frame size.
-                            fitAppSize(image);
+                            
+                            getSelectedFrame().fitAppSize(image);
                         }
                         
                         checkEditMenuItem();
@@ -331,7 +332,7 @@ public class EditMenu extends EasyJShopMenu {
                             getCanvasOfSelectedFrame().setImage(image);
                             
                             // if the image is full screen size, resize it to fit the frame size.
-                            fitAppSize(image);
+                            getSelectedFrame().fitAppSize(image);
                         }
                         
                         checkEditMenuItem();
@@ -693,7 +694,7 @@ public class EditMenu extends EasyJShopMenu {
             internalFrame.setVisible(true);
             internalFrame.setSelected(true);
 
-            fitAppSize(image);
+            getSelectedFrame().fitAppSize(image);
         }
         catch(PropertyVetoException e) {
             infoMessageBox(e.getMessage());
@@ -717,7 +718,7 @@ public class EditMenu extends EasyJShopMenu {
         // let the dashed rect disappear
         canvas.resetRect();
         
-        fitAppSize(image);
+        getSelectedFrame().fitAppSize(image);
 
         setStarBeforeTitle();
     }
@@ -845,7 +846,7 @@ public class EditMenu extends EasyJShopMenu {
         
         canvas.setImage(image);
         
-        fitAppSize(image);
+        getSelectedFrame().fitAppSize(image);
         
         setStarBeforeTitle();
     }
@@ -885,7 +886,7 @@ public class EditMenu extends EasyJShopMenu {
         
         canvas.setImage(image);
         
-        fitAppSize(image);
+        getSelectedFrame().fitAppSize(image);
         
         setStarBeforeTitle();
     }
