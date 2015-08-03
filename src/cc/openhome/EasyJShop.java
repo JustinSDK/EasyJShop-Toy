@@ -20,12 +20,9 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class EasyJShop extends JFrame {
-    
+
     private JDesktopPane desktopPane;
     
-    private List internalFrameListeners = new ArrayList();
-    private List canvasMouseListeners = new ArrayList();
-    private List canvasMouseMotionListeners = new ArrayList();
     private Map mementoManagers = new HashMap();
     
     private ImageMenu imageMenu = new ImageMenu();
@@ -48,23 +45,20 @@ public class EasyJShop extends JFrame {
         
         setJMenuBar(new JMenuBar());
         
-        addMenu(imageMenu, null);
-        addMenu(editMenu, BorderLayout.NORTH);
-        addMenu(new AboutMenu(), null);
+        addMenu(imageMenu);
+        
+        addMenu(editMenu);
+        getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
+        
+        addMenu(new AboutMenu());
         
         desktopPane = new JDesktopPane();
         getContentPane().add(desktopPane);
     }
     
-    private void addMenu(AbstractChild menu, String toolBarLayout) {
+    private void addMenu(AbstractChild menu) {
         menu.setParent(this);
-        if (menu.getMenu() != null) {
-            getJMenuBar().add(menu.getMenu());
-        }
-        
-        if (menu.getToolBar() != null) {
-            getContentPane().add(menu.getToolBar(), toolBarLayout);
-        }
+        getJMenuBar().add(menu.getMenu());
     }
     
     private void setUpEventListener() {
