@@ -27,7 +27,6 @@ public class AboutMenu extends EasyJShopMenu {
     }
     
     public void setupUIComponent() {
-        //aboutMenu = new JMenu();
         setText("About");
         aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
         add(aboutEasyJShopMenuItem);

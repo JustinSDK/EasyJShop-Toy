@@ -68,7 +68,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             captureHelper = new ScreenCaptureHelper();
         } catch (AWTException e) {
-            parent.infoMessageBox(e.getMessage());
+            parent.messageBox(e.getMessage());
         }
     }
 
@@ -252,7 +252,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             Thread.sleep(delaySlider.getValue() * 1000);
         } catch (InterruptedException e) {
-            parent.infoMessageBox(e.getMessage());
+            parent.messageBox(e.getMessage());
         }
 
         Image image = captureHelper.capture();
@@ -287,7 +287,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             internalFrame.setSelected(true);
         } catch (PropertyVetoException e) {
-            parent.infoMessageBox(e.getMessage());
+            parent.messageBox(e.getMessage());
         }
 
         getSelectedFrame().fitAppSize(image);
@@ -312,9 +312,9 @@ public class ImageMenu extends EasyJShopMenu {
 
                             getSelectedFrame().fitAppSize(image);
                         } catch (IOException e) {
-                            parent.infoMessageBox(e.getMessage());
+                            parent.messageBox(e.getMessage());
                         } catch (PropertyVetoException e) {
-                            parent.infoMessageBox(e.getMessage());
+                            parent.messageBox(e.getMessage());
                         }
                     }
                 }
@@ -389,7 +389,7 @@ public class ImageMenu extends EasyJShopMenu {
             int dotpos = filename.lastIndexOf('.');
             ImageIO.write(bufferedImage, filename.substring(dotpos + 1), new File(filename));
         } catch (IOException e) {
-            parent.infoMessageBox(e.getMessage());
+            parent.messageBox(e.getMessage());
         }
 
         getDesktopPane().getSelectedFrame().setTitle(filename);
@@ -424,7 +424,7 @@ public class ImageMenu extends EasyJShopMenu {
                     return;
                 }
             } catch (PropertyVetoException e) {
-                parent.infoMessageBox(e.getMessage());
+                parent.messageBox(e.getMessage());
             }
         }
 
@@ -452,7 +452,7 @@ public class ImageMenu extends EasyJShopMenu {
                             removeMementoAndDispose(internalFrame);
                         }
                     } catch (PropertyVetoException e) {
-                        parent.infoMessageBox(e.getMessage());
+                        parent.messageBox(e.getMessage());
                     }
                     break;
                 case JOptionPane.NO_OPTION:

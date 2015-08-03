@@ -637,7 +637,7 @@ public class EditMenu extends EasyJShopMenu {
         Rectangle2D rect = canvas.getSelectedRect();
         
         if(rect.getWidth() <= 0 || rect.getWidth() <=0) {
-            parent.infoMessageBox("No area selected.");
+            parent.messageBox("No area selected.");
             return null;
         }
 
@@ -690,7 +690,7 @@ public class EditMenu extends EasyJShopMenu {
             getSelectedFrame().fitAppSize(image);
         }
         catch(PropertyVetoException e) {
-            parent.infoMessageBox(e.getMessage());
+            parent.messageBox(e.getMessage());
         }
     }
         
@@ -803,7 +803,7 @@ public class EditMenu extends EasyJShopMenu {
                 }
             }
             catch(Exception e) {
-                parent.infoMessageBox(e.getMessage());
+                parent.messageBox(e.getMessage());
             }
         }
     }
@@ -919,7 +919,7 @@ public class EditMenu extends EasyJShopMenu {
                             }
                         }
                         catch(Exception e) {
-                            parent.infoMessageBox(e.getMessage());
+                            parent.messageBox(e.getMessage());
                         }
                     } 
                     else {

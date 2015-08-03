@@ -73,7 +73,7 @@ public class ImageInternalFrame extends JInternalFrame {
                     internalFrame.setIcon(false);
                     internalFrame.setSelected(true);
                 } catch (PropertyVetoException ex) {
-                    parent.infoMessageBox(ex.getMessage());
+                    parent.messageBox(ex.getMessage());
                 }
 
                 parent.getImageMenu().checkUnsavedImage(internalFrame);

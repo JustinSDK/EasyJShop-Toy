@@ -104,12 +104,12 @@ public class MainFrame extends JFrame {
                 internalFrame.pack();
                 batcher.execute();
             } catch (PropertyVetoException e) {
-                infoMessageBox(e.getMessage());
+                messageBox(e.getMessage());
             }
         }
     }    
     
-    public void infoMessageBox(String message) {
+    public void messageBox(String message) {
         JOptionPane.showMessageDialog(null, message,
                 "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
