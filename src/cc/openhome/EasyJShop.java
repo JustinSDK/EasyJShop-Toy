@@ -10,6 +10,7 @@ import javax.swing.*;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
+import cc.openhome.main.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
@@ -26,6 +27,18 @@ public class EasyJShop extends JFrame {
     private EditMenu editMenu = new EditMenu(this);
     
     private ImageIcon icon = new ImageIcon(EasyJShop.class.getResource("images/appIcon.gif"));
+
+    public ImageMenu getImageMenu() {
+        return imageMenu;
+    }
+
+    public EditMenu getEditMenu() {
+        return editMenu;
+    }
+
+    public ImageIcon getIcon() {
+        return icon;
+    }
     
     public EasyJShop() {
         super("EasyJShop");
@@ -70,183 +83,7 @@ public class EasyJShop extends JFrame {
     // create an JInternalFrame and set image into it by
     // using JLabel and ImageIcon
     public JInternalFrame createImageInternalFrame(String title, Image image) {
-        JInternalFrame internalFrame = new JInternalFrame(title, true, true, true, true);
-        internalFrame.setFrameIcon(icon);
-        internalFrame.setDefaultCloseOperation(JInternalFrame.DO_NOTHING_ON_CLOSE);
-        
-        internalFrame.addInternalFrameListener(new InternalFrameAdapter() {
-            public void internalFrameOpened(InternalFrameEvent e) {
-                imageMenu.enableSaveMenuItem();
-            }
-            
-            public void internalFrameClosing(InternalFrameEvent e) {
-                JInternalFrame internalFrame = (JInternalFrame) e.getSource();
-                
-                try {
-                    internalFrame.setIcon(false);
-                    internalFrame.setSelected(true);
-                } catch (PropertyVetoException ex) {
-                    imageMenu.infoMessageBox(ex.getMessage());
-                }
-                
-                imageMenu.checkUnsavedImage(internalFrame);
-            }
-            
-            public void internalFrameClosed(InternalFrameEvent e) {
-                imageMenu.checkImageMenuItem();
-            }
-            
-            public void internalFrameIconified(InternalFrameEvent e) {
-                imageMenu.checkImageMenuItem();
-            }
-            
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-                imageMenu.checkImageMenuItem();
-            }
-            
-            public void internalFrameActivated(InternalFrameEvent e) {
-                imageMenu.checkImageMenuItem();
-            }
-        });
-        
-        internalFrame.addInternalFrameListener(new InternalFrameAdapter() {
-            public void internalFrameOpened(InternalFrameEvent e) {
-                editMenu.checkEditMenuItem();
-                
-                if (getDesktopPane().getSelectedFrame() == null) {
-                    return;
-                }
-                
-                editMenu.setEditInfo(editMenu.getCanvasOfSelectedFrame());
-            }
-            
-            public void internalFrameClosed(InternalFrameEvent e) {
-                editMenu.checkEditMenuItem();
-            }
-            
-            public void internalFrameIconified(InternalFrameEvent e) {
-                editMenu.checkEditMenuItem();
-            }
-            
-            public void internalFrameDeiconified(InternalFrameEvent e) {
-                editMenu.checkEditMenuItem();
-            }
-            
-            public void internalFrameActivated(InternalFrameEvent e) {
-                editMenu.checkEditMenuItem();
-            }
-        });
-        
-        CanvasComponent canvas = new CanvasComponent(image);
-        
-        canvas.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if (editMenu.getEditMode() == CanvasComponent.ViewMode) {
-                    canvas.setCursor(editMenu.getViewCursor());
-                } else {
-                    canvas.setCursor(null);
-                }
-            }
-            
-            public void mousePressed(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if (canvas.getEditMode() == CanvasComponent.PasteMode) {
-                    if (editMenu.mergeImage(canvas) != JOptionPane.NO_OPTION) {
-                        editMenu.setEditInfo(canvas);
-                    }
-                    return;
-                }
-                
-                editMenu.setEditInfo(canvas);
-                
-                switch (canvas.getEditMode()) {
-                    case 0: // SelectionMode
-                        canvas.setStart(e.getPoint());
-                        break;
-                    case 1: // BrushMode
-                        getMementoManager(canvas).addImage(editMenu.copyImage(canvas));
-                        canvas.resetRect();
-                        canvas.setStart(e.getPoint());
-                        canvas.repaint();
-                        setStarBeforeTitle();
-                        break;
-                    case 3: // TextMode
-                        if (canvas.getText() != null) {
-                            editMenu.mergeText(canvas);
-                        } else {
-                            editMenu.inputText(canvas);
-                        }
-                        break;
-                    case 4: // ViewMode
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            canvas.increaseViewScale();
-                        } else if (e.getButton() == MouseEvent.BUTTON3) {
-                            canvas.decreaseViewScale();
-                        }
-                        editMenu.fitAppSize(canvas.getImage());
-                        canvas.repaint();
-                        break;
-                    default: // SelectionMode
-                        canvas.setStart(e.getPoint());
-                }
-            }
-            
-            public void mouseReleased(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                canvas.setStart(null);
-                canvas.setEnd(null);
-                
-                editMenu.checkEditMenuItem();
-            }
-        });
-        
-        canvas.addMouseMotionListener(new MouseMotionListener() {
-            public void mouseDragged(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                switch (canvas.getEditMode()) {
-                    case 0: // SelectionMode
-                        canvas.dragRect(e.getPoint());
-                        break;
-                    case 1: // BrushMode
-                        canvas.setEnd(e.getPoint());
-                        canvas.repaint();
-                        break;
-                    case 3:
-                    case 4:
-                        break;
-                    default: // SelectionMode
-                        canvas.dragRect(e.getPoint());
-                }
-            }
-            
-            public void mouseMoved(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                
-                if (canvas.getEditMode() == CanvasComponent.PasteMode
-                        || canvas.getEditMode() == CanvasComponent.TextMode) {
-                    canvas.setStart(e.getPoint());
-                    canvas.repaint();
-                }
-            }
-        });
-
-        mementoManagers.put(canvas, new ImageMementoManager());
-        
-        JPanel panel = new JPanel();
-        canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
-        panel.add(canvas);
-        
-        JScrollPane scrollPanel = new JScrollPane(panel,
-                ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-        
-        internalFrame.getContentPane().add(scrollPanel);
-        
-        return internalFrame;
+        return new ImageInternalFrame(this, title, image);
     }
     
     public CanvasComponent getCanvasOfInternalFrame(JInternalFrame internalFrame) {
@@ -279,4 +116,6 @@ public class EasyJShop extends JFrame {
         
         new EasyJShop().setVisible(true);
     }
+    
+    
 }
