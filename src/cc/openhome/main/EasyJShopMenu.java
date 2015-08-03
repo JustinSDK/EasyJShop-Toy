@@ -52,18 +52,14 @@ public abstract class EasyJShopMenu {
         JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
         internalFrame.pack();
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // if the frame is larger than app size, resize it to fit the app size.
-        
-        if (internalFrame.getWidth() >= Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 20
-                && internalFrame.getHeight() >= Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 120) {
-            Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-            getDesktopPane().getSelectedFrame().setSize((int) size.getWidth() - 20, (int) size.getHeight() - 120);
-        } else if (internalFrame.getWidth() >= Toolkit.getDefaultToolkit().getScreenSize().getWidth() - 20) {
-            Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-            getDesktopPane().getSelectedFrame().setSize((int) size.getWidth() - 20, internalFrame.getHeight());
-        } else if (internalFrame.getHeight() >= Toolkit.getDefaultToolkit().getScreenSize().getHeight() - 120) {
-            Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-            getDesktopPane().getSelectedFrame().setSize(internalFrame.getWidth(), (int) size.getHeight() - 120);
+        if (internalFrame.getWidth() >= screenSize.getWidth() - 20 && internalFrame.getHeight() >= screenSize.getHeight() - 120) {
+            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - 120);
+        } else if (internalFrame.getWidth() >= screenSize.getWidth() - 20) {
+            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, internalFrame.getHeight());
+        } else if (internalFrame.getHeight() >= screenSize.getHeight() - 120) {
+            getDesktopPane().getSelectedFrame().setSize(internalFrame.getWidth(), (int) screenSize.getHeight() - 120);
         }
     }
 
