@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.EasyJShop;
+import cc.openhome.MainFrame;
 import java.awt.AWTException;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -57,7 +57,7 @@ public class ImageMenu extends EasyJShopMenu {
     private JFileChooser openFileChooser, saveFileChooser;
 
     //private InternalFrameListener internalFrameListener;
-    public ImageMenu(EasyJShop easyJShop) {
+    public ImageMenu(MainFrame easyJShop) {
         super(easyJShop);
         initResource();
         setupUIComponent();

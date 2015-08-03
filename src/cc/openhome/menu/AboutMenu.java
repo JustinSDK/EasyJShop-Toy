@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.EasyJShop;
+import cc.openhome.MainFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,7 +18,7 @@ public class AboutMenu extends EasyJShopMenu {
     private ImageIcon logoImage;
     private JMenuItem aboutEasyJShopMenuItem;
     
-    public AboutMenu(EasyJShop parent) {
+    public AboutMenu(MainFrame parent) {
         super(parent);
         initResource();
         setupUIComponent();

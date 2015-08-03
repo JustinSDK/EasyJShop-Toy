@@ -9,15 +9,15 @@ import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JOptionPane;
 
-import cc.openhome.EasyJShop;
+import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.menu.EditMenu;
 
 public abstract class EasyJShopMenu extends JMenu {
-    protected EasyJShop parent;
+    protected MainFrame parent;
     protected ImageIcon smallLogo = new ImageIcon(EditMenu.class.getResource("../images/smallLogo.gif"));
 
-    public EasyJShopMenu(EasyJShop parent) {
+    public EasyJShopMenu(MainFrame parent) {
         this.parent = parent;
     }
 

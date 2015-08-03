@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.EasyJShop;
+import cc.openhome.MainFrame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -80,7 +80,7 @@ public class EditMenu extends EasyJShopMenu {
     private int editMode;
     private boolean resizeLocker;
     
-    public EditMenu(EasyJShop easyJShop) {
+    public EditMenu(MainFrame easyJShop) {
         super(easyJShop);
         initResource();
         setupUIComponent();

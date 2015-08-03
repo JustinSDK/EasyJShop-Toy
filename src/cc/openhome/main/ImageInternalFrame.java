@@ -1,6 +1,6 @@
 package cc.openhome.main;
 
-import cc.openhome.EasyJShop;
+import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,14 +20,14 @@ import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
 
-    private EasyJShop parent;
+    private MainFrame parent;
     private CanvasComponent canvas;
 
     public CanvasComponent getCanvas() {
         return canvas;
     }
 
-    public ImageInternalFrame(EasyJShop parent, String title, Image image) {
+    public ImageInternalFrame(MainFrame parent, String title, Image image) {
         super(title, true, true, true, true);
 
         this.parent = parent;
