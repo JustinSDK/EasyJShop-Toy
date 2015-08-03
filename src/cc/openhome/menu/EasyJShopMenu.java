@@ -1,17 +1,15 @@
-package cc.openhome.main;
+package cc.openhome.menu;
 
-import java.beans.PropertyVetoException;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
-import javax.swing.JOptionPane;
 
 import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.menu.EditMenu;
+import cc.openhome.main.CanvasComponent;
+import cc.openhome.main.ImageInternalFrame;
 
 public abstract class EasyJShopMenu extends JMenu {
     protected MainFrame parent;
@@ -19,23 +17,6 @@ public abstract class EasyJShopMenu extends JMenu {
 
     public EasyJShopMenu(MainFrame parent) {
         this.parent = parent;
-    }
-
-    protected void batch(IBatcher batcher) {
-        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
-            try {
-                internalFrame.setIcon(true);
-                internalFrame.pack();
-                batcher.execute();
-            } catch (PropertyVetoException e) {
-                infoMessageBox(e.getMessage());
-            }
-        }
-    }
-
-    public void infoMessageBox(String message) {
-        JOptionPane.showMessageDialog(null, message,
-                "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
 
      protected ImageInternalFrame getSelectedFrame() {

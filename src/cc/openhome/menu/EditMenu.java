@@ -44,7 +44,6 @@ import cc.openhome.dialog.ResizeDialog;
 import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
-import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
@@ -638,7 +637,7 @@ public class EditMenu extends EasyJShopMenu {
         Rectangle2D rect = canvas.getSelectedRect();
         
         if(rect.getWidth() <= 0 || rect.getWidth() <=0) {
-            infoMessageBox("No area selected.");
+            parent.infoMessageBox("No area selected.");
             return null;
         }
 
@@ -691,7 +690,7 @@ public class EditMenu extends EasyJShopMenu {
             getSelectedFrame().fitAppSize(image);
         }
         catch(PropertyVetoException e) {
-            infoMessageBox(e.getMessage());
+            parent.infoMessageBox(e.getMessage());
         }
     }
         
@@ -804,7 +803,7 @@ public class EditMenu extends EasyJShopMenu {
                 }
             }
             catch(Exception e) {
-                infoMessageBox(e.getMessage());
+                parent.infoMessageBox(e.getMessage());
             }
         }
     }
@@ -920,7 +919,7 @@ public class EditMenu extends EasyJShopMenu {
                             }
                         }
                         catch(Exception e) {
-                            infoMessageBox(e.getMessage());
+                            parent.infoMessageBox(e.getMessage());
                         }
                     } 
                     else {
@@ -959,7 +958,7 @@ public class EditMenu extends EasyJShopMenu {
                 default: // do nothing
             }
             
-            batch(batcher);
+            parent.batch(batcher);
         }
         
     }

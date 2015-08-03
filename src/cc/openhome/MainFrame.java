@@ -9,10 +9,12 @@ import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.main.CanvasComponent;
+import cc.openhome.main.IBatcher;
 import cc.openhome.main.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
+import java.beans.PropertyVetoException;
 
 public class MainFrame extends JFrame {
     private JDesktopPane desktopPane;
@@ -93,5 +95,22 @@ public class MainFrame extends JFrame {
     
     public CanvasComponent getCanvasOfSelectedFrame() {
         return ((ImageInternalFrame) getDesktopPane().getSelectedFrame()).getCanvas();
+    }   
+    
+    public void batch(IBatcher batcher) {
+        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
+            try {
+                internalFrame.setIcon(true);
+                internalFrame.pack();
+                batcher.execute();
+            } catch (PropertyVetoException e) {
+                infoMessageBox(e.getMessage());
+            }
+        }
     }    
+    
+    public void infoMessageBox(String message) {
+        JOptionPane.showMessageDialog(null, message,
+                "Info.", JOptionPane.INFORMATION_MESSAGE);
+    }
 }

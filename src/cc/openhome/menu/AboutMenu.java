@@ -6,15 +6,12 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-import cc.openhome.main.EasyJShopMenu;
 
 public class AboutMenu extends EasyJShopMenu {
-    //private JMenu aboutMenu;
     private ImageIcon logoImage;
     private JMenuItem aboutEasyJShopMenuItem;
     

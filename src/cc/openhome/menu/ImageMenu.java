@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import cc.openhome.img.ScreenCaptureHelper;
-import cc.openhome.main.EasyJShopMenu;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
 import cc.openhome.main.IBatcher;
@@ -69,7 +68,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             captureHelper = new ScreenCaptureHelper();
         } catch (AWTException e) {
-            infoMessageBox(e.getMessage());
+            parent.infoMessageBox(e.getMessage());
         }
     }
 
@@ -253,7 +252,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             Thread.sleep(delaySlider.getValue() * 1000);
         } catch (InterruptedException e) {
-            infoMessageBox(e.getMessage());
+            parent.infoMessageBox(e.getMessage());
         }
 
         Image image = captureHelper.capture();
@@ -288,7 +287,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             internalFrame.setSelected(true);
         } catch (PropertyVetoException e) {
-            infoMessageBox(e.getMessage());
+            parent.infoMessageBox(e.getMessage());
         }
 
         getSelectedFrame().fitAppSize(image);
@@ -313,9 +312,9 @@ public class ImageMenu extends EasyJShopMenu {
 
                             getSelectedFrame().fitAppSize(image);
                         } catch (IOException e) {
-                            infoMessageBox(e.getMessage());
+                            parent.infoMessageBox(e.getMessage());
                         } catch (PropertyVetoException e) {
-                            infoMessageBox(e.getMessage());
+                            parent.infoMessageBox(e.getMessage());
                         }
                     }
                 }
@@ -390,7 +389,7 @@ public class ImageMenu extends EasyJShopMenu {
             int dotpos = filename.lastIndexOf('.');
             ImageIO.write(bufferedImage, filename.substring(dotpos + 1), new File(filename));
         } catch (IOException e) {
-            infoMessageBox(e.getMessage());
+            parent.infoMessageBox(e.getMessage());
         }
 
         getDesktopPane().getSelectedFrame().setTitle(filename);
@@ -409,7 +408,7 @@ public class ImageMenu extends EasyJShopMenu {
 
         new Thread(new Runnable() {
             public void run() {
-                batch(batcher);
+                parent.batch(batcher);
             }
         }).start();
     }
@@ -425,7 +424,7 @@ public class ImageMenu extends EasyJShopMenu {
                     return;
                 }
             } catch (PropertyVetoException e) {
-                infoMessageBox(e.getMessage());
+                parent.infoMessageBox(e.getMessage());
             }
         }
 
@@ -453,7 +452,7 @@ public class ImageMenu extends EasyJShopMenu {
                             removeMementoAndDispose(internalFrame);
                         }
                     } catch (PropertyVetoException e) {
-                        infoMessageBox(e.getMessage());
+                        parent.infoMessageBox(e.getMessage());
                     }
                     break;
                 case JOptionPane.NO_OPTION:
