@@ -20,62 +20,47 @@ import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
 
 public class EasyJShop extends JFrame {
-    private ImageIcon appIcon;
-    
-    private JMenuBar menuBar;
-    
     private JDesktopPane desktopPane;
     
-    private List windowListeners;
-    private List internalFrameListeners, canvasMouseListeners, canvasMouseMotionListeners;
-    private Map mementoManagers;
+    private List internalFrameListeners = new ArrayList();
+    private List canvasMouseListeners = new ArrayList();
+    private List canvasMouseMotionListeners = new ArrayList();
+    private Map mementoManagers = new HashMap();
+    
+    private ImageMenu imageMenu = new ImageMenu();
+    
+    private ImageIcon icon = new ImageIcon(EasyJShop.class.getResource("images/appIcon.gif"));
     
     public EasyJShop() {
         super("EasyJShop");
-        
-        initResource();
         setUpUIComponent();
         setUpEventListener();
-        
-        setVisible(true);    
-    }
-    
-    private void initResource() {
-        appIcon = new ImageIcon(EasyJShop.class.getResource("images/appIcon.gif"));
-        windowListeners = new ArrayList();
-        internalFrameListeners = new ArrayList();
-        canvasMouseListeners = new ArrayList();
-        canvasMouseMotionListeners = new ArrayList();
-        mementoManagers = new HashMap();
     }
     
     private void setUpUIComponent() {
-        setIconImage(appIcon.getImage());
-        setSize((int) getToolkit().getScreenSize().getWidth(), (int) getToolkit().getScreenSize().getHeight() - 20);
+        setIconImage(icon.getImage());
         
-        menuBar = new JMenuBar();
+        setSize(640, 480);
         
-        addChild(new ImageMenu(), null);
-        addChild(new EditMenu(), BorderLayout.NORTH);
-        addChild(new AboutMenu(), null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         
-        setJMenuBar(menuBar);
+        setJMenuBar(new JMenuBar());
+        
+        addMenu(imageMenu, null);
+        addMenu(new EditMenu(), BorderLayout.NORTH);
+        addMenu(new AboutMenu(), null);
                 
         desktopPane = new JDesktopPane();
         getContentPane().add(desktopPane);
     }
     
-    private void addChild(AbstractChild menu, String toolBarLayout) {
+    private void addMenu(AbstractChild menu, String toolBarLayout) {
         menu.setParent(this);
-        
         if(menu.getMenu() != null)
-            menuBar.add(menu.getMenu());
+            getJMenuBar().add(menu.getMenu());
         
         if(menu.getToolBar() != null)
             getContentPane().add(menu.getToolBar(), toolBarLayout);
-        
-        if(menu.getWindowListener() != null)
-            windowListeners.add(menu.getWindowListener());
         
         if(menu.getInternalFrameListener() != null)
             internalFrameListeners.add(menu.getInternalFrameListener());
@@ -89,11 +74,12 @@ public class EasyJShop extends JFrame {
     
     private void setUpEventListener() {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        
-        Iterator iterator = windowListeners.iterator();
-        while(iterator.hasNext()) {
-            addWindowListener((WindowListener) iterator.next());
-        }
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                imageMenu.checkUnsavedImages();
+            }
+        });
     }
     
     public JDesktopPane getDesktopPane() {
@@ -104,7 +90,7 @@ public class EasyJShop extends JFrame {
     // using JLabel and ImageIcon
     public JInternalFrame createImageInternalFrame(String title, Image image) {
         JInternalFrame internalFrame = new JInternalFrame(title, true, true, true, true);
-        internalFrame.setFrameIcon(appIcon);
+        internalFrame.setFrameIcon(icon);
         internalFrame.setDefaultCloseOperation(JInternalFrame.DO_NOTHING_ON_CLOSE);
         
         Iterator iterator = internalFrameListeners.iterator();
@@ -167,6 +153,6 @@ public class EasyJShop extends JFrame {
                     "Info.", JOptionPane.INFORMATION_MESSAGE);
         }
         
-        new EasyJShop();
+        new EasyJShop().setVisible(true);  
     }
 }

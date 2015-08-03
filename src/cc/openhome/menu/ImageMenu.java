@@ -61,8 +61,6 @@ public class ImageMenu extends AbstractChild {
     
     private JFileChooser openFileChooser, saveFileChooser;
     
-    private WindowListener windowListener;
-    
     private InternalFrameListener internalFrameListener;
     
     public ImageMenu() {
@@ -228,29 +226,6 @@ public class ImageMenu extends AbstractChild {
             }
         });
         
-        windowListener = new WindowListener() {
-            public void windowClosing(WindowEvent e) {
-                checkUnsavedImages();
-            }
-
-            public void windowOpened(WindowEvent e) {
-            }
-
-            public void windowClosed(WindowEvent e) {
-            }
-
-            public void windowIconified(WindowEvent e) {
-            }
-
-            public void windowDeiconified(WindowEvent e) {
-            }
-
-            public void windowActivated(WindowEvent e) {
-            }
-
-            public void windowDeactivated(WindowEvent e) {
-            }
-        };
         
         internalFrameListener = new InternalFrameListener() {
 
@@ -490,7 +465,7 @@ public class ImageMenu extends AbstractChild {
         }).start();
     }
     
-    private void checkUnsavedImages() {
+    public void checkUnsavedImages() {
         JInternalFrame[] internalFrames = getDesktopPane().getAllFrames();
         
         for(int i = 0; i < internalFrames.length; i++) {
@@ -558,9 +533,5 @@ public class ImageMenu extends AbstractChild {
     
     public InternalFrameListener getInternalFrameListener() {
         return internalFrameListener;
-    }
-    
-    public WindowListener getWindowListener() {
-        return windowListener;
     }
 }
