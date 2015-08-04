@@ -36,19 +36,15 @@ public class AboutMenu extends EasyJShopMenu {
         aboutEasyJShopMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         
-        aboutEasyJShopMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        JOptionPane.showOptionDialog(null, 
-                            "EasyJShop....  :)\n" +  
+        aboutEasyJShopMenuItem.addActionListener((ActionEvent e) -> {
+            JOptionPane.showOptionDialog(null,
+                    "EasyJShop....  :)\n" +  
                             "http://openhome.cc\n" +
                             "caterpillar@openhome.cc",
-                            "About EasyJShop",
-                            JOptionPane.DEFAULT_OPTION,
-                            JOptionPane.INFORMATION_MESSAGE,
-                            logoImage, null, null);
-                    }
-                }   
-            );
+                    "About EasyJShop",
+                    JOptionPane.DEFAULT_OPTION,
+                    JOptionPane.INFORMATION_MESSAGE,
+                    logoImage, null, null);
+        });
     }
 }

@@ -136,75 +136,43 @@ public class ImageMenu extends EasyJShopMenu {
         exitMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
-        captureMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        captureScreen();
-                    }
-                }
-        );
+        captureMenuItem.addActionListener(e -> {
+            captureScreen();
+        });
 
-        newImageMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        newImageFile();
-                    }
-                }
-        );
+        newImageMenuItem.addActionListener(e -> {
+            newImageFile();
+        });
 
-        openMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        openImageFile();
-                    }
-                }
-        );
+        openMenuItem.addActionListener(e -> {
+            openImageFile();
+        });
 
-        saveMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        saveImageFile();
-                    }
-                }
-        );
+        saveMenuItem.addActionListener(e -> {
+            saveImageFile();
+        });
 
-        saveAsMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        saveImageFileAs();
-                    }
-                }
-        );
+        saveAsMenuItem.addActionListener(e -> {
+            saveImageFileAs();
+        });
 
-        saveAllMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        saveAllImageFile();
-                    }
-                }
-        );
+        saveAllMenuItem.addActionListener(e -> {
+            saveAllImageFile();
+        });
 
-        exitMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        checkUnsavedImages();
-                    }
-                }
-        );
+        exitMenuItem.addActionListener(e -> {
+            checkUnsavedImages();
+        });
 
-        widthSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (((Integer) widthSpinner.getValue()).intValue() <= 0) {
-                    widthSpinner.setValue(new Integer(1));
-                }
+        widthSpinner.addChangeListener(e -> {
+            if (((Integer) widthSpinner.getValue()) <= 0) {
+                widthSpinner.setValue(1);
             }
         });
 
-        heightSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if (((Integer) heightSpinner.getValue()).intValue() <= 0) {
-                    heightSpinner.setValue(new Integer(1));
-                }
+        heightSpinner.addChangeListener(e -> {
+            if (((Integer) heightSpinner.getValue()) <= 0) {
+                heightSpinner.setValue(1);
             }
         });
 
@@ -267,8 +235,8 @@ public class ImageMenu extends EasyJShopMenu {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
 
         if (option == JOptionPane.OK_OPTION) {
-            int width = ((Integer) widthSpinner.getValue()).intValue();
-            int height = ((Integer) heightSpinner.getValue()).intValue();
+            int width = ((Integer) widthSpinner.getValue());
+            int height = ((Integer) heightSpinner.getValue());
             BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             Graphics g = bufferedImage.getGraphics();
             g.setColor(backgroundColorBox.getColor());
@@ -294,28 +262,23 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void openImageFile() {
-        new Thread(new Runnable() {
-            public void run() {
-                if (openFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                    File[] files = openFileChooser.getSelectedFiles();
-
-                    for (int i = 0; i < files.length; i++) {
-                        // bring it to top
-                        try {
-                            Image image = ImageIO.read(files[i]);
-                            JInternalFrame internalFrame =  new ImageInternalFrame(parent, files[i].getAbsolutePath(), image);
-
-                            getDesktopPane().add(internalFrame);
-
-                            internalFrame.setVisible(true);
-                            internalFrame.setSelected(true);
-
-                            getSelectedFrame().fitAppSize(image);
-                        } catch (IOException e) {
-                            parent.messageBox(e.getMessage());
-                        } catch (PropertyVetoException e) {
-                            parent.messageBox(e.getMessage());
-                        }
+        new Thread(() -> {
+            if (openFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                File[] files = openFileChooser.getSelectedFiles();
+                
+                for (File file : files) {
+                    // bring it to top
+                    try {
+                        Image image = ImageIO.read(file);
+                        JInternalFrame internalFrame = new ImageInternalFrame(parent, file.getAbsolutePath(), image);
+                        getDesktopPane().add(internalFrame);
+                        internalFrame.setVisible(true);
+                        internalFrame.setSelected(true);
+                        getSelectedFrame().fitAppSize(image);
+                    }catch (IOException e) {
+                        parent.messageBox(e.getMessage());
+                    }catch (PropertyVetoException e) {
+                        parent.messageBox(e.getMessage());
                     }
                 }
             }
@@ -400,30 +363,26 @@ public class ImageMenu extends EasyJShopMenu {
             return;
         }
 
-        final IBatcher batcher = new IBatcher() {
-            public void execute() {
-                saveImageFile();
-            }
+        final IBatcher batcher = () -> {
+            saveImageFile();
         };
 
-        new Thread(new Runnable() {
-            public void run() {
-                parent.batch(batcher);
-            }
+        new Thread(() -> {
+            parent.batch(batcher);
         }).start();
     }
 
     public void checkUnsavedImages() {
         JInternalFrame[] internalFrames = getDesktopPane().getAllFrames();
 
-        for (int i = 0; i < internalFrames.length; i++) {
+        for (JInternalFrame internalFrame : internalFrames) {
             try {
-                internalFrames[i].setIcon(false);
-                internalFrames[i].setSelected(true);
-                if (checkUnsavedImage(internalFrames[i])) {
+                internalFrame.setIcon(false);
+                internalFrame.setSelected(true);
+                if (checkUnsavedImage(internalFrame)) {
                     return;
                 }
-            } catch (PropertyVetoException e) {
+            }catch (PropertyVetoException e) {
                 parent.messageBox(e.getMessage());
             }
         }
