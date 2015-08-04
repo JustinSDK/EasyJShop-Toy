@@ -15,8 +15,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.geom.Rectangle2D;
 import java.beans.PropertyVetoException;
 
@@ -36,8 +34,6 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.InternalFrameEvent;
-import javax.swing.event.InternalFrameListener;
 
 import cc.openhome.dialog.FontDialog;
 import cc.openhome.dialog.ResizeDialog;
@@ -317,124 +313,76 @@ public class EditMenu extends EasyJShopMenu {
                 }
             );
         
-        redoMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if(getDesktopPane().getSelectedFrame() == null)
-                            return;
-                            
-                        Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
-                        
-                        if(image != null) {
-                            getCanvasOfSelectedFrame().setImage(image);
-                            
-                            // if the image is full screen size, resize it to fit the frame size.
-                            getSelectedFrame().fitAppSize(image);
-                        }
-                        
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        redoMenuItem.addActionListener(e -> {
+            if(getDesktopPane().getSelectedFrame() == null)
+                return;
+            
+            Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
+            
+            if(image != null) {
+                getCanvasOfSelectedFrame().setImage(image);
+                
+                // if the image is full screen size, resize it to fit the frame size.
+                getSelectedFrame().fitAppSize(image);
+            }
+            
+            checkEditMenuItem();
+        });
         
-        cutMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        copyToClipBoard(true);
-                        pasteToNewMenuItem.setEnabled(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        cutMenuItem.addActionListener(e -> {
+            copyToClipBoard(true);
+            pasteToNewMenuItem.setEnabled(true);
+            checkEditMenuItem();
+        });
         
-        copyMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        copyToClipBoard(false);
-                        pasteToNewMenuItem.setEnabled(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        copyMenuItem.addActionListener(e -> {
+            copyToClipBoard(false);
+            pasteToNewMenuItem.setEnabled(true);
+            checkEditMenuItem();
+        });
         
-        pasteMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        paste();
-                    }
-                }
-            );
+        pasteMenuItem.addActionListener(e -> {
+            paste();
+        });
         
-        pasteToNewMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        pasteToNew();
-                    }
-                }
-            );
+        pasteToNewMenuItem.addActionListener(e -> {
+            pasteToNew();
+        });
 
-        cropMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        crop();
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        cropMenuItem.addActionListener(e -> {
+            crop();
+            checkEditMenuItem();
+        });
         
-        resizeMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        resize();
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        resizeMenuItem.addActionListener(e -> {
+            resize();
+            checkEditMenuItem();
+        });
         
-        horizontalMirrorMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        mirror(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        horizontalMirrorMenuItem.addActionListener(e -> {
+            mirror(true);
+            checkEditMenuItem();
+        });
         
-        verticalMirrorMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        mirror(false);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        verticalMirrorMenuItem.addActionListener(e -> {
+            mirror(false);
+            checkEditMenuItem();
+        });
         
-        clockwiseMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        clockwise(false);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        clockwiseMenuItem.addActionListener(e -> {
+            clockwise(false);
+            checkEditMenuItem();
+        });
 
-        counterClockwiseMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        clockwise(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        counterClockwiseMenuItem.addActionListener(e -> {
+            clockwise(true);
+            checkEditMenuItem();
+        });
         
-        batchMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        batch();
-                        checkEditMenuItem();
-                    }
-                }
-            );
+        batchMenuItem.addActionListener(e -> {
+            batch();
+            checkEditMenuItem();
+        });
         
         // tool bar
         
@@ -468,74 +416,48 @@ public class EditMenu extends EasyJShopMenu {
             }
         });
         
-        selectBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                editMode = CanvasComponent.SelectionMode;
+        selectBtn.addActionListener(e -> {
+            editMode = CanvasComponent.SelectionMode;
+        });
+        
+        brushBtn.addActionListener(e -> {
+            editMode = CanvasComponent.BrushMode;
+        });
+        
+        textBtn.addActionListener(e -> {
+            editMode = CanvasComponent.TextMode;
+        });
+        
+        viewBtn.addActionListener(e -> {
+            editMode = CanvasComponent.ViewMode;
+        });
+        
+        brushSpinner.addChangeListener(e -> {
+            if(((Integer) brushSpinner.getValue()) <= 0) {
+                brushSpinner.setValue(1);
             }
         });
         
-        brushBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                editMode = CanvasComponent.BrushMode;
-            }
+        cutBtn.addActionListener(e -> {
+            copyToClipBoard(true);
+            pasteToNewMenuItem.setEnabled(true);
+            checkEditMenuItem();
         });
         
-        textBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                editMode = CanvasComponent.TextMode;
-            }
+        copyBtn.addActionListener(e -> {
+            copyToClipBoard(false);
+            pasteToNewMenuItem.setEnabled(true);
+            checkEditMenuItem();
         });
         
-        viewBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                editMode = CanvasComponent.ViewMode;
-            }
+        pasteBtn.addActionListener(e -> {
+            paste();
         });
         
-        brushSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if(((Integer) brushSpinner.getValue()).intValue() <= 0) {
-                    brushSpinner.setValue(new Integer(1));
-                }
-            }
+        cropBtn.addActionListener(e -> {
+            crop();
+            checkEditMenuItem();
         });
-        
-        cutBtn.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        copyToClipBoard(true);
-                        pasteToNewMenuItem.setEnabled(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
-        
-        copyBtn.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        copyToClipBoard(false);
-                        pasteToNewMenuItem.setEnabled(true);
-                        checkEditMenuItem();
-                    }
-                }
-            );
-        
-        pasteBtn.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        paste();
-                    }
-                }
-            );
-        
-        cropBtn.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        crop();
-                        checkEditMenuItem();
-                    }
-                }
-            );
         
     }
     
@@ -902,19 +824,15 @@ public class EditMenu extends EasyJShopMenu {
                         try {
                             if(ResizeDialog.isPercentage()) {
                                 final int scale = ResizeDialog.getScalePercentage(); 
-                                batcher = new IBatcher() {
-                                    public void execute() {
-                                        resizeImage(scale);
-                                    }
+                                batcher = () -> {
+                                    resizeImage(scale);
                                 };
                             }
                             else if(ResizeDialog.isCustomWidthHeight()) {
                                 final int width = ResizeDialog.getPixelWidth();
                                 final int height = ResizeDialog.getPixelHeight();
-                                batcher = new IBatcher() {
-                                    public void execute() {
-                                        resizeImage(width, height);
-                                    }
+                                batcher = () -> {
+                                    resizeImage(width, height);
                                 };
                             }
                         }
@@ -928,32 +846,24 @@ public class EditMenu extends EasyJShopMenu {
                     
                     break;
                 case 1: // horizontal mirror
-                    batcher = new IBatcher() {
-                        public void execute() {
-                            mirror(true);
-                        }
-                    };
+                    batcher = () -> {
+                        mirror(true);
+            };
                     break;
                 case 2: // vertical mirror
-                    batcher = new IBatcher() {
-                        public void execute() {
-                            mirror(false);
-                        }
-                    };
+                    batcher = () -> {
+                        mirror(false);
+            };
                     break;
                 case 3: // clockwise
-                    batcher = new IBatcher() {
-                        public void execute() {
-                            clockwise(false);
-                        }
-                    };
+                    batcher = () -> {
+                        clockwise(false);
+            };
                     break;
                 case 4: // counter-clockwise
-                    batcher = new IBatcher() {
-                        public void execute() {
-                            clockwise(true);
-                        }
-                    };
+                    batcher = () -> {
+                        clockwise(true);
+            };
                     break;
                 default: // do nothing
             }
@@ -976,6 +886,6 @@ public class EditMenu extends EasyJShopMenu {
         canvas.setEditMode(editMode);
         canvas.setForeground(foreColorBox.getColor());
         canvas.setBackground(backColorBox.getColor());
-        canvas.setBrushWidth(((Integer)brushSpinner.getValue()).intValue());
+        canvas.setBrushWidth(((Integer)brushSpinner.getValue()));
     }
 }
