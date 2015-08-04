@@ -2,7 +2,6 @@ package cc.openhome.menu;
 
 import cc.openhome.MainFrame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
@@ -12,23 +11,17 @@ import javax.swing.KeyStroke;
 
 
 public class AboutMenu extends EasyJShopMenu {
-    private ImageIcon logoImage;
-    private JMenuItem aboutEasyJShopMenuItem;
+    private ImageIcon logoImage = new ImageIcon(AboutMenu.class.getResource("../images/logo.jpg"));
+    private JMenuItem aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
     
     public AboutMenu(MainFrame parent) {
         super(parent);
-        initResource();
         setupUIComponent();
         setupEventListener();
     }
     
-    public void initResource() {
-        logoImage = new ImageIcon(AboutMenu.class.getResource("../images/logo.jpg"));
-    }
-    
     public void setupUIComponent() {
         setText("About");
-        aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
         add(aboutEasyJShopMenuItem);
     }
     
@@ -36,7 +29,7 @@ public class AboutMenu extends EasyJShopMenu {
         aboutEasyJShopMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         
-        aboutEasyJShopMenuItem.addActionListener((ActionEvent e) -> {
+        aboutEasyJShopMenuItem.addActionListener(e -> {
             JOptionPane.showOptionDialog(null,
                     "EasyJShop....  :)\n" +  
                             "http://openhome.cc\n" +

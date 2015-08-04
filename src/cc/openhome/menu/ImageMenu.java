@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
-import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
@@ -29,9 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import cc.openhome.img.ScreenCaptureHelper;
-import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
-import cc.openhome.main.IBatcher;
 import cc.openhome.main.ImageInternalFrame;
 
 public class ImageMenu extends EasyJShopMenu {
@@ -48,7 +45,7 @@ public class ImageMenu extends EasyJShopMenu {
     private ColorDemoBox backgroundColorBox;
     private JPanel newImagePanel;
 
-    private JFileChooser openFileChooser, saveFileChooser;
+    private JFileChooser openFileChooser;
 
     //private InternalFrameListener internalFrameListener;
     public ImageMenu(MainFrame easyJShop) {
@@ -78,9 +75,6 @@ public class ImageMenu extends EasyJShopMenu {
         openFileChooser = new JFileChooser();
         openFileChooser.setMultiSelectionEnabled(true);
         openFileChooser.addChoosableFileFilter(new OpenableFileFilter());
-
-        saveFileChooser = new JFileChooser();
-        saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
 
         setText("Image");
         captureMenuItem = new JMenuItem("Get screen");
@@ -144,11 +138,11 @@ public class ImageMenu extends EasyJShopMenu {
         });
 
         saveMenuItem.addActionListener(e -> {
-            saveImageFile();
+            getSelectedFrame().saveImageFile();
         });
 
         saveAsMenuItem.addActionListener(e -> {
-            saveImageFileAs();
+            getSelectedFrame().saveImageFileAs();
         });
 
         saveAllMenuItem.addActionListener(e -> {
@@ -157,6 +151,9 @@ public class ImageMenu extends EasyJShopMenu {
 
         exitMenuItem.addActionListener(e -> {
             checkUnsavedImages();
+            if (getDesktopPane().getAllFrames().length == 0) {
+                System.exit(0);
+            }
         });
 
         widthSpinner.addChangeListener(e -> {
@@ -205,7 +202,7 @@ public class ImageMenu extends EasyJShopMenu {
         parent.setVisible(false);
         int option = JOptionPane.showOptionDialog(null,
                 delaySlider, "delay ? (seconds)", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
 
         if (option == JOptionPane.CANCEL_OPTION) {
             parent.setVisible(true);
@@ -227,7 +224,7 @@ public class ImageMenu extends EasyJShopMenu {
 
     private void newImageFile() {
         int option = JOptionPane.showOptionDialog(null, newImagePanel, "New image",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
 
         if (option == JOptionPane.OK_OPTION) {
             int width = ((Integer) widthSpinner.getValue());
@@ -241,7 +238,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void newInternalFrame(String title, Image image) {
-        JInternalFrame internalFrame =  new ImageInternalFrame(parent, title, image);
+        JInternalFrame internalFrame = new ImageInternalFrame(parent, title, image);
 
         getDesktopPane().add(internalFrame);
 
@@ -260,7 +257,7 @@ public class ImageMenu extends EasyJShopMenu {
         new Thread(() -> {
             if (openFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File[] files = openFileChooser.getSelectedFiles();
-                
+
                 for (File file : files) {
                     // bring it to top
                     try {
@@ -270,164 +267,39 @@ public class ImageMenu extends EasyJShopMenu {
                         internalFrame.setVisible(true);
                         internalFrame.setSelected(true);
                         getSelectedFrame().fitAppSize(image);
-                    }catch (IOException e) {
-                        parent.messageBox(e.getMessage());
-                    }catch (PropertyVetoException e) {
+                    } catch (Exception e) {
                         parent.messageBox(e.getMessage());
                     }
                 }
             }
         }).start();
-    }
-
-    private void saveImageFile() {
-        String title = getDesktopPane().getSelectedFrame().getTitle();
-
-        if (title.equals("*untitled") || title.equals("untitled")) {
-            saveImageFileAs();
-        } else if (title.startsWith("*")) {
-            save(title.substring(1));
-        }
-    }
-
-    private void saveImageFileAs() {
-        if (saveFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File file = saveFileChooser.getSelectedFile();
-            String filename = file.toString();
-            String lowerCaseFilename = filename.toLowerCase();
-            // the default extension filename is 'jpg'.
-            if (!lowerCaseFilename.endsWith(".jpg") && !lowerCaseFilename.endsWith(".png")) {
-                filename = filename + ".jpg";
-                file = new File(filename);
-            }
-
-            if (file.exists()) {
-                boolean isSaveAs = true;
-
-                while (isSaveAs) {
-                    int option = JOptionPane.showOptionDialog(null,
-                            filename + " exists, overwrite?", "overwrite?", JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
-
-                    switch (option) {
-                        case JOptionPane.YES_OPTION:
-                            isSaveAs = false;
-                            break;
-                        case JOptionPane.NO_OPTION:
-                            if (saveFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
-                                file = saveFileChooser.getSelectedFile();
-                                filename = file.toString();
-                            } else {
-                                isSaveAs = false;
-                            }
-                            break;
-                        case JOptionPane.CANCEL_OPTION:
-                            // cancell save action
-                            return;
-                    }
-                }
-            }
-
-            save(filename);
-        }
-    }
-
-    private void save(String filename) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-        Image image = canvas.getImage();
-
-        // create BufferedImage for ImageIO
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
-                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-        Graphics g = bufferedImage.getGraphics();
-        g.drawImage(image, 0, 0, null);
-
-        try {
-            // decide the extension filename
-            int dotpos = filename.lastIndexOf('.');
-            ImageIO.write(bufferedImage, filename.substring(dotpos + 1), new File(filename));
-        } catch (IOException e) {
-            parent.messageBox(e.getMessage());
-        }
-
-        getDesktopPane().getSelectedFrame().setTitle(filename);
     }
 
     private void saveAllImageFile() {
-        if (getDesktopPane().getAllFrames().length == 0) {
-            return;
+        if (getDesktopPane().getAllFrames().length > 0) {
+            new Thread(() -> {
+                parent.allInternalFrames(() -> {
+                    getSelectedFrame().saveImageFile();
+                });
+            }).start();
         }
-
-        final IBatcher batcher = () -> {
-            saveImageFile();
-        };
-
-        new Thread(() -> {
-            parent.batch(batcher);
-        }).start();
     }
 
     public void checkUnsavedImages() {
-        JInternalFrame[] internalFrames = getDesktopPane().getAllFrames();
-
-        for (JInternalFrame internalFrame : internalFrames) {
-            try {
-                internalFrame.setIcon(false);
-                internalFrame.setSelected(true);
-                if (checkUnsavedImage(internalFrame)) {
-                    return;
+        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
+            ((ImageInternalFrame) internalFrame).deIconified();
+            if (internalFrame.getTitle().startsWith("*")) {
+                int option = JOptionPane.showOptionDialog(null,
+                        internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                switch (option) {
+                    case JOptionPane.CANCEL_OPTION:
+                        return;
+                    case JOptionPane.YES_OPTION:
+                        getSelectedFrame().saveImageFile();
                 }
-            }catch (PropertyVetoException e) {
-                parent.messageBox(e.getMessage());
             }
+            ((ImageInternalFrame) internalFrame).close();
         }
-
-        // check all images ok, now quit the application.
-        if (getDesktopPane().getAllFrames().length == 0) {
-            System.exit(0);
-        }
-    }
-
-    public boolean checkUnsavedImage(JInternalFrame internalFrame) {
-        boolean cancel = false;
-
-        if (internalFrame.getTitle().startsWith("*")) {
-            int option = JOptionPane.showOptionDialog(null,
-                    internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
-
-            switch (option) {
-                case JOptionPane.YES_OPTION:
-                    try {
-                        internalFrame.setSelected(true);
-                        saveImageFile();
-
-                        if (!internalFrame.getTitle().startsWith("*")) {
-                            removeMementoAndDispose(internalFrame);
-                        }
-                    } catch (PropertyVetoException e) {
-                        parent.messageBox(e.getMessage());
-                    }
-                    break;
-                case JOptionPane.NO_OPTION:
-                    removeMementoAndDispose(internalFrame);
-                    break;
-                case JOptionPane.CANCEL_OPTION:
-                    // cancell quit action
-                    cancel = true;
-                    break;
-            }
-        } else {
-            removeMementoAndDispose(internalFrame);
-        }
-
-        return cancel;
-    }
-
-    private void removeMementoAndDispose(JInternalFrame internalFrame) {
-        CanvasComponent canvas = ((ImageInternalFrame) internalFrame).getCanvas();
-        getMementoManagers().remove(canvas);
-        internalFrame.setVisible(false);
-        internalFrame.dispose();
     }
 }

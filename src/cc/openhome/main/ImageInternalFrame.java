@@ -2,14 +2,22 @@ package cc.openhome.main;
 
 import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
+import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -19,6 +27,8 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
+
+    private JFileChooser saveFileChooser;
 
     private MainFrame parent;
     private CanvasComponent canvas;
@@ -32,6 +42,9 @@ public class ImageInternalFrame extends JInternalFrame {
 
         this.parent = parent;
         canvas = new CanvasComponent(image);
+
+        saveFileChooser = new JFileChooser();
+        saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
 
         setFrameIcon(parent.getIcon());
 
@@ -60,23 +73,24 @@ public class ImageInternalFrame extends JInternalFrame {
 
                 // edit menu
                 parent.getEditMenu().checkEditMenuItem();
-                if (getDesktopPane().getSelectedFrame() == null) {
-                    return;
-                }
-                parent.getEditMenu().setEditInfo(parent.getCanvasOfSelectedFrame());
+                parent.getEditMenu().setEditInfo(getCanvas());
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
-                JInternalFrame internalFrame = (JInternalFrame) e.getSource();
+                saveOrNot();
+            }
 
-                try {
-                    internalFrame.setIcon(false);
-                    internalFrame.setSelected(true);
-                } catch (PropertyVetoException ex) {
-                    parent.messageBox(ex.getMessage());
+            private void saveOrNot() throws HeadlessException {
+                deIconified();
+                if (getTitle().startsWith("*")) {
+                    int option = JOptionPane.showOptionDialog(null,
+                            getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                    if (option == JOptionPane.YES_OPTION) {
+                        saveImageFile();
+                    }
                 }
-
-                parent.getImageMenu().checkUnsavedImage(internalFrame);
+                close();
             }
 
             public void internalFrameClosed(InternalFrameEvent e) {
@@ -198,18 +212,105 @@ public class ImageInternalFrame extends JInternalFrame {
     public void fitAppSize(Image image) {
         double scale = canvas.getScale();
         canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
-        JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
-        internalFrame.pack();
+
+        pack();
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         // if the frame is larger than app size, resize it to fit the app size.
-        if (internalFrame.getWidth() >= screenSize.getWidth() - 20 && internalFrame.getHeight() >= screenSize.getHeight() - 120) {
+        if (getWidth() >= screenSize.getWidth() - 20 && getHeight() >= screenSize.getHeight() - 120) {
             getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - 120);
-        } else if (internalFrame.getWidth() >= screenSize.getWidth() - 20) {
-            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, internalFrame.getHeight());
-        } else if (internalFrame.getHeight() >= screenSize.getHeight() - 120) {
-            getDesktopPane().getSelectedFrame().setSize(internalFrame.getWidth(), (int) screenSize.getHeight() - 120);
+        } else if (getWidth() >= screenSize.getWidth() - 20) {
+            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, getHeight());
+        } else if (getHeight() >= screenSize.getHeight() - 120) {
+            getDesktopPane().getSelectedFrame().setSize(getWidth(), (int) screenSize.getHeight() - 120);
         }
     }
 
+    public void deIconified() {
+        try {
+            setIcon(false);
+            setSelected(true);
+        } catch (PropertyVetoException ex) {
+            parent.messageBox(ex.getMessage());
+        }
+
+    }
+
+    public void close() {
+        CanvasComponent canvas = getCanvas();
+        parent.getMementoManagers().remove(canvas);
+        setVisible(false);
+        dispose();
+    }
+
+    public void saveImageFile() {
+        String title = getTitle();
+
+        if (title.endsWith("untitled")) {
+            saveImageFileAs();
+        } else if (title.startsWith("*")) {
+            save(new File(title));
+        }
+    }
+
+    public void saveImageFileAs() {
+        if (saveFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File file = getSelectedFile();
+
+            if (file.exists()) {
+                confirmOverwrite(file);
+            } else {
+                save(file);
+            }
+        }
+    }
+
+    private void confirmOverwrite(File file) throws HeadlessException {
+        int option = JOptionPane.showOptionDialog(null,
+                file.toString() + " exists, overwrite?", "overwrite?", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+        switch (option) {
+            case JOptionPane.YES_OPTION: // overwrite
+                save(file);
+                break;
+            case JOptionPane.NO_OPTION:
+                saveImageFileAs();
+                break;
+        }
+    }
+
+    private File getSelectedFile() {
+        File file = saveFileChooser.getSelectedFile();
+        String filename = file.toString();
+        String lowerCaseFilename = filename.toLowerCase();
+        // the default extension filename is 'jpg'.
+        if (!lowerCaseFilename.endsWith(".jpg") && !lowerCaseFilename.endsWith(".png")) {
+            filename = filename + ".jpg";
+            file = new File(filename);
+        }
+        return file;
+    }
+
+    private void save(File file) {
+        saveBufferedImageToFile(createBufferedImage(), file);
+        setTitle(file.toString());
+    }
+
+    private BufferedImage createBufferedImage() {
+        Image image = getCanvas().getImage();
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        return bufferedImage;
+    }
+
+    private void saveBufferedImageToFile(BufferedImage bufferedImage, File file) {
+        String filename = file.toString();
+        try {
+            ImageIO.write(bufferedImage, filename.substring(filename.lastIndexOf('.') + 1), file);
+        } catch (IOException e) {
+            parent.messageBox(e.getMessage());
+        }
+    }
 }

@@ -13,7 +13,6 @@ import cc.openhome.main.ImageInternalFrame;
 
 public abstract class EasyJShopMenu extends JMenu {
     protected MainFrame parent;
-    protected ImageIcon smallLogo = new ImageIcon(EditMenu.class.getResource("../images/smallLogo.gif"));
 
     public EasyJShopMenu(MainFrame parent) {
         this.parent = parent;

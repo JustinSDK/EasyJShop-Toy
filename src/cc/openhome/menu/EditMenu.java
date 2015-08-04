@@ -655,7 +655,7 @@ public class EditMenu extends EasyJShopMenu {
     public int mergeImage(CanvasComponent canvas) {
         int option = JOptionPane.showOptionDialog(null, 
                 "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
         
         switch(option) {
             case JOptionPane.YES_OPTION:
@@ -679,7 +679,7 @@ public class EditMenu extends EasyJShopMenu {
     public int mergeText(CanvasComponent canvas) {
         int option = JOptionPane.showOptionDialog(null, 
                 "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
         
         switch(option) {
             case JOptionPane.YES_OPTION:
@@ -700,7 +700,7 @@ public class EditMenu extends EasyJShopMenu {
     }
     
     public void inputText(CanvasComponent canvas) {
-        int option = FontDialog.showDialog(null, "Font information", smallLogo);
+        int option = FontDialog.showDialog(null, "Font information", parent.smallLogo);
         
         if(option == JOptionPane.OK_OPTION) {
             canvas.setText(FontDialog.getInputText(), FontDialog.getFont());
@@ -710,7 +710,7 @@ public class EditMenu extends EasyJShopMenu {
     private void resize() {
         Image image = getCanvasOfSelectedFrame().getImage();
         
-        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), smallLogo);
+        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), parent.smallLogo);
         
         if(option == JOptionPane.OK_OPTION) {
             try {
@@ -809,7 +809,7 @@ public class EditMenu extends EasyJShopMenu {
     private void batch() {
         int option = JOptionPane.showOptionDialog(null, 
                 batchComboBox, "batch..", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
         
         if(option == JOptionPane.OK_OPTION) {
             int selected = batchComboBox.getSelectedIndex();
@@ -818,7 +818,7 @@ public class EditMenu extends EasyJShopMenu {
                 case 0: // resize
                     Image image = getCanvasOfSelectedFrame().getImage();
                     
-                    option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), smallLogo);
+                    option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), parent.smallLogo);
                     
                     if(option == JOptionPane.OK_OPTION) {
                         try {
@@ -868,7 +868,7 @@ public class EditMenu extends EasyJShopMenu {
                 default: // do nothing
             }
             
-            parent.batch(batcher);
+            parent.allInternalFrames(batcher);
         }
         
     }
