@@ -35,11 +35,11 @@ public class ImageInternalFrame extends JInternalFrame {
 
         this.mainFrame = mainFrame;
         
-        initComponents(image, mainFrame);
+        initComponents(mainFrame, image);
         initEventListeners();
     }
 
-    private void initComponents(Image image, MainFrame mainFrame1) {
+    private void initComponents(MainFrame mainFrame1, Image image) {
         canvas = new CanvasComponent(image, mainFrame1);
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
