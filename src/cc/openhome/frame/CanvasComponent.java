@@ -1,5 +1,6 @@
 package cc.openhome.frame;
 
+import cc.openhome.img.ImageProcessor;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -82,7 +83,7 @@ public class CanvasComponent extends JComponent {
                         setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
-                        mainFrame.getMementoManager(CanvasComponent.this).addImage(mainFrame.getEditMenu().copyImage(CanvasComponent.this));
+                        mainFrame.getMementoManager(CanvasComponent.this).addImage(ImageProcessor.copyImage(getImage()));
                         resetRect();
                         setStart(e.getPoint());
                         repaint();

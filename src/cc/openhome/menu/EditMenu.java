@@ -45,8 +45,6 @@ import cc.openhome.img.ImageMementoManager;
 import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
-
-    private ImageProcessor imageProcessor;
     private TransferableImage transferableImage;
 
     private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
@@ -110,7 +108,6 @@ public class EditMenu extends JMenu {
     }
 
     private void initResource() {
-        imageProcessor = new ImageProcessor();
         transferableImage = new TransferableImage();
 
         selectIcon = new ImageIcon(EditMenu.class.getResource("../images/select.gif"));
@@ -555,7 +552,7 @@ public class EditMenu extends JMenu {
             return null;
         }
 
-        return imageProcessor.copyRectImage(canvas.getImage(), rect, null);
+        return ImageProcessor.copyRectImage(canvas.getImage(), rect, null);
     }
 
     private void copyToClipBoard(boolean cut) {
@@ -572,7 +569,7 @@ public class EditMenu extends JMenu {
         if (cut) {
             CanvasComponent canvas = getCanvasOfSelectedFrame();
 
-            image = imageProcessor.copyImage(canvas.getImage());
+            image = ImageProcessor.copyImage(canvas.getImage());
 
             // set up undo
             getMementoManager(canvas).addImage(image);
@@ -643,7 +640,7 @@ public class EditMenu extends JMenu {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                getMementoManager(canvas).addImage(imageProcessor.copyImage(canvas.getImage()));
+                getMementoManager(canvas).addImage(ImageProcessor.copyImage(canvas.getImage()));
                 canvas.mergePastedImage();
                 setStarBeforeTitle();
                 checkEditMenuItem();
@@ -666,7 +663,7 @@ public class EditMenu extends JMenu {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                getMementoManager(canvas).addImage(imageProcessor.copyImage(canvas.getImage()));
+                getMementoManager(canvas).addImage(ImageProcessor.copyImage(canvas.getImage()));
                 canvas.mergeText();
                 setStarBeforeTitle();
                 checkEditMenuItem();
@@ -724,7 +721,7 @@ public class EditMenu extends JMenu {
     private void resizeImage(int scale) {
         Image image = preResize();
 
-        image = imageProcessor.resize(image, scale * 0.01, null);
+        image = ImageProcessor.resize(image, scale * 0.01, null);
 
         postResize(image);
     }
@@ -732,7 +729,7 @@ public class EditMenu extends JMenu {
     private void resizeImage(int width, int height) {
         Image image = preResize();
 
-        image = imageProcessor.resize(image, width, height, null);
+        image = ImageProcessor.resize(image, width, height, null);
 
         postResize(image);
     }
@@ -756,9 +753,9 @@ public class EditMenu extends JMenu {
         Image image = canvas.getImage();
 
         if (horizontal) {
-            image = imageProcessor.horizontalMirror(image, null);
+            image = ImageProcessor.horizontalMirror(image, null);
         } else {
-            image = imageProcessor.verticalMirror(image, null);
+            image = ImageProcessor.verticalMirror(image, null);
         }
 
         canvas.setImage(image);
@@ -777,9 +774,9 @@ public class EditMenu extends JMenu {
         Image image = canvas.getImage();
 
         if (counter) {
-            image = imageProcessor.counterClockwise(image, null);
+            image = ImageProcessor.counterClockwise(image, null);
         } else {
-            image = imageProcessor.clockwise(image, null);
+            image = ImageProcessor.clockwise(image, null);
         }
 
         canvas.setImage(image);
