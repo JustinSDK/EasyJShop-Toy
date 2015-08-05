@@ -114,8 +114,12 @@ public class MainFrame extends JFrame {
         internalFrame.open();
     }
     
-    public void updateMenuItemStatus() {
+    public void updateMenuStatus() {
         getImageMenu().checkSavingMenuItems();
+        getEditMenu().checkEditMenuItem();
+    }
+    
+    public void updateEditMenuStatus() {
         getEditMenu().checkEditMenuItem();
     }
     

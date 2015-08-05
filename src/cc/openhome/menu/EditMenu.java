@@ -16,7 +16,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
-import java.beans.PropertyVetoException;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -32,8 +31,6 @@ import javax.swing.JSpinner;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import cc.openhome.dialog.FontDialog;
 import cc.openhome.dialog.ResizeDialog;
@@ -43,7 +40,6 @@ import cc.openhome.img.TransferableImage;
 import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
 import cc.openhome.frame.InternalFrameExecutor;
-import cc.openhome.frame.ImageInternalFrame;
 
 public class EditMenu extends EasyJShopMenu {
 

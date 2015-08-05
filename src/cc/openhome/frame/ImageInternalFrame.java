@@ -13,8 +13,6 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
@@ -67,7 +65,7 @@ public class ImageInternalFrame extends JInternalFrame {
 
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
-                mainFrame.updateMenuItemStatus();
+                mainFrame.updateMenuStatus();
                 mainFrame.getEditMenu().setEditInfo(getCanvas());
             }
 
@@ -75,38 +73,25 @@ public class ImageInternalFrame extends JInternalFrame {
                 saveOrNot();
             }
 
-            private void saveOrNot() throws HeadlessException {
-                deIconified();
-                if (getTitle().startsWith("*")) {
-                    int option = JOptionPane.showOptionDialog(null,
-                            getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
-                    if (option == JOptionPane.YES_OPTION) {
-                        saveImageFile();
-                    }
-                }
-                close();
-            }
-
             public void internalFrameClosed(InternalFrameEvent e) {
-                mainFrame.updateMenuItemStatus();
+                mainFrame.updateMenuStatus();
             }
 
             public void internalFrameIconified(InternalFrameEvent e) {
                 try {
                     setSelected(false);
-                    mainFrame.updateMenuItemStatus();
+                    mainFrame.updateMenuStatus();
                 } catch (PropertyVetoException ex) {
                     throw new RuntimeException(ex);
                 }
             }
 
             public void internalFrameDeiconified(InternalFrameEvent e) {
-                mainFrame.updateMenuItemStatus();
+                mainFrame.updateMenuStatus();
             }
 
             public void internalFrameActivated(InternalFrameEvent e) {
-                mainFrame.updateMenuItemStatus();
+                mainFrame.updateMenuStatus();
             }
         });
 
@@ -169,8 +154,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
                 canvas.setStart(null);
                 canvas.setEnd(null);
-
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.updateEditMenuStatus();
             }
         });
 
@@ -186,8 +170,7 @@ public class ImageInternalFrame extends JInternalFrame {
                         canvas.setEnd(e.getPoint());
                         canvas.repaint();
                         break;
-                    case 3:
-                    case 4:
+                    case 3 | 4:
                         break;
                     default: // SelectionMode
                         canvas.dragRect(e.getPoint());
@@ -203,7 +186,20 @@ public class ImageInternalFrame extends JInternalFrame {
             }
         });
     }
-    
+
+    private void saveOrNot() throws HeadlessException {
+        deIconified();
+        if (getTitle().startsWith("*")) {
+            int option = JOptionPane.showOptionDialog(null,
+                    getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+            if (option == JOptionPane.YES_OPTION) {
+                saveImageFile();
+            }
+        }
+        close();
+    }
+
     public void deIconified() {
         try {
             setIcon(false);
@@ -221,11 +217,10 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void saveImageFile() {
-        String title = getTitle();
         if (title.endsWith("untitled")) {
             saveImageFileAs();
         } else if (title.startsWith("*")) {
-            save(new File(title));
+            saveTo(new File(title));
         }
     }
 
@@ -235,7 +230,7 @@ public class ImageInternalFrame extends JInternalFrame {
             if (file.exists()) {
                 confirmOverwrite(file);
             } else {
-                save(file);
+                saveTo(file);
             }
         }
     }
@@ -246,7 +241,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         switch (option) {
             case JOptionPane.YES_OPTION: // overwrite
-                save(file);
+                saveTo(file);
                 break;
             case JOptionPane.NO_OPTION:
                 saveImageFileAs();
@@ -266,12 +261,12 @@ public class ImageInternalFrame extends JInternalFrame {
         return file;
     }
 
-    private void save(File file) {
-        saveBufferedImageToFile(createBufferedImage(), file);
+    private void saveTo(File file) {
+        saveImage(createImage(), file);
         setTitle(file.toString());
     }
 
-    private BufferedImage createBufferedImage() {
+    private BufferedImage createImage() {
         Image image = getCanvas().getImage();
         BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
                 image.getHeight(null), BufferedImage.TYPE_INT_RGB);
@@ -280,7 +275,7 @@ public class ImageInternalFrame extends JInternalFrame {
         return bufferedImage;
     }
 
-    private void saveBufferedImageToFile(BufferedImage bufferedImage, File file) {
+    private void saveImage(BufferedImage bufferedImage, File file) {
         String filename = file.toString();
         try {
             ImageIO.write(bufferedImage, filename.substring(filename.lastIndexOf('.') + 1), file);
