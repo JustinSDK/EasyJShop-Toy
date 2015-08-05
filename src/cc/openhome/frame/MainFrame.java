@@ -1,4 +1,4 @@
-package cc.openhome;
+package cc.openhome.frame;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -8,9 +8,9 @@ import java.util.Map;
 import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.main.CanvasComponent;
-import cc.openhome.main.InternalFrameExecutor;
-import cc.openhome.main.ImageInternalFrame;
+import cc.openhome.frame.CanvasComponent;
+import cc.openhome.frame.InternalFrameExecutor;
+import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;

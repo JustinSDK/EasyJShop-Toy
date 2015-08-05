@@ -1,4 +1,4 @@
-package cc.openhome.main;
+package cc.openhome.frame;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

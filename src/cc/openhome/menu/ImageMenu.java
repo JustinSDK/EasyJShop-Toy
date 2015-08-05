@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.MainFrame;
+import cc.openhome.frame.MainFrame;
 import java.awt.AWTException;
 import java.awt.Graphics;
 import java.awt.Image;
@@ -28,7 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 
 import cc.openhome.img.ImageCreator;
-import cc.openhome.main.ColorDemoBox;
+import cc.openhome.frame.ColorDemoBox;
 
 public class ImageMenu extends EasyJShopMenu {
 

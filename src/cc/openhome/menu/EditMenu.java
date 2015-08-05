@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.MainFrame;
+import cc.openhome.frame.MainFrame;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.Color;
@@ -40,10 +40,10 @@ import cc.openhome.dialog.ResizeDialog;
 import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
-import cc.openhome.main.CanvasComponent;
-import cc.openhome.main.ColorDemoBox;
-import cc.openhome.main.InternalFrameExecutor;
-import cc.openhome.main.ImageInternalFrame;
+import cc.openhome.frame.CanvasComponent;
+import cc.openhome.frame.ColorDemoBox;
+import cc.openhome.frame.InternalFrameExecutor;
+import cc.openhome.frame.ImageInternalFrame;
 
 public class EditMenu extends EasyJShopMenu {
 

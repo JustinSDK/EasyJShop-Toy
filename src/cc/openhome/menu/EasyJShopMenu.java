@@ -6,10 +6,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
 import javax.swing.JMenu;
 
-import cc.openhome.MainFrame;
+import cc.openhome.frame.MainFrame;
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.main.CanvasComponent;
-import cc.openhome.main.ImageInternalFrame;
+import cc.openhome.frame.CanvasComponent;
+import cc.openhome.frame.ImageInternalFrame;
 
 public abstract class EasyJShopMenu extends JMenu {
     protected MainFrame mainFrame;

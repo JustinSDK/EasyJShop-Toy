@@ -1,6 +1,5 @@
-package cc.openhome.main;
+package cc.openhome.frame;
 
-import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;

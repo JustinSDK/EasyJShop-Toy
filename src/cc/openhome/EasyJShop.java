@@ -1,5 +1,6 @@
 package cc.openhome;
 
+import cc.openhome.frame.MainFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 

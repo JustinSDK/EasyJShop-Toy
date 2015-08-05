@@ -1,6 +1,6 @@
 package cc.openhome.menu;
 
-import cc.openhome.MainFrame;
+import cc.openhome.frame.MainFrame;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
