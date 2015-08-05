@@ -34,26 +34,24 @@ public class ImageInternalFrame extends JInternalFrame {
         super(title, true, true, true, true);
 
         this.mainFrame = mainFrame;
-        canvas = new CanvasComponent(image, mainFrame);
+        
+        initComponents(image, mainFrame);
+        initEventListeners();
+    }
 
+    private void initComponents(Image image, MainFrame mainFrame1) {
+        canvas = new CanvasComponent(image, mainFrame1);
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
-
-        setFrameIcon(mainFrame.getIcon());
-
-        mainFrame.getMementoManagers().put(canvas, new ImageMementoManager());
-
+        setFrameIcon(mainFrame1.getIcon());
+        mainFrame1.getMementoManagers().put(canvas, new ImageMementoManager());
         JPanel panel = new JPanel();
         canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
         panel.add(canvas);
-
         JScrollPane scrollPanel = new JScrollPane(panel,
                 ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
-
         getContentPane().add(scrollPanel);
-
-        initEventListeners();
     }
 
     private void initEventListeners() {
