@@ -17,7 +17,7 @@ public abstract class EasyJShopMenu extends JMenu {
         this.mainFrame = mainFrame;
     }
 
-    protected ImageInternalFrame getSelectedFrame() {
+     protected ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
     }
         
@@ -36,4 +36,5 @@ public abstract class EasyJShopMenu extends JMenu {
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
         return mainFrame.getMementoManager(canvas);
     }
+
 }

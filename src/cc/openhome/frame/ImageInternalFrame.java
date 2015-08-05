@@ -6,9 +6,6 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
@@ -24,7 +21,6 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
-
     private JFileChooser saveFileChooser;
 
     private MainFrame mainFrame;
