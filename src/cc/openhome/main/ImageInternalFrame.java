@@ -28,25 +28,25 @@ public class ImageInternalFrame extends JInternalFrame {
 
     private JFileChooser saveFileChooser;
 
-    private MainFrame parent;
+    private MainFrame mainFrame;
     private CanvasComponent canvas;
 
     public CanvasComponent getCanvas() {
         return canvas;
     }
 
-    public ImageInternalFrame(MainFrame parent, String title, Image image) {
+    public ImageInternalFrame(MainFrame mainFrame, String title, Image image) {
         super(title, true, true, true, true);
 
-        this.parent = parent;
+        this.mainFrame = mainFrame;
         canvas = new CanvasComponent(image);
 
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
 
-        setFrameIcon(parent.getIcon());
+        setFrameIcon(mainFrame.getIcon());
 
-        parent.getMementoManagers().put(canvas, new ImageMementoManager());
+        mainFrame.getMementoManagers().put(canvas, new ImageMementoManager());
 
         JPanel panel = new JPanel();
         canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -67,11 +67,11 @@ public class ImageInternalFrame extends JInternalFrame {
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
                 // image menu
-                parent.getImageMenu().enableSaveMenuItem();
+                mainFrame.getImageMenu().setSavingMenuItemsEnabled(true);
 
                 // edit menu
-                parent.getEditMenu().checkEditMenuItem();
-                parent.getEditMenu().setEditInfo(getCanvas());
+                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.getEditMenu().setEditInfo(getCanvas());
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -83,7 +83,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 if (getTitle().startsWith("*")) {
                     int option = JOptionPane.showOptionDialog(null,
                             getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                            JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
                     if (option == JOptionPane.YES_OPTION) {
                         saveImageFile();
                     }
@@ -92,23 +92,23 @@ public class ImageInternalFrame extends JInternalFrame {
             }
 
             public void internalFrameClosed(InternalFrameEvent e) {
-                parent.getImageMenu().checkImageMenuItem();
-                parent.getEditMenu().checkEditMenuItem();
+                mainFrame.getImageMenu().checkSavingMenuItems();
+                mainFrame.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameIconified(InternalFrameEvent e) {
-                parent.getImageMenu().checkImageMenuItem();
-                parent.getEditMenu().checkEditMenuItem();
+                mainFrame.getImageMenu().checkSavingMenuItems();
+                mainFrame.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameDeiconified(InternalFrameEvent e) {
-                parent.getImageMenu().checkImageMenuItem();
-                parent.getEditMenu().checkEditMenuItem();
+                mainFrame.getImageMenu().checkSavingMenuItems();
+                mainFrame.getEditMenu().checkEditMenuItem();
             }
 
             public void internalFrameActivated(InternalFrameEvent e) {
-                parent.getImageMenu().checkImageMenuItem();
-                parent.getEditMenu().checkEditMenuItem();
+                mainFrame.getImageMenu().checkSavingMenuItems();
+                mainFrame.getEditMenu().checkEditMenuItem();
             }
         });
 
@@ -116,8 +116,8 @@ public class ImageInternalFrame extends JInternalFrame {
             public void mouseEntered(MouseEvent e) {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
 
-                if (parent.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
-                    canvas.setCursor(parent.getEditMenu().getViewCursor());
+                if (mainFrame.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
+                    canvas.setCursor(mainFrame.getEditMenu().getViewCursor());
                 } else {
                     canvas.setCursor(null);
                 }
@@ -127,30 +127,30 @@ public class ImageInternalFrame extends JInternalFrame {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
 
                 if (canvas.getEditMode() == CanvasComponent.PasteMode) {
-                    if (parent.getEditMenu().mergeImage(canvas) != JOptionPane.NO_OPTION) {
-                        parent.getEditMenu().setEditInfo(canvas);
+                    if (mainFrame.getEditMenu().mergeImage(canvas) != JOptionPane.NO_OPTION) {
+                        mainFrame.getEditMenu().setEditInfo(canvas);
                     }
                     return;
                 }
 
-                parent.getEditMenu().setEditInfo(canvas);
+                mainFrame.getEditMenu().setEditInfo(canvas);
 
                 switch (canvas.getEditMode()) {
                     case 0: // SelectionMode
                         canvas.setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
-                        parent.getMementoManager(canvas).addImage(parent.getEditMenu().copyImage(canvas));
+                        mainFrame.getMementoManager(canvas).addImage(mainFrame.getEditMenu().copyImage(canvas));
                         canvas.resetRect();
                         canvas.setStart(e.getPoint());
                         canvas.repaint();
-                        parent.setStarBeforeTitle();
+                        mainFrame.setStarBeforeTitle();
                         break;
                     case 3: // TextMode
                         if (canvas.getText() != null) {
-                            parent.getEditMenu().mergeText(canvas);
+                            mainFrame.getEditMenu().mergeText(canvas);
                         } else {
-                            parent.getEditMenu().inputText(canvas);
+                            mainFrame.getEditMenu().inputText(canvas);
                         }
                         break;
                     case 4: // ViewMode
@@ -172,7 +172,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 canvas.setStart(null);
                 canvas.setEnd(null);
 
-                parent.getEditMenu().checkEditMenuItem();
+                mainFrame.getEditMenu().checkEditMenuItem();
             }
         });
 
@@ -219,7 +219,7 @@ public class ImageInternalFrame extends JInternalFrame {
 
     public void close() {
         CanvasComponent canvas = getCanvas();
-        parent.getMementoManagers().remove(canvas);
+        mainFrame.getMementoManagers().remove(canvas);
         setVisible(false);
         dispose();
     }
@@ -249,7 +249,7 @@ public class ImageInternalFrame extends JInternalFrame {
     private void confirmOverwrite(File file) throws HeadlessException {
         int option = JOptionPane.showOptionDialog(null,
                 file.toString() + " exists, overwrite?", "overwrite?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         switch (option) {
             case JOptionPane.YES_OPTION: // overwrite
                 save(file);

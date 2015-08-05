@@ -115,7 +115,7 @@ public class ImageMenu extends EasyJShopMenu {
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
         captureMenuItem.addActionListener(e -> {
-            captureScreen();
+            screenShot();
         });
 
         newImageMenuItem.addActionListener(e -> {
@@ -166,50 +166,40 @@ public class ImageMenu extends EasyJShopMenu {
                 }
             }
         });
-
     }
 
-    public void enableSaveMenuItem() {
-        saveMenuItem.setEnabled(true);
-        saveAsMenuItem.setEnabled(true);
-        saveAllMenuItem.setEnabled(true);
+    public void setSavingMenuItemsEnabled(boolean flag) {
+        saveMenuItem.setEnabled(flag);
+        saveAsMenuItem.setEnabled(flag);
+        saveAllMenuItem.setEnabled(flag);
     }
 
-    public void checkImageMenuItem() {
+    public void checkSavingMenuItems() {
         if (getDesktopPane().getAllFrames().length == 0 || getDesktopPane().getSelectedFrame() == null) {
-            saveMenuItem.setEnabled(false);
-            saveAsMenuItem.setEnabled(false);
-            saveAllMenuItem.setEnabled(false);
+            setSavingMenuItemsEnabled(false);
         } else {
-            saveMenuItem.setEnabled(true);
-            saveAsMenuItem.setEnabled(true);
-            saveAllMenuItem.setEnabled(true);
+            setSavingMenuItemsEnabled(true);
         }
     }
 
-    private void captureScreen() {
+    private void screenShot() {
         mainFrame.setVisible(false);
-
         int option = JOptionPane.showOptionDialog(null,
                 delaySlider, "delay ? (seconds)", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
-
-        if (option == JOptionPane.CANCEL_OPTION) {
-            mainFrame.setVisible(true);
-            return;
+        if (option == JOptionPane.OK_OPTION) {
+            sleep(delaySlider.getValue() * 1000);
+            mainFrame.createInternalFrame("*untitled", imageCreator.capture());
         }
+        mainFrame.setVisible(true);
+    }
 
+    private void sleep(int millis) throws RuntimeException {
         try {
-            Thread.sleep(delaySlider.getValue() * 1000);
+            Thread.sleep(millis);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        Image image = imageCreator.capture();
-
-        mainFrame.createInternalFrame("*untitled", image);
-        
-        mainFrame.setVisible(true);
     }
 
     private void newImage() {
@@ -247,6 +237,7 @@ public class ImageMenu extends EasyJShopMenu {
 
     public void checkUnsavedImages() {
         class Operation {
+
             boolean notCancelled = true;
         }
         Operation operation = new Operation();
