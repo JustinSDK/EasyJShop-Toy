@@ -552,7 +552,7 @@ public class EditMenu extends JMenu {
             return null;
         }
 
-        return ImageProcessor.copyRectImage(canvas.getImage(), rect, null);
+        return ImageProcessor.copyRectImage(canvas.getImage(), rect);
     }
 
     private void copyToClipBoard(boolean cut) {
@@ -721,7 +721,7 @@ public class EditMenu extends JMenu {
     private void resizeImage(int scale) {
         Image image = preResize();
 
-        image = ImageProcessor.resize(image, scale * 0.01, null);
+        image = ImageProcessor.resize(image, scale * 0.01);
 
         postResize(image);
     }
@@ -729,7 +729,7 @@ public class EditMenu extends JMenu {
     private void resizeImage(int width, int height) {
         Image image = preResize();
 
-        image = ImageProcessor.resize(image, width, height, null);
+        image = ImageProcessor.resize(image, width, height);
 
         postResize(image);
     }
@@ -753,12 +753,12 @@ public class EditMenu extends JMenu {
         Image image = canvas.getImage();
 
         if (horizontal) {
-            image = ImageProcessor.horizontalMirror(image, null);
+            image = ImageProcessor.horizontalMirror(image);
         } else {
-            image = ImageProcessor.verticalMirror(image, null);
+            image = ImageProcessor.verticalMirror(image);
         }
 
-        canvas.setImage(image);
+        canvas.setImage(image); 
         canvas.repaint();
 
         setStarBeforeTitle();
@@ -774,9 +774,9 @@ public class EditMenu extends JMenu {
         Image image = canvas.getImage();
 
         if (counter) {
-            image = ImageProcessor.counterClockwise(image, null);
+            image = ImageProcessor.counterClockwise(image);
         } else {
-            image = ImageProcessor.clockwise(image, null);
+            image = ImageProcessor.clockwise(image);
         }
 
         canvas.setImage(image);
