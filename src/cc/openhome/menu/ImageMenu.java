@@ -189,9 +189,10 @@ public class ImageMenu extends EasyJShopMenu {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             sleep(delaySlider.getValue() * 1000);
-            mainFrame.createInternalFrame("*untitled", imageCreator.capture());
         }
+        Image image = imageCreator.capture();
         mainFrame.setVisible(true);
+        mainFrame.createInternalFrame("*untitled", image);
     }
 
     private void sleep(int millis) throws RuntimeException {

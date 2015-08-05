@@ -12,10 +12,8 @@ import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.InternalFrameExecutor;
 import cc.openhome.main.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
-import cc.openhome.menu.EasyJShopMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
-import java.beans.PropertyVetoException;
 
 public class MainFrame extends JFrame {
 
@@ -114,5 +112,10 @@ public class MainFrame extends JFrame {
         ImageInternalFrame internalFrame = new ImageInternalFrame(this, title, image);
         getDesktopPane().add(internalFrame);
         internalFrame.open();
+    }
+    
+    public void updateMenuItemStatus() {
+        getImageMenu().checkSavingMenuItems();
+        getEditMenu().checkEditMenuItem();
     }
 }

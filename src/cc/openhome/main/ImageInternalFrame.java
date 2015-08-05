@@ -14,6 +14,8 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
@@ -66,11 +68,7 @@ public class ImageInternalFrame extends JInternalFrame {
 
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
-                // image menu
-                mainFrame.getImageMenu().setSavingMenuItemsEnabled(true);
-
-                // edit menu
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.updateMenuItemStatus();
                 mainFrame.getEditMenu().setEditInfo(getCanvas());
             }
 
@@ -92,23 +90,24 @@ public class ImageInternalFrame extends JInternalFrame {
             }
 
             public void internalFrameClosed(InternalFrameEvent e) {
-                mainFrame.getImageMenu().checkSavingMenuItems();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.updateMenuItemStatus();
             }
 
             public void internalFrameIconified(InternalFrameEvent e) {
-                mainFrame.getImageMenu().checkSavingMenuItems();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                try {
+                    setSelected(false);
+                    mainFrame.updateMenuItemStatus();
+                } catch (PropertyVetoException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
 
             public void internalFrameDeiconified(InternalFrameEvent e) {
-                mainFrame.getImageMenu().checkSavingMenuItems();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.updateMenuItemStatus();
             }
 
             public void internalFrameActivated(InternalFrameEvent e) {
-                mainFrame.getImageMenu().checkSavingMenuItems();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.updateMenuItemStatus();
             }
         });
 
@@ -294,9 +293,9 @@ public class ImageInternalFrame extends JInternalFrame {
     public void open() {
         try {
             pack();
+            setVisible(true);
             setSelected(true);
             setMaximum(true);
-            setVisible(true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
