@@ -14,15 +14,21 @@ import com.sun.image.codec.jpeg.JPEGEncodeParam;
 import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ImageCreator {
     private Rectangle screenRect;
     private Robot robot;
     private float imageQuality; // 0.0f ~ 1.0f
 
-    public ImageCreator() throws AWTException {
+    public ImageCreator() {
         screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-        robot = new Robot();
+        try {
+            robot = new Robot();
+        } catch (AWTException ex) {
+            throw new RuntimeException(ex);
+        }
         imageQuality = 0.5f;
     }
 

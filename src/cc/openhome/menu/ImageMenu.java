@@ -32,7 +32,7 @@ import cc.openhome.main.ColorDemoBox;
 
 public class ImageMenu extends EasyJShopMenu {
 
-    private ImageCreator imageCreator;
+    private ImageCreator imageCreator = new ImageCreator();
 
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
@@ -49,18 +49,8 @@ public class ImageMenu extends EasyJShopMenu {
     //private InternalFrameListener internalFrameListener;
     public ImageMenu(MainFrame mainFrame) {
         super(mainFrame);
-        initResource();
         setupUIComponent();
         setupEventListener();
-    }
-
-    private void initResource() {
-
-        try {
-            imageCreator = new ImageCreator();
-        } catch (AWTException e) {
-            mainFrame.messageBox(e.getMessage());
-        }
     }
 
     private void setupUIComponent() {
@@ -212,14 +202,14 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             Thread.sleep(delaySlider.getValue() * 1000);
         } catch (InterruptedException e) {
-            mainFrame.messageBox(e.getMessage());
+            throw new RuntimeException(e);
         }
 
         Image image = imageCreator.capture();
 
-        mainFrame.setVisible(true);
-
         mainFrame.createInternalFrame("*untitled", image);
+        
+        mainFrame.setVisible(true);
     }
 
     private void newImage() {
@@ -239,7 +229,7 @@ public class ImageMenu extends EasyJShopMenu {
                     try {
                         mainFrame.createInternalFrame(file.getAbsolutePath(), ImageIO.read(file));
                     } catch (Exception e) {
-                        mainFrame.messageBox(e.getMessage());
+                        throw new RuntimeException(e);
                     }
                 }
             }

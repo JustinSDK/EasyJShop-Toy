@@ -212,7 +212,7 @@ public class ImageInternalFrame extends JInternalFrame {
             setIcon(false);
             setSelected(true);
         } catch (PropertyVetoException ex) {
-            parent.messageBox(ex.getMessage());
+            throw new RuntimeException(ex);
         }
 
     }
@@ -291,7 +291,7 @@ public class ImageInternalFrame extends JInternalFrame {
         try {
             ImageIO.write(bufferedImage, filename.substring(filename.lastIndexOf('.') + 1), file);
         } catch (IOException e) {
-            parent.messageBox(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 
@@ -302,7 +302,7 @@ public class ImageInternalFrame extends JInternalFrame {
             setMaximum(true);
             setVisible(true);
         } catch (Exception e) {
-            parent.messageBox(e.getMessage());
+            throw new RuntimeException(e);
         }
     }
 }
