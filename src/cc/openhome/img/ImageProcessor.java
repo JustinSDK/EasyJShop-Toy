@@ -95,4 +95,10 @@ public class ImageProcessor {
         
         return  bufferedImage;
     }
+    
+    public Image copyImage(Image image) {
+        Rectangle2D rect = new Rectangle2D.Double();
+        rect.setRect(0, 0, image.getWidth(null), image.getHeight(null));
+        return copyRectImage(image, rect, null);
+    }    
 }

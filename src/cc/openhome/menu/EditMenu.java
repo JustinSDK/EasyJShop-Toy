@@ -572,7 +572,7 @@ public class EditMenu extends JMenu {
         if (cut) {
             CanvasComponent canvas = getCanvasOfSelectedFrame();
 
-            image = copyImage(canvas);
+            image = imageProcessor.copyImage(canvas.getImage());
 
             // set up undo
             getMementoManager(canvas).addImage(image);
@@ -643,7 +643,7 @@ public class EditMenu extends JMenu {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                getMementoManager(canvas).addImage(copyImage(canvas));
+                getMementoManager(canvas).addImage(imageProcessor.copyImage(canvas.getImage()));
                 canvas.mergePastedImage();
                 setStarBeforeTitle();
                 checkEditMenuItem();
@@ -666,7 +666,7 @@ public class EditMenu extends JMenu {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                getMementoManager(canvas).addImage(copyImage(canvas));
+                getMementoManager(canvas).addImage(imageProcessor.copyImage(canvas.getImage()));
                 canvas.mergeText();
                 setStarBeforeTitle();
                 checkEditMenuItem();
@@ -847,16 +847,6 @@ public class EditMenu extends JMenu {
 
             mainFrame.forEachInternalFrame(batcher);
         }
-
-    }
-
-    public Image copyImage(CanvasComponent canvas) {
-        // copy the original            
-        Image image = canvas.getImage();
-        Rectangle2D rect = new Rectangle2D.Double();
-        rect.setRect(0, 0, image.getWidth(null), image.getHeight(null));
-        image = imageProcessor.copyRectImage(image, rect, null);
-        return image;
     }
 
     public void setEditInfo(CanvasComponent canvas) {
