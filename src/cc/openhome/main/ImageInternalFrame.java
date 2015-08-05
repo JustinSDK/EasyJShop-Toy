@@ -198,7 +198,6 @@ public class ImageInternalFrame extends JInternalFrame {
 
             public void mouseMoved(MouseEvent e) {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
-
                 if (canvas.getEditMode() == CanvasComponent.PasteMode || canvas.getEditMode() == CanvasComponent.TextMode) {
                     canvas.setStart(e.getPoint());
                     canvas.repaint();
@@ -218,15 +217,13 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void close() {
-        CanvasComponent canvas = getCanvas();
-        mainFrame.getMementoManagers().remove(canvas);
+        mainFrame.getMementoManagers().remove(getCanvas());
         setVisible(false);
         dispose();
     }
 
     public void saveImageFile() {
         String title = getTitle();
-
         if (title.endsWith("untitled")) {
             saveImageFileAs();
         } else if (title.startsWith("*")) {
@@ -237,7 +234,6 @@ public class ImageInternalFrame extends JInternalFrame {
     public void saveImageFileAs() {
         if (saveFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File file = getSelectedFile();
-
             if (file.exists()) {
                 confirmOverwrite(file);
             } else {
