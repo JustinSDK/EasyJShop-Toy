@@ -14,6 +14,10 @@ import java.awt.image.BufferedImage;
 import javax.swing.JComponent;
 
 import java.awt.Font;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+import javax.swing.JOptionPane;
 
 public class CanvasComponent extends JComponent {
     public final static int SelectionMode = 0;
@@ -36,6 +40,8 @@ public class CanvasComponent extends JComponent {
     private String text;
     private Font textFont;
     
+    private MainFrame mainFrame;
+    
     public CanvasComponent() {
         rect = new Rectangle2D.Double();
         
@@ -48,10 +54,99 @@ public class CanvasComponent extends JComponent {
         
         brushWidth = 10;
         scale = 1.0;
+        initEventListener();
     }
     
-    public CanvasComponent(Image image) {
+    public void initEventListener() {
+        addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                if (mainFrame.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
+                    setCursor(mainFrame.getEditMenu().getViewCursor());
+                } else {
+                    setCursor(null);
+                }
+            }
+
+            public void mousePressed(MouseEvent e) {
+                if (getEditMode() == CanvasComponent.PasteMode) {
+                    if (mainFrame.getEditMenu().mergeImage(CanvasComponent.this) != JOptionPane.NO_OPTION) {
+                        mainFrame.getEditMenu().setEditInfo(CanvasComponent.this);
+                    }
+                    return;
+                }
+
+                mainFrame.getEditMenu().setEditInfo(CanvasComponent.this);
+
+                switch (getEditMode()) {
+                    case 0: // SelectionMode
+                        setStart(e.getPoint());
+                        break;
+                    case 1: // BrushMode
+                        mainFrame.getMementoManager(CanvasComponent.this).addImage(mainFrame.getEditMenu().copyImage(CanvasComponent.this));
+                        resetRect();
+                        setStart(e.getPoint());
+                        repaint();
+                        mainFrame.setStarBeforeTitle();
+                        break;
+                    case 3: // TextMode
+                        if (getText() != null) {
+                            mainFrame.getEditMenu().mergeText(CanvasComponent.this);
+                        } else {
+                            mainFrame.getEditMenu().inputText(CanvasComponent.this);
+                        }
+                        break;
+                    case 4: // ViewMode
+                        if (e.getButton() == MouseEvent.BUTTON1) {
+                            increaseViewScale();
+                        } else if (e.getButton() == MouseEvent.BUTTON3) {
+                            decreaseViewScale();
+                        }
+                        mainFrame.getSelectedFrame().open();
+                        repaint();
+                        break;
+                    default: // SelectionMode
+                        setStart(e.getPoint());
+                }
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                CanvasComponent canvas = (CanvasComponent) e.getSource();
+                canvas.setStart(null);
+                canvas.setEnd(null);
+                mainFrame.updateEditMenuStatus();
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionListener() {
+            public void mouseDragged(MouseEvent e) {
+                switch (getEditMode()) {
+                    case 0: // SelectionMode
+                        dragRect(e.getPoint());
+                        break;
+                    case 1: // BrushMode
+                        setEnd(e.getPoint());
+                        repaint();
+                        break;
+                    case 3 | 4:
+                        break;
+                    default: // SelectionMode
+                        dragRect(e.getPoint());
+                }
+            }
+
+            public void mouseMoved(MouseEvent e) {
+                CanvasComponent canvas = (CanvasComponent) e.getSource();
+                if (canvas.getEditMode() == CanvasComponent.PasteMode || canvas.getEditMode() == CanvasComponent.TextMode) {
+                    canvas.setStart(e.getPoint());
+                    canvas.repaint();
+                }
+            }
+        });        
+    }
+    
+    public CanvasComponent(Image image, MainFrame mainFrame) {
         this();
+        this.mainFrame = mainFrame;        
         setImage(image);
     }
         
