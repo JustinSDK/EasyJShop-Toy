@@ -45,6 +45,7 @@ import cc.openhome.img.ImageMementoManager;
 import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
+
     private TransferableImage transferableImage;
 
     private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
@@ -73,6 +74,12 @@ public class EditMenu extends JMenu {
     private boolean resizeLocker;
 
     private MainFrame mainFrame;
+
+    private interface ImageExecutor {
+
+        Image execute(Image image);
+    }
+
     public EditMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         initResource();
@@ -354,22 +361,22 @@ public class EditMenu extends JMenu {
         });
 
         horizontalMirrorMenuItem.addActionListener(e -> {
-            mirror(true);
+            mirror(getSelectedFrame(), ImageProcessor::horizontalMirror);
             checkEditMenuItem();
         });
 
         verticalMirrorMenuItem.addActionListener(e -> {
-            mirror(false);
+            mirror(getSelectedFrame(), ImageProcessor::verticalMirror);
             checkEditMenuItem();
         });
 
         clockwiseMenuItem.addActionListener(e -> {
-            clockwise(false);
+            clockwise(getSelectedFrame(), ImageProcessor::clockwise);
             checkEditMenuItem();
         });
 
         counterClockwiseMenuItem.addActionListener(e -> {
-            clockwise(true);
+            clockwise(getSelectedFrame(), ImageProcessor::counterClockwise);
             checkEditMenuItem();
         });
 
@@ -548,7 +555,7 @@ public class EditMenu extends JMenu {
 
         if (rect.getWidth() <= 0 || rect.getWidth() <= 0) {
             JOptionPane.showMessageDialog(null, "No area selected.",
-                "Info.", JOptionPane.INFORMATION_MESSAGE);
+                    "Info.", JOptionPane.INFORMATION_MESSAGE);
             return null;
         }
 
@@ -744,44 +751,34 @@ public class EditMenu extends JMenu {
         setStarBeforeTitle();
     }
 
-    private void mirror(boolean horizontal) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
+    private void mirror(ImageInternalFrame internalFrame, ImageExecutor executor) {
+        CanvasComponent canvas = internalFrame.getCanvas();
 
         // set up undo
-        getMementoManager(canvas).addImage(canvas.getImage());
+        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
 
         Image image = canvas.getImage();
+        image = executor.execute(image);
 
-        if (horizontal) {
-            image = ImageProcessor.horizontalMirror(image);
-        } else {
-            image = ImageProcessor.verticalMirror(image);
-        }
-
-        canvas.setImage(image); 
+        canvas.setImage(image);
         canvas.repaint();
 
         setStarBeforeTitle();
     }
 
-    private void clockwise(boolean counter) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
+    private void clockwise(ImageInternalFrame internalFrame, ImageExecutor executor) {
+        CanvasComponent canvas = internalFrame.getCanvas();
         canvas.resetRect();
 
         // set up undo
-        getMementoManager(canvas).addImage(canvas.getImage());
+        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
 
         Image image = canvas.getImage();
-
-        if (counter) {
-            image = ImageProcessor.counterClockwise(image);
-        } else {
-            image = ImageProcessor.clockwise(image);
-        }
+        image = executor.execute(image);
 
         canvas.setImage(image);
 
-        getSelectedFrame().open();
+        internalFrame.open();
 
         setStarBeforeTitle();
     }
@@ -821,22 +818,22 @@ public class EditMenu extends JMenu {
                     break;
                 case 1: // horizontal mirror
                     batcher = internalFrame -> {
-                        mirror(true);
+                        mirror(internalFrame, ImageProcessor::horizontalMirror);
                     };
                     break;
                 case 2: // vertical mirror
                     batcher = internalFrame -> {
-                        mirror(false);
+                        mirror(internalFrame, ImageProcessor::verticalMirror);
                     };
                     break;
                 case 3: // clockwise
                     batcher = internalFrame -> {
-                        clockwise(false);
+                        clockwise(internalFrame, ImageProcessor::counterClockwise);
                     };
                     break;
                 case 4: // counter-clockwise
                     batcher = internalFrame -> {
-                        clockwise(true);
+                        clockwise(internalFrame, ImageProcessor::clockwise);
                     };
                     break;
                 default: // do nothing
@@ -852,15 +849,15 @@ public class EditMenu extends JMenu {
         canvas.setBackground(backColorBox.getColor());
         canvas.setBrushWidth(((Integer) brushSpinner.getValue()));
     }
-       
-     protected ImageInternalFrame getSelectedFrame() {
+
+    protected ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
     }
-        
+
     protected CanvasComponent getCanvasOfSelectedFrame() {
         return mainFrame.getCanvasOfSelectedFrame();
     }
-    
+
     protected JDesktopPane getDesktopPane() {
         return mainFrame.getDesktopPane();
     }
@@ -871,5 +868,5 @@ public class EditMenu extends JMenu {
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
         return mainFrame.getMementoManager(canvas);
-    }    
+    }
 }
