@@ -27,13 +27,12 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import cc.openhome.img.ScreenCaptureHelper;
+import cc.openhome.img.ImageCreator;
 import cc.openhome.main.ColorDemoBox;
-import cc.openhome.main.ImageInternalFrame;
 
 public class ImageMenu extends EasyJShopMenu {
 
-    private ScreenCaptureHelper captureHelper;
+    private ImageCreator imageCreator;
 
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
@@ -58,7 +57,7 @@ public class ImageMenu extends EasyJShopMenu {
     private void initResource() {
 
         try {
-            captureHelper = new ScreenCaptureHelper();
+            imageCreator = new ImageCreator();
         } catch (AWTException e) {
             mainFrame.messageBox(e.getMessage());
         }
@@ -216,7 +215,7 @@ public class ImageMenu extends EasyJShopMenu {
             mainFrame.messageBox(e.getMessage());
         }
 
-        Image image = captureHelper.capture();
+        Image image = imageCreator.capture();
 
         mainFrame.setVisible(true);
 
@@ -229,16 +228,8 @@ public class ImageMenu extends EasyJShopMenu {
         if (option == JOptionPane.OK_OPTION) {
             int width = ((Integer) widthSpinner.getValue());
             int height = ((Integer) heightSpinner.getValue());
-            mainFrame.createInternalFrame("untitled", createEmptyImage(width, height));
+            mainFrame.createInternalFrame("untitled", imageCreator.emptyImage(width, height, backgroundColorBox.getColor()));
         }
-    }
-
-    private BufferedImage createEmptyImage(int width, int height) {
-        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics g = bufferedImage.getGraphics();
-        g.setColor(backgroundColorBox.getColor());
-        g.fillRect(0, 0, width, height);
-        return bufferedImage;
     }
 
     private void openImage() {
