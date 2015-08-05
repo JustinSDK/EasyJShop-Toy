@@ -225,16 +225,19 @@ public class ImageMenu extends EasyJShopMenu {
     private void newImageFile() {
         int option = JOptionPane.showOptionDialog(null, newImagePanel, "New image",
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
-
         if (option == JOptionPane.OK_OPTION) {
             int width = ((Integer) widthSpinner.getValue());
             int height = ((Integer) heightSpinner.getValue());
-            BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics g = bufferedImage.getGraphics();
-            g.setColor(backgroundColorBox.getColor());
-            g.fillRect(0, 0, width, height);
-            parent.createInternalFrame("untitled", bufferedImage);
+            parent.createInternalFrame("untitled", createEmptyImage(width, height));
         }
+    }
+
+    private BufferedImage createEmptyImage(int width, int height) {
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.setColor(backgroundColorBox.getColor());
+        g.fillRect(0, 0, width, height);
+        return bufferedImage;
     }
 
 
