@@ -39,9 +39,12 @@ import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
 import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
+import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.frame.InternalFrameExecutor;
+import cc.openhome.img.ImageMementoManager;
+import javax.swing.JDesktopPane;
 
-public class EditMenu extends EasyJShopMenu {
+public class EditMenu extends JMenu {
 
     private ImageProcessor imageProcessor;
     private TransferableImage transferableImage;
@@ -71,8 +74,9 @@ public class EditMenu extends EasyJShopMenu {
     private int editMode;
     private boolean resizeLocker;
 
+    private MainFrame mainFrame;
     public EditMenu(MainFrame mainFrame) {
-        super(mainFrame);
+        this.mainFrame = mainFrame;
         initResource();
         setupUIComponent();
         setupEventListener();
@@ -861,4 +865,24 @@ public class EditMenu extends EasyJShopMenu {
         canvas.setBackground(backColorBox.getColor());
         canvas.setBrushWidth(((Integer) brushSpinner.getValue()));
     }
+       
+     protected ImageInternalFrame getSelectedFrame() {
+        return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
+    }
+        
+    protected CanvasComponent getCanvasOfSelectedFrame() {
+        return mainFrame.getCanvasOfSelectedFrame();
+    }
+    
+    protected JDesktopPane getDesktopPane() {
+        return mainFrame.getDesktopPane();
+    }
+
+    protected void setStarBeforeTitle() {
+        mainFrame.setStarBeforeTitle();
+    }
+
+    protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
+        return mainFrame.getMementoManager(canvas);
+    }    
 }

@@ -57,7 +57,7 @@ public class MainFrame extends JFrame {
         bar.add(imageMenu);
         bar.add(editMenu);
         getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
-        bar.add(new AboutMenu(this));
+        bar.add(new AboutMenu());
 
         setJMenuBar(bar);
 

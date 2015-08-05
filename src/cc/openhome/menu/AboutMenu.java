@@ -4,16 +4,16 @@ import cc.openhome.frame.MainFrame;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-public class AboutMenu extends EasyJShopMenu {
+public class AboutMenu extends JMenu {
     private ImageIcon logoImage = new ImageIcon(AboutMenu.class.getResource("../images/logo.jpg"));
     private JMenuItem aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
-    
-    public AboutMenu(MainFrame mainFrame) {
-        super(mainFrame);
+
+    public AboutMenu() {
         setupUIComponent();
         setupEventListener();
     }

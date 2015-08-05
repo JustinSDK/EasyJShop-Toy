@@ -24,8 +24,9 @@ import javax.swing.JLabel;
 
 import cc.openhome.img.ImageCreator;
 import cc.openhome.frame.ColorDemoBox;
+import javax.swing.JMenu;
 
-public class ImageMenu extends EasyJShopMenu {
+public class ImageMenu extends JMenu {
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
     private JMenuItem exitMenuItem;
@@ -39,9 +40,11 @@ public class ImageMenu extends EasyJShopMenu {
     private JFileChooser openFileChooser;
 
     private ImageCreator imageCreator = new ImageCreator();
+    
+    private MainFrame mainFrame;
 
     public ImageMenu(MainFrame mainFrame) {
-        super(mainFrame);
+        this.mainFrame = mainFrame;
         setupUIComponent();
         setupEventListener();
     }
