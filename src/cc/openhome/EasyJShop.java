@@ -10,8 +10,9 @@ public class EasyJShop {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
             new MainFrame().setVisible(true);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e.getMessage(),
-                    "Info.", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, e.toString(),
+                    "INFORMATION", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }    
 }

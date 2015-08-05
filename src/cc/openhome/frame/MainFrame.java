@@ -24,8 +24,8 @@ public class MainFrame extends JFrame {
     private ImageMenu imageMenu = new ImageMenu(this);
     private EditMenu editMenu = new EditMenu(this);
 
-    private ImageIcon icon = new ImageIcon(MainFrame.class.getResource("images/appIcon.gif"));
-    public ImageIcon smallLogo = new ImageIcon(MainFrame.class.getResource("images/smallLogo.gif"));
+    private ImageIcon icon = new ImageIcon(MainFrame.class.getResource("../images/appIcon.gif"));
+    public ImageIcon smallLogo = new ImageIcon(MainFrame.class.getResource("../images/smallLogo.gif"));
 
     public ImageMenu getImageMenu() {
         return imageMenu;
@@ -118,4 +118,16 @@ public class MainFrame extends JFrame {
         getImageMenu().checkSavingMenuItems();
         getEditMenu().checkEditMenuItem();
     }
+    
+    public boolean noInternalFrame() {
+        return getDesktopPane().getAllFrames().length == 0;
+    }
+
+    public boolean noSelectedFrame() {
+        return getDesktopPane().getSelectedFrame() == null;
+    }    
+    
+    public ImageInternalFrame getSelectedFrame() {
+        return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
+    }    
 }

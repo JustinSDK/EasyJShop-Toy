@@ -1,21 +1,16 @@
 package cc.openhome.menu;
 
 import cc.openhome.frame.MainFrame;
-import java.awt.AWTException;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.beans.PropertyVetoException;
 import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JSlider;
@@ -31,9 +26,6 @@ import cc.openhome.img.ImageCreator;
 import cc.openhome.frame.ColorDemoBox;
 
 public class ImageMenu extends EasyJShopMenu {
-
-    private ImageCreator imageCreator = new ImageCreator();
-
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
     private JMenuItem exitMenuItem;
@@ -46,7 +38,8 @@ public class ImageMenu extends EasyJShopMenu {
 
     private JFileChooser openFileChooser;
 
-    //private InternalFrameListener internalFrameListener;
+    private ImageCreator imageCreator = new ImageCreator();
+
     public ImageMenu(MainFrame mainFrame) {
         super(mainFrame);
         setupUIComponent();
@@ -127,11 +120,11 @@ public class ImageMenu extends EasyJShopMenu {
         });
 
         saveMenuItem.addActionListener(e -> {
-            getSelectedFrame().saveImageFile();
+            mainFrame.getSelectedFrame().saveImageFile();
         });
 
         saveAsMenuItem.addActionListener(e -> {
-            getSelectedFrame().saveImageFileAs();
+            mainFrame.getSelectedFrame().saveImageFileAs();
         });
 
         saveAllMenuItem.addActionListener(e -> {
@@ -140,7 +133,7 @@ public class ImageMenu extends EasyJShopMenu {
 
         exitMenuItem.addActionListener(e -> {
             checkUnsavedImages();
-            if (getDesktopPane().getAllFrames().length == 0) {
+            if (mainFrame.noInternalFrame()) {
                 System.exit(0);
             }
         });
@@ -175,7 +168,7 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     public void checkSavingMenuItems() {
-        if (getDesktopPane().getAllFrames().length == 0 || getDesktopPane().getSelectedFrame() == null) {
+        if (mainFrame.noInternalFrame() || mainFrame.noSelectedFrame()) {
             setSavingMenuItemsEnabled(false);
         } else {
             setSavingMenuItemsEnabled(true);
@@ -255,7 +248,7 @@ public class ImageMenu extends EasyJShopMenu {
                             operation.notCancelled = false;
                             break;
                         case JOptionPane.YES_OPTION:
-                            getSelectedFrame().saveImageFile();
+                            internalFrame.saveImageFile();
                     }
                 }
                 internalFrame.close();
