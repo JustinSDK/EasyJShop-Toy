@@ -1,7 +1,6 @@
 package cc.openhome.menu;
 
 import cc.openhome.MainFrame;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
@@ -9,13 +8,12 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
-
 public class AboutMenu extends EasyJShopMenu {
     private ImageIcon logoImage = new ImageIcon(AboutMenu.class.getResource("../images/logo.jpg"));
     private JMenuItem aboutEasyJShopMenuItem = new JMenuItem("EasyJShop");
     
-    public AboutMenu(MainFrame parent) {
-        super(parent);
+    public AboutMenu(MainFrame mainFrame) {
+        super(mainFrame);
         setupUIComponent();
         setupEventListener();
     }

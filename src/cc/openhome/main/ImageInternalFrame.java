@@ -159,7 +159,7 @@ public class ImageInternalFrame extends JInternalFrame {
                         } else if (e.getButton() == MouseEvent.BUTTON3) {
                             canvas.decreaseViewScale();
                         }
-                        showInMainFrame();
+                        open();
                         canvas.repaint();
                         break;
                     default: // SelectionMode
@@ -206,18 +206,7 @@ public class ImageInternalFrame extends JInternalFrame {
             }
         });
     }
-
-//    public void packOrFitParent() {
-//        pack();
-//        if (parent.getWidth() < getWidth() || parent.getHeight() < getHeight()) {
-//            try {
-//                setMaximum(true);
-//            } catch (PropertyVetoException ex) {
-//                parent.messageBox(ex.getMessage());
-//            }
-//        }
-//    }
-
+    
     public void deIconified() {
         try {
             setIcon(false);
@@ -306,9 +295,9 @@ public class ImageInternalFrame extends JInternalFrame {
         }
     }
 
-    public void showInMainFrame() {
-        pack();
+    public void open() {
         try {
+            pack();
             setSelected(true);
             setMaximum(true);
             setVisible(true);

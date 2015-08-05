@@ -42,19 +42,19 @@ import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
 import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ColorDemoBox;
-import cc.openhome.main.IBatcher;
+import cc.openhome.main.InternalFrameExecutor;
 import cc.openhome.main.ImageInternalFrame;
 
-
 public class EditMenu extends EasyJShopMenu {
+
     private ImageProcessor imageProcessor;
     private TransferableImage transferableImage;
-    
-    private ImageIcon selectIcon, brushIcon, textIcon, viewIcon, 
-                      cutIcon, copyIcon, pasteIcon, cropIcon;
-    
+
+    private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
+            cutIcon, copyIcon, pasteIcon, cropIcon;
+
     private Cursor viewCursor;
-    
+
     private JMenuItem undoMenuItem, redoMenuItem;
     private JMenuItem cutMenuItem, cropMenuItem;
     private JMenuItem copyMenuItem;
@@ -62,59 +62,57 @@ public class EditMenu extends EasyJShopMenu {
     private JMenuItem resizeMenuItem, horizontalMirrorMenuItem, verticalMirrorMenuItem;
     private JMenuItem clockwiseMenuItem, counterClockwiseMenuItem;
     private JMenuItem batchMenuItem;
-    
+
     private JComboBox batchComboBox;
-    
+
     private JToolBar toolBar;
     private ColorDemoBox foreColorBox, backColorBox;
     private JSpinner brushSpinner;
 
     private JToggleButton selectBtn, brushBtn, textBtn, viewBtn;
     private JButton cutBtn, copyBtn, pasteBtn, cropBtn;
-    
+
     private int editMode;
     private boolean resizeLocker;
-    
-    public EditMenu(MainFrame easyJShop) {
-        super(easyJShop);
+
+    public EditMenu(MainFrame mainFrame) {
+        super(mainFrame);
         initResource();
         setupUIComponent();
         setupEventListener();
-        
+
         Thread clipboradChecker = new Thread(new Runnable() {
             public void run() {
-                while(true) {
+                while (true) {
                     try {
-                        if(ClipboardHelper.getImageFromClipboard() == null) {
+                        if (ClipboardHelper.getImageFromClipboard() == null) {
                             pasteMenuItem.setEnabled(false);
                             pasteToNewMenuItem.setEnabled(false);
                             pasteBtn.setEnabled(false);
-                        }
-                        else {
+                        } else {
                             pasteToNewMenuItem.setEnabled(true);
-                            
-                            if(getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
+
+                            if (getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
                                 pasteMenuItem.setEnabled(true);
                                 pasteBtn.setEnabled(true);
                             }
                         }
-                        
+
                         Thread.sleep(1000);
-                    }
-                    catch(InterruptedException e) {
+                    } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
             }
         });
-        
+
         clipboradChecker.start();
     }
-    
+
     private void initResource() {
         imageProcessor = new ImageProcessor();
         transferableImage = new TransferableImage();
-        
+
         selectIcon = new ImageIcon(EditMenu.class.getResource("../images/select.gif"));
         brushIcon = new ImageIcon(EditMenu.class.getResource("../images/brush.gif"));
         textIcon = new ImageIcon(EditMenu.class.getResource("../images/text.gif"));
@@ -126,46 +124,44 @@ public class EditMenu extends EasyJShopMenu {
         pasteIcon = new ImageIcon(EditMenu.class.getResource("../images/paste.gif"));
         cropIcon = new ImageIcon(EditMenu.class.getResource("../images/crop.gif"));
     }
-    
+
     private void setupUIComponent() {
         // set up menuitem
         setText("Edit");
-        
+
         undoMenuItem = new JMenuItem("Undo");
         redoMenuItem = new JMenuItem("Redo");
-        
+
         cutMenuItem = new JMenuItem("Cut");
         copyMenuItem = new JMenuItem("Copy");
         pasteMenuItem = new JMenuItem("Into current");
-        
-        
+
         pasteToNewMenuItem = new JMenuItem("To new");
         cropMenuItem = new JMenuItem("Crop");
-        
+
         resizeMenuItem = new JMenuItem("Resize");
         horizontalMirrorMenuItem = new JMenuItem("Horizontal mirror");
         verticalMirrorMenuItem = new JMenuItem("Vertical mirror");
         clockwiseMenuItem = new JMenuItem("Rotate clockwise");
         counterClockwiseMenuItem = new JMenuItem("Rotate counter-clockwise");
         batchMenuItem = new JMenuItem("Batch..");
-        
+
         add(undoMenuItem);
         add(redoMenuItem);
         addSeparator();
-        
+
         add(cutMenuItem);
         add(copyMenuItem);
-        
+
         JMenu pasteMenu = new JMenu("Paste");
         pasteMenu.add(pasteMenuItem);
         pasteMenu.add(pasteToNewMenuItem);
         add(pasteMenu);
         addSeparator();
-        
-        
+
         add(cropMenuItem);
         addSeparator();
-        
+
         add(resizeMenuItem);
         add(horizontalMirrorMenuItem);
         add(verticalMirrorMenuItem);
@@ -173,13 +169,13 @@ public class EditMenu extends EasyJShopMenu {
         add(counterClockwiseMenuItem);
         addSeparator();
         add(batchMenuItem);
-        
+
         // batch box
-        String[] items = {"Resize", 
-                          "Horizontal mirror", "Vertical mirror", 
-                          "Rotate clockwise", "Rotate counter-clockwise"};
+        String[] items = {"Resize",
+            "Horizontal mirror", "Vertical mirror",
+            "Rotate clockwise", "Rotate counter-clockwise"};
         batchComboBox = new JComboBox(items);
-        
+
         undoMenuItem.setEnabled(false);
         redoMenuItem.setEnabled(false);
         cutMenuItem.setEnabled(false);
@@ -192,61 +188,61 @@ public class EditMenu extends EasyJShopMenu {
         clockwiseMenuItem.setEnabled(false);
         counterClockwiseMenuItem.setEnabled(false);
         batchMenuItem.setEnabled(false);
-        
+
         // set up toolbar
         toolBar = new JToolBar("Edit toolbar");
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
-        
+
         JPanel colorPanel = new JPanel();
         colorPanel.setLayout(null);
         Dimension panelDim = colorPanel.getPreferredSize();
         panelDim.setSize(20, 20);
         colorPanel.setPreferredSize(panelDim);
-        
+
         foreColorBox = new ColorDemoBox(Color.black);
         foreColorBox.setToolTipText("Foreground Color");
         foreColorBox.setLocation(0, 0);
         colorPanel.add(foreColorBox);
-        
+
         backColorBox = new ColorDemoBox(Color.white);
         backColorBox.setToolTipText("Background Color");
         backColorBox.setLocation(7, 7);
         colorPanel.add(backColorBox);
-        
+
         toolBar.add(colorPanel);
-        
+
         toolBar.addSeparator();
-        
+
         brushSpinner = new JSpinner();
         brushSpinner.setValue(new Integer(10));
         brushSpinner.setToolTipText("Brush width");
         toolBar.add(brushSpinner);
-        
+
         toolBar.addSeparator();
-        
+
         selectBtn = new JToggleButton(selectIcon);
         selectBtn.setSelected(true);
         selectBtn.setToolTipText("Selection");
-        
+
         brushBtn = new JToggleButton(brushIcon);
         brushBtn.setToolTipText("Brush");
         textBtn = new JToggleButton(textIcon);
         textBtn.setToolTipText("Text");
         viewBtn = new JToggleButton(viewIcon);
         textBtn.setToolTipText("View");
-        
+
         ButtonGroup buttonGroup = new ButtonGroup();
         buttonGroup.add(selectBtn);
         buttonGroup.add(brushBtn);
         buttonGroup.add(textBtn);
         buttonGroup.add(viewBtn);
-        
+
         toolBar.add(selectBtn);
         toolBar.add(brushBtn);
         toolBar.add(textBtn);
         toolBar.add(viewBtn);
         toolBar.addSeparator();
-        
+
         cutBtn = new JButton(cutIcon);
         cutBtn.setToolTipText("Cut");
         copyBtn = new JButton(copyIcon);
@@ -255,20 +251,20 @@ public class EditMenu extends EasyJShopMenu {
         pasteBtn.setToolTipText("Paste");
         cropBtn = new JButton(cropIcon);
         cropBtn.setToolTipText("Crop");
-        
+
         toolBar.add(cutBtn);
         toolBar.add(copyBtn);
         toolBar.add(pasteBtn);
         toolBar.addSeparator();
-        
+
         toolBar.add(cropBtn);
-        
+
         cutBtn.setEnabled(false);
         copyBtn.setEnabled(false);
         pasteBtn.setEnabled(false);
         cropBtn.setEnabled(false);
     }
-    
+
     private void setupEventListener() {
         // menuitem event listener
         undoMenuItem.setAccelerator(
@@ -289,62 +285,63 @@ public class EditMenu extends EasyJShopMenu {
         undoMenuItem.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        if(getDesktopPane().getSelectedFrame() == null)
+                        if (getDesktopPane().getSelectedFrame() == null) {
                             return;
-                        
-                        if(getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
+                        }
+
+                        if (getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
                             getMementoManager(getCanvasOfSelectedFrame())
-                                  .addImage(getCanvasOfSelectedFrame().getImage());
+                            .addImage(getCanvasOfSelectedFrame().getImage());
                             getMementoManager(getCanvasOfSelectedFrame()).undoImage();
                         }
-                        
+
                         Image image = getMementoManager(getCanvasOfSelectedFrame()).undoImage();
-                        
-                        if(image != null) {
+
+                        if (image != null) {
                             getCanvasOfSelectedFrame().setImage(image);
-                            
+
                             // if the image is full screen size, resize it to fit the frame size.
-                            
-                            getSelectedFrame().showInMainFrame();
+                            getSelectedFrame().open();
                         }
-                        
+
                         checkEditMenuItem();
                     }
                 }
-            );
-        
+        );
+
         redoMenuItem.addActionListener(e -> {
-            if(getDesktopPane().getSelectedFrame() == null)
+            if (getDesktopPane().getSelectedFrame() == null) {
                 return;
-            
-            Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
-            
-            if(image != null) {
-                getCanvasOfSelectedFrame().setImage(image);
-                
-                // if the image is full screen size, resize it to fit the frame size.
-                getSelectedFrame().showInMainFrame();
             }
-            
+
+            Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
+
+            if (image != null) {
+                getCanvasOfSelectedFrame().setImage(image);
+
+                // if the image is full screen size, resize it to fit the frame size.
+                getSelectedFrame().open();
+            }
+
             checkEditMenuItem();
         });
-        
+
         cutMenuItem.addActionListener(e -> {
             copyToClipBoard(true);
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
-        
+
         copyMenuItem.addActionListener(e -> {
             copyToClipBoard(false);
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
-        
+
         pasteMenuItem.addActionListener(e -> {
             paste();
         });
-        
+
         pasteToNewMenuItem.addActionListener(e -> {
             pasteToNew();
         });
@@ -353,22 +350,22 @@ public class EditMenu extends EasyJShopMenu {
             crop();
             checkEditMenuItem();
         });
-        
+
         resizeMenuItem.addActionListener(e -> {
             resize();
             checkEditMenuItem();
         });
-        
+
         horizontalMirrorMenuItem.addActionListener(e -> {
             mirror(true);
             checkEditMenuItem();
         });
-        
+
         verticalMirrorMenuItem.addActionListener(e -> {
             mirror(false);
             checkEditMenuItem();
         });
-        
+
         clockwiseMenuItem.addActionListener(e -> {
             clockwise(false);
             checkEditMenuItem();
@@ -378,104 +375,103 @@ public class EditMenu extends EasyJShopMenu {
             clockwise(true);
             checkEditMenuItem();
         });
-        
+
         batchMenuItem.addActionListener(e -> {
             batch();
             checkEditMenuItem();
         });
-        
+
         // tool bar
-        
-        foreColorBox.addMouseListener(new MouseAdapter() {           
+        foreColorBox.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Color color = JColorChooser.showDialog(null, "Color information", foreColorBox.getColor());
-                if(color != null) {
+                if (color != null) {
                     foreColorBox.setColor(color);
                     foreColorBox.repaint();
                     JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
-                    
-                    if(internalFrame != null) {
+
+                    if (internalFrame != null) {
                         getCanvasOfSelectedFrame().setForeground(color);
                     }
                 }
             }
         });
 
-        backColorBox.addMouseListener(new MouseAdapter() {           
+        backColorBox.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 Color color = JColorChooser.showDialog(null, "Color information", backColorBox.getColor());
-                if(color != null) {
+                if (color != null) {
                     backColorBox.setColor(color);
                     backColorBox.repaint();
                     JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
-                    
-                    if(internalFrame != null) {
+
+                    if (internalFrame != null) {
                         getCanvasOfSelectedFrame().setBackground(color);
                     }
                 }
             }
         });
-        
+
         selectBtn.addActionListener(e -> {
             editMode = CanvasComponent.SelectionMode;
         });
-        
+
         brushBtn.addActionListener(e -> {
             editMode = CanvasComponent.BrushMode;
         });
-        
+
         textBtn.addActionListener(e -> {
             editMode = CanvasComponent.TextMode;
         });
-        
+
         viewBtn.addActionListener(e -> {
             editMode = CanvasComponent.ViewMode;
         });
-        
+
         brushSpinner.addChangeListener(e -> {
-            if(((Integer) brushSpinner.getValue()) <= 0) {
+            if (((Integer) brushSpinner.getValue()) <= 0) {
                 brushSpinner.setValue(1);
             }
         });
-        
+
         cutBtn.addActionListener(e -> {
             copyToClipBoard(true);
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
-        
+
         copyBtn.addActionListener(e -> {
             copyToClipBoard(false);
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
-        
+
         pasteBtn.addActionListener(e -> {
             paste();
         });
-        
+
         cropBtn.addActionListener(e -> {
             crop();
             checkEditMenuItem();
         });
-        
+
     }
-    
+
     public JToolBar getToolBar() {
         return toolBar;
     }
-    
+
     public int getEditMode() {
         return editMode;
     }
-    
+
     public Cursor getViewCursor() {
         return viewCursor;
     }
-    
+
     public void checkEditMenuItem() {
         // check all
-        if(getDesktopPane().getSelectedFrame() == null) {
+        if (getDesktopPane().getSelectedFrame() == null) {
             undoMenuItem.setEnabled(false);
             redoMenuItem.setEnabled(false);
             cutMenuItem.setEnabled(false);
@@ -488,15 +484,14 @@ public class EditMenu extends EasyJShopMenu {
             clockwiseMenuItem.setEnabled(false);
             counterClockwiseMenuItem.setEnabled(false);
             batchMenuItem.setEnabled(false);
-            
+
             cutBtn.setEnabled(false);
             copyBtn.setEnabled(false);
             pasteBtn.setEnabled(false);
             cropBtn.setEnabled(false);
-            
+
             return;
-        }
-        else {
+        } else {
             resizeMenuItem.setEnabled(true);
             horizontalMirrorMenuItem.setEnabled(true);
             verticalMirrorMenuItem.setEnabled(true);
@@ -504,178 +499,177 @@ public class EditMenu extends EasyJShopMenu {
             counterClockwiseMenuItem.setEnabled(true);
             batchMenuItem.setEnabled(true);
         }
-        
+
         CanvasComponent canvas = getCanvasOfSelectedFrame();
-        
+
         // check cut, copy and paste menuitem
-        if(canvas.getSelectedRect().getWidth() <= 0) {
+        if (canvas.getSelectedRect().getWidth() <= 0) {
             cutMenuItem.setEnabled(false);
             copyMenuItem.setEnabled(false);
             cropMenuItem.setEnabled(false);
-            
+
             cutBtn.setEnabled(false);
             copyBtn.setEnabled(false);
             cropBtn.setEnabled(false);
-        }
-        else {
+        } else {
             cutMenuItem.setEnabled(true);
             copyMenuItem.setEnabled(true);
             cropMenuItem.setEnabled(true);
-            
+
             cutBtn.setEnabled(true);
             copyBtn.setEnabled(true);
             cropBtn.setEnabled(true);
         }
-        
+
         // check paste menuitem
-        if(ClipboardHelper.getImageFromClipboard() != null) {
+        if (ClipboardHelper.getImageFromClipboard() != null) {
             pasteMenuItem.setEnabled(true);
             pasteBtn.setEnabled(true);
-        }
-        else {
+        } else {
             pasteMenuItem.setEnabled(false);
             pasteBtn.setEnabled(false);
         }
-        
+
         // check undo menuitem
-        if(getMementoManager(canvas).isUndoable()) {
+        if (getMementoManager(canvas).isUndoable()) {
             undoMenuItem.setEnabled(true);
-        }
-        else {
+        } else {
             undoMenuItem.setEnabled(false);
         }
-        
+
         // check redo menuitem
-        if(getMementoManager(canvas).isRedoable()) {
+        if (getMementoManager(canvas).isRedoable()) {
             redoMenuItem.setEnabled(true);
-        }
-        else {
+        } else {
             redoMenuItem.setEnabled(false);
         }
     }
-    
+
     private Image copySelectedImage() {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
         Rectangle2D rect = canvas.getSelectedRect();
-        
-        if(rect.getWidth() <= 0 || rect.getWidth() <=0) {
-            parent.messageBox("No area selected.");
+
+        if (rect.getWidth() <= 0 || rect.getWidth() <= 0) {
+            mainFrame.messageBox("No area selected.");
             return null;
         }
 
         return imageProcessor.copyRectImage(canvas.getImage(), rect, null);
     }
-    
+
     private void copyToClipBoard(boolean cut) {
         Image image = copySelectedImage();
-        
-        if(image == null)
+
+        if (image == null) {
             return;
-        
+        }
+
         transferableImage.setImage(image);
-        
+
         ClipboardHelper.imageToClipboard(transferableImage);
-        
-        if(cut) {
+
+        if (cut) {
             CanvasComponent canvas = getCanvasOfSelectedFrame();
 
             image = copyImage(canvas);
-            
+
             // set up undo
             getMementoManager(canvas).addImage(image);
-            
+
             Graphics g = canvas.getImage().getGraphics();
             Rectangle2D rect = getCanvasOfSelectedFrame().getSelectedRect();
             g.setColor(getCanvasOfSelectedFrame().getBackground());
-            g.fillRect((int)rect.getX(), (int)rect.getY(), 
-            (int)rect.getWidth(),(int)rect.getHeight());
+            g.fillRect((int) rect.getX(), (int) rect.getY(),
+                    (int) rect.getWidth(), (int) rect.getHeight());
             getCanvasOfSelectedFrame().repaint();
             setStarBeforeTitle();
         }
     }
-    
+
     private void pasteToNew() {
         Image image = ClipboardHelper.getImageFromClipboard();
-        
-        if(image == null)
+
+        if (image == null) {
             return;
-        
+        }
+
         // new a internalFrame for the copied image
-        parent.createInternalFrame("*untitled", image);
+        mainFrame.createInternalFrame("*untitled", image);
     }
-        
+
     private void crop() {
         Image image = copySelectedImage();
-        
-        if(image == null)
+
+        if (image == null) {
             return;
-        
+        }
+
         CanvasComponent canvas = getCanvasOfSelectedFrame();
-        
+
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
-        
+
         // use current internalFrame for the corped image
         canvas.setImage(image);
-        
+
         // let the dashed rect disappear
         canvas.resetRect();
-        
-        getSelectedFrame().showInMainFrame();
+
+        getSelectedFrame().open();
 
         setStarBeforeTitle();
     }
-    
+
     private void paste() {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
 
-        if(canvas == null)
+        if (canvas == null) {
             return;
-        
+        }
+
         Image image = ClipboardHelper.getImageFromClipboard();
-        
-        if(image != null) {
+
+        if (image != null) {
             canvas.setEditMode(CanvasComponent.PasteMode);
             canvas.setPastedImage(image);
         }
     }
-    
+
     public int mergeImage(CanvasComponent canvas) {
-        int option = JOptionPane.showOptionDialog(null, 
+        int option = JOptionPane.showOptionDialog(null,
                 "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
-        
-        switch(option) {
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+
+        switch (option) {
             case JOptionPane.YES_OPTION:
                 getMementoManager(canvas).addImage(copyImage(canvas));
                 canvas.mergePastedImage();
                 setStarBeforeTitle();
                 checkEditMenuItem();
-                break;                   
+                break;
             case JOptionPane.NO_OPTION:
                 break;
             case JOptionPane.CANCEL_OPTION:
                 canvas.setPastedImage(null);
                 canvas.setStart(null);
-                break;     
+                break;
         }
-        
+
         return option;
     }
-    
 
     public int mergeText(CanvasComponent canvas) {
-        int option = JOptionPane.showOptionDialog(null, 
+        int option = JOptionPane.showOptionDialog(null,
                 "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
-        
-        switch(option) {
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+
+        switch (option) {
             case JOptionPane.YES_OPTION:
                 getMementoManager(canvas).addImage(copyImage(canvas));
                 canvas.mergeText();
                 setStarBeforeTitle();
                 checkEditMenuItem();
-                //break;
+            //break;
             case JOptionPane.CANCEL_OPTION:
                 canvas.setText(null, null);
                 canvas.setStart(null);
@@ -683,197 +677,191 @@ public class EditMenu extends EasyJShopMenu {
             case JOptionPane.NO_OPTION:
                 break;
         }
-        
+
         return option;
     }
-    
+
     public void inputText(CanvasComponent canvas) {
-        int option = FontDialog.showDialog(null, "Font information", parent.smallLogo);
-        
-        if(option == JOptionPane.OK_OPTION) {
+        int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
+
+        if (option == JOptionPane.OK_OPTION) {
             canvas.setText(FontDialog.getInputText(), FontDialog.getFont());
         }
     }
-    
+
     private void resize() {
         Image image = getCanvasOfSelectedFrame().getImage();
-        
-        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), parent.smallLogo);
-        
-        if(option == JOptionPane.OK_OPTION) {
+
+        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+
+        if (option == JOptionPane.OK_OPTION) {
             try {
-                if(ResizeDialog.isPercentage()) {
-                    int scale = ResizeDialog.getScalePercentage(); 
-                    resizeImage(scale);    
-                }
-                else if(ResizeDialog.isCustomWidthHeight()) {
+                if (ResizeDialog.isPercentage()) {
+                    int scale = ResizeDialog.getScalePercentage();
+                    resizeImage(scale);
+                } else if (ResizeDialog.isCustomWidthHeight()) {
                     int width = ResizeDialog.getPixelWidth();
                     int height = ResizeDialog.getPixelHeight();
                     resizeImage(width, height);
                 }
-            }
-            catch(Exception e) {
-                parent.messageBox(e.getMessage());
+            } catch (Exception e) {
+                mainFrame.messageBox(e.getMessage());
             }
         }
     }
-    
+
     private Image preResize() {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
         canvas.resetRect();
-        
+
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
-        
+
         return canvas.getImage();
     }
-    
+
     private void resizeImage(int scale) {
         Image image = preResize();
-        
+
         image = imageProcessor.resize(image, scale * 0.01, null);
-        
+
         postResize(image);
     }
-    
+
     private void resizeImage(int width, int height) {
         Image image = preResize();
-        
+
         image = imageProcessor.resize(image, width, height, null);
-        
+
         postResize(image);
     }
-    
+
     private void postResize(Image image) {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
-        
+
         canvas.setImage(image);
-        
-        getSelectedFrame().showInMainFrame();
-        
+
+        getSelectedFrame().open();
+
         setStarBeforeTitle();
     }
-    
+
     private void mirror(boolean horizontal) {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
-        
+
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
-        
+
         Image image = canvas.getImage();
-        
-        if(horizontal) 
+
+        if (horizontal) {
             image = imageProcessor.horizontalMirror(image, null);
-        else
+        } else {
             image = imageProcessor.verticalMirror(image, null);
-        
+        }
+
         canvas.setImage(image);
         canvas.repaint();
-        
+
         setStarBeforeTitle();
     }
-    
+
     private void clockwise(boolean counter) {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
         canvas.resetRect();
-        
+
         // set up undo
         getMementoManager(canvas).addImage(canvas.getImage());
-        
+
         Image image = canvas.getImage();
-        
-        if(counter) 
+
+        if (counter) {
             image = imageProcessor.counterClockwise(image, null);
-        else
+        } else {
             image = imageProcessor.clockwise(image, null);
-        
+        }
+
         canvas.setImage(image);
-        
-        getSelectedFrame().showInMainFrame();
-        
+
+        getSelectedFrame().open();
+
         setStarBeforeTitle();
     }
-    
+
     private void batch() {
-        int option = JOptionPane.showOptionDialog(null, 
+        int option = JOptionPane.showOptionDialog(null,
                 batchComboBox, "batch..", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
-        
-        if(option == JOptionPane.OK_OPTION) {
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+
+        if (option == JOptionPane.OK_OPTION) {
             int selected = batchComboBox.getSelectedIndex();
-            IBatcher batcher = null;
-            switch(selected) {
+            InternalFrameExecutor batcher = null;
+            switch (selected) {
                 case 0: // resize
                     Image image = getCanvasOfSelectedFrame().getImage();
-                    
-                    option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), parent.smallLogo);
-                    
-                    if(option == JOptionPane.OK_OPTION) {
+
+                    option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+
+                    if (option == JOptionPane.OK_OPTION) {
                         try {
-                            if(ResizeDialog.isPercentage()) {
-                                final int scale = ResizeDialog.getScalePercentage(); 
-                                batcher = () -> {
-                                    resizeImage(scale);
+                            if (ResizeDialog.isPercentage()) {
+                                batcher = internalFrame -> {
+                                    resizeImage(ResizeDialog.getScalePercentage());
+                                };
+                            } else if (ResizeDialog.isCustomWidthHeight()) {
+                                batcher = internalFrame -> {
+                                    resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
                                 };
                             }
-                            else if(ResizeDialog.isCustomWidthHeight()) {
-                                final int width = ResizeDialog.getPixelWidth();
-                                final int height = ResizeDialog.getPixelHeight();
-                                batcher = () -> {
-                                    resizeImage(width, height);
-                                };
-                            }
+                        } catch (Exception e) {
+                            mainFrame.messageBox(e.getMessage());
                         }
-                        catch(Exception e) {
-                            parent.messageBox(e.getMessage());
-                        }
-                    } 
-                    else {
+                    } else {
                         return;
                     }
-                    
+
                     break;
                 case 1: // horizontal mirror
-                    batcher = () -> {
+                    batcher = internalFrame -> {
                         mirror(true);
-            };
+                    };
                     break;
                 case 2: // vertical mirror
-                    batcher = () -> {
+                    batcher = internalFrame -> {
                         mirror(false);
-            };
+                    };
                     break;
                 case 3: // clockwise
-                    batcher = () -> {
+                    batcher = internalFrame -> {
                         clockwise(false);
-            };
+                    };
                     break;
                 case 4: // counter-clockwise
-                    batcher = () -> {
+                    batcher = internalFrame -> {
                         clockwise(true);
-            };
+                    };
                     break;
                 default: // do nothing
             }
-            
-            parent.allInternalFrames(batcher);
+
+            mainFrame.forEachInternalFrame(batcher);
         }
-        
+
     }
-    
+
     public Image copyImage(CanvasComponent canvas) {
         // copy the original            
         Image image = canvas.getImage();
-        Rectangle2D rect = new Rectangle2D.Double(); 
+        Rectangle2D rect = new Rectangle2D.Double();
         rect.setRect(0, 0, image.getWidth(null), image.getHeight(null));
         image = imageProcessor.copyRectImage(image, rect, null);
         return image;
     }
-    
+
     public void setEditInfo(CanvasComponent canvas) {
         canvas.setEditMode(editMode);
         canvas.setForeground(foreColorBox.getColor());
         canvas.setBackground(backColorBox.getColor());
-        canvas.setBrushWidth(((Integer)brushSpinner.getValue()));
+        canvas.setBrushWidth(((Integer) brushSpinner.getValue()));
     }
 }

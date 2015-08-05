@@ -12,10 +12,10 @@ import cc.openhome.main.CanvasComponent;
 import cc.openhome.main.ImageInternalFrame;
 
 public abstract class EasyJShopMenu extends JMenu {
-    protected MainFrame parent;
+    protected MainFrame mainFrame;
 
-    public EasyJShopMenu(MainFrame parent) {
-        this.parent = parent;
+    public EasyJShopMenu(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
     }
 
      protected ImageInternalFrame getSelectedFrame() {
@@ -23,22 +23,22 @@ public abstract class EasyJShopMenu extends JMenu {
     }
         
     protected CanvasComponent getCanvasOfSelectedFrame() {
-        return parent.getCanvasOfSelectedFrame();
+        return mainFrame.getCanvasOfSelectedFrame();
     }
     
     protected JDesktopPane getDesktopPane() {
-        return parent.getDesktopPane();
+        return mainFrame.getDesktopPane();
     }
 
     protected void setStarBeforeTitle() {
-        parent.setStarBeforeTitle();
+        mainFrame.setStarBeforeTitle();
     }
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
-        return parent.getMementoManager(canvas);
+        return mainFrame.getMementoManager(canvas);
     }
 
     protected Map getMementoManagers() {
-        return parent.getMementoManagers();
+        return mainFrame.getMementoManagers();
     }
 }

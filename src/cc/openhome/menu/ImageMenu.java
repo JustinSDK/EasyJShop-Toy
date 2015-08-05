@@ -48,8 +48,8 @@ public class ImageMenu extends EasyJShopMenu {
     private JFileChooser openFileChooser;
 
     //private InternalFrameListener internalFrameListener;
-    public ImageMenu(MainFrame easyJShop) {
-        super(easyJShop);
+    public ImageMenu(MainFrame mainFrame) {
+        super(mainFrame);
         initResource();
         setupUIComponent();
         setupEventListener();
@@ -60,7 +60,7 @@ public class ImageMenu extends EasyJShopMenu {
         try {
             captureHelper = new ScreenCaptureHelper();
         } catch (AWTException e) {
-            parent.messageBox(e.getMessage());
+            mainFrame.messageBox(e.getMessage());
         }
     }
 
@@ -130,11 +130,11 @@ public class ImageMenu extends EasyJShopMenu {
         });
 
         newImageMenuItem.addActionListener(e -> {
-            newImageFile();
+            newImage();
         });
 
         openMenuItem.addActionListener(e -> {
-            openImageFile();
+            openImage();
         });
 
         saveMenuItem.addActionListener(e -> {
@@ -146,7 +146,7 @@ public class ImageMenu extends EasyJShopMenu {
         });
 
         saveAllMenuItem.addActionListener(e -> {
-            saveAllImageFile();
+            saveAllImages();
         });
 
         exitMenuItem.addActionListener(e -> {
@@ -199,36 +199,37 @@ public class ImageMenu extends EasyJShopMenu {
     }
 
     private void captureScreen() {
-        parent.setVisible(false);
+        mainFrame.setVisible(false);
+
         int option = JOptionPane.showOptionDialog(null,
                 delaySlider, "delay ? (seconds)", JOptionPane.OK_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
 
         if (option == JOptionPane.CANCEL_OPTION) {
-            parent.setVisible(true);
+            mainFrame.setVisible(true);
             return;
         }
 
         try {
             Thread.sleep(delaySlider.getValue() * 1000);
         } catch (InterruptedException e) {
-            parent.messageBox(e.getMessage());
+            mainFrame.messageBox(e.getMessage());
         }
 
         Image image = captureHelper.capture();
 
-        parent.setVisible(true);
+        mainFrame.setVisible(true);
 
-        parent.createInternalFrame("*untitled", image);
+        mainFrame.createInternalFrame("*untitled", image);
     }
 
-    private void newImageFile() {
+    private void newImage() {
         int option = JOptionPane.showOptionDialog(null, newImagePanel, "New image",
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             int width = ((Integer) widthSpinner.getValue());
             int height = ((Integer) heightSpinner.getValue());
-            parent.createInternalFrame("untitled", createEmptyImage(width, height));
+            mainFrame.createInternalFrame("untitled", createEmptyImage(width, height));
         }
     }
 
@@ -240,46 +241,52 @@ public class ImageMenu extends EasyJShopMenu {
         return bufferedImage;
     }
 
-
-    private void openImageFile() {
+    private void openImage() {
         new Thread(() -> {
             if (openFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 for (File file : openFileChooser.getSelectedFiles()) {
                     try {
-                        parent.createInternalFrame(file.getAbsolutePath(), ImageIO.read(file));
+                        mainFrame.createInternalFrame(file.getAbsolutePath(), ImageIO.read(file));
                     } catch (Exception e) {
-                        parent.messageBox(e.getMessage());
+                        mainFrame.messageBox(e.getMessage());
                     }
                 }
             }
         }).start();
     }
 
-    private void saveAllImageFile() {
-        if (getDesktopPane().getAllFrames().length > 0) {
+    private void saveAllImages() {
+        mainFrame.forEachInternalFrame(internalFrame -> {
             new Thread(() -> {
-                parent.allInternalFrames(() -> {
-                    getSelectedFrame().saveImageFile();
-                });
+                internalFrame.deIconified();
+                internalFrame.saveImageFile();
             }).start();
-        }
+        });
     }
 
     public void checkUnsavedImages() {
-        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
-            ((ImageInternalFrame) internalFrame).deIconified();
-            if (internalFrame.getTitle().startsWith("*")) {
-                int option = JOptionPane.showOptionDialog(null,
-                        internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
-                        JOptionPane.QUESTION_MESSAGE, parent.smallLogo, null, null);
-                switch (option) {
-                    case JOptionPane.CANCEL_OPTION:
-                        return;
-                    case JOptionPane.YES_OPTION:
-                        getSelectedFrame().saveImageFile();
-                }
-            }
-            ((ImageInternalFrame) internalFrame).close();
+        class Operation {
+            boolean notCancelled = true;
         }
+        Operation operation = new Operation();
+
+        mainFrame.forEachInternalFrame(internalFrame -> {
+            if (operation.notCancelled) {
+                if (internalFrame.getTitle().startsWith("*")) {
+                    internalFrame.deIconified();
+                    int option = JOptionPane.showOptionDialog(null,
+                            internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+                    switch (option) {
+                        case JOptionPane.CANCEL_OPTION:
+                            operation.notCancelled = false;
+                            break;
+                        case JOptionPane.YES_OPTION:
+                            getSelectedFrame().saveImageFile();
+                    }
+                }
+                internalFrame.close();
+            }
+        });
     }
 }

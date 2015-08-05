@@ -9,7 +9,7 @@ import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.main.CanvasComponent;
-import cc.openhome.main.IBatcher;
+import cc.openhome.main.InternalFrameExecutor;
 import cc.openhome.main.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EasyJShopMenu;
@@ -104,15 +104,9 @@ public class MainFrame extends JFrame {
         return ((ImageInternalFrame) getDesktopPane().getSelectedFrame()).getCanvas();
     }
 
-    public void allInternalFrames(IBatcher batcher) {
+    public void forEachInternalFrame(InternalFrameExecutor executor) {
         for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
-            try {
-                internalFrame.setIcon(true);
-                internalFrame.pack();
-                batcher.execute();
-            } catch (PropertyVetoException e) {
-                messageBox(e.getMessage());
-            }
+            executor.execute((ImageInternalFrame) internalFrame);
         }
     }
 
@@ -120,10 +114,10 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(null, message,
                 "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
-    
+
     public void createInternalFrame(String title, Image image) {
         ImageInternalFrame internalFrame = new ImageInternalFrame(this, title, image);
         getDesktopPane().add(internalFrame);
-        internalFrame.showInMainFrame();
-    }    
+        internalFrame.open();
+    }
 }
