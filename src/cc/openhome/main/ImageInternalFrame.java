@@ -4,11 +4,9 @@ import cc.openhome.MainFrame;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -161,7 +159,7 @@ public class ImageInternalFrame extends JInternalFrame {
                         } else if (e.getButton() == MouseEvent.BUTTON3) {
                             canvas.decreaseViewScale();
                         }
-                        fitAppSize(canvas.getImage());
+                        showInMainFrame();
                         canvas.repaint();
                         break;
                     default: // SelectionMode
@@ -209,22 +207,16 @@ public class ImageInternalFrame extends JInternalFrame {
         });
     }
 
-    public void fitAppSize(Image image) {
-        double scale = canvas.getScale();
-        canvas.setSize((int) (image.getWidth(canvas) * scale), (int) (image.getHeight(canvas) * scale));
-
-        pack();
-
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        // if the frame is larger than app size, resize it to fit the app size.
-        if (getWidth() >= screenSize.getWidth() - 20 && getHeight() >= screenSize.getHeight() - 120) {
-            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, (int) screenSize.getHeight() - 120);
-        } else if (getWidth() >= screenSize.getWidth() - 20) {
-            getDesktopPane().getSelectedFrame().setSize((int) screenSize.getWidth() - 20, getHeight());
-        } else if (getHeight() >= screenSize.getHeight() - 120) {
-            getDesktopPane().getSelectedFrame().setSize(getWidth(), (int) screenSize.getHeight() - 120);
-        }
-    }
+//    public void packOrFitParent() {
+//        pack();
+//        if (parent.getWidth() < getWidth() || parent.getHeight() < getHeight()) {
+//            try {
+//                setMaximum(true);
+//            } catch (PropertyVetoException ex) {
+//                parent.messageBox(ex.getMessage());
+//            }
+//        }
+//    }
 
     public void deIconified() {
         try {
@@ -310,6 +302,17 @@ public class ImageInternalFrame extends JInternalFrame {
         try {
             ImageIO.write(bufferedImage, filename.substring(filename.lastIndexOf('.') + 1), file);
         } catch (IOException e) {
+            parent.messageBox(e.getMessage());
+        }
+    }
+
+    public void showInMainFrame() {
+        pack();
+        try {
+            setSelected(true);
+            setMaximum(true);
+            setVisible(true);
+        } catch (Exception e) {
             parent.messageBox(e.getMessage());
         }
     }

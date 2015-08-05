@@ -305,7 +305,7 @@ public class EditMenu extends EasyJShopMenu {
                             
                             // if the image is full screen size, resize it to fit the frame size.
                             
-                            getSelectedFrame().fitAppSize(image);
+                            getSelectedFrame().showInMainFrame();
                         }
                         
                         checkEditMenuItem();
@@ -323,7 +323,7 @@ public class EditMenu extends EasyJShopMenu {
                 getCanvasOfSelectedFrame().setImage(image);
                 
                 // if the image is full screen size, resize it to fit the frame size.
-                getSelectedFrame().fitAppSize(image);
+                getSelectedFrame().showInMainFrame();
             }
             
             checkEditMenuItem();
@@ -601,19 +601,7 @@ public class EditMenu extends EasyJShopMenu {
             return;
         
         // new a internalFrame for the copied image
-        JInternalFrame internalFrame = new ImageInternalFrame(parent, "*untitled", image);
-
-        getDesktopPane().add(internalFrame);
-        
-        try {
-            internalFrame.setVisible(true);
-            internalFrame.setSelected(true);
-
-            getSelectedFrame().fitAppSize(image);
-        }
-        catch(PropertyVetoException e) {
-            parent.messageBox(e.getMessage());
-        }
+        parent.createInternalFrame("*untitled", image);
     }
         
     private void crop() {
@@ -633,7 +621,7 @@ public class EditMenu extends EasyJShopMenu {
         // let the dashed rect disappear
         canvas.resetRect();
         
-        getSelectedFrame().fitAppSize(image);
+        getSelectedFrame().showInMainFrame();
 
         setStarBeforeTitle();
     }
@@ -761,7 +749,7 @@ public class EditMenu extends EasyJShopMenu {
         
         canvas.setImage(image);
         
-        getSelectedFrame().fitAppSize(image);
+        getSelectedFrame().showInMainFrame();
         
         setStarBeforeTitle();
     }
@@ -801,7 +789,7 @@ public class EditMenu extends EasyJShopMenu {
         
         canvas.setImage(image);
         
-        getSelectedFrame().fitAppSize(image);
+        getSelectedFrame().showInMainFrame();
         
         setStarBeforeTitle();
     }

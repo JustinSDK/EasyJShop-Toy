@@ -3,10 +3,6 @@ package cc.openhome;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-/**
- *
- * @author Justin
- */
 public class EasyJShop {
     public static void main(String[] args) {
         try {
@@ -15,7 +11,6 @@ public class EasyJShop {
             JOptionPane.showMessageDialog(null, e.getMessage(),
                     "Info.", JOptionPane.INFORMATION_MESSAGE);
         }
-        
         new MainFrame().setVisible(true);
     }    
 }

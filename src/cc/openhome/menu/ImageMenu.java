@@ -219,7 +219,7 @@ public class ImageMenu extends EasyJShopMenu {
 
         parent.setVisible(true);
 
-        newInternalFrame("*untitled", image);
+        parent.createInternalFrame("*untitled", image);
     }
 
     private void newImageFile() {
@@ -233,40 +233,17 @@ public class ImageMenu extends EasyJShopMenu {
             Graphics g = bufferedImage.getGraphics();
             g.setColor(backgroundColorBox.getColor());
             g.fillRect(0, 0, width, height);
-            newInternalFrame("untitled", bufferedImage);
+            parent.createInternalFrame("untitled", bufferedImage);
         }
     }
 
-    private void newInternalFrame(String title, Image image) {
-        JInternalFrame internalFrame = new ImageInternalFrame(parent, title, image);
-
-        getDesktopPane().add(internalFrame);
-
-        internalFrame.setVisible(true);
-
-        try {
-            internalFrame.setSelected(true);
-        } catch (PropertyVetoException e) {
-            parent.messageBox(e.getMessage());
-        }
-
-        getSelectedFrame().fitAppSize(image);
-    }
 
     private void openImageFile() {
         new Thread(() -> {
             if (openFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-                File[] files = openFileChooser.getSelectedFiles();
-
-                for (File file : files) {
-                    // bring it to top
+                for (File file : openFileChooser.getSelectedFiles()) {
                     try {
-                        Image image = ImageIO.read(file);
-                        JInternalFrame internalFrame = new ImageInternalFrame(parent, file.getAbsolutePath(), image);
-                        getDesktopPane().add(internalFrame);
-                        internalFrame.setVisible(true);
-                        internalFrame.setSelected(true);
-                        getSelectedFrame().fitAppSize(image);
+                        parent.createInternalFrame(file.getAbsolutePath(), ImageIO.read(file));
                     } catch (Exception e) {
                         parent.messageBox(e.getMessage());
                     }

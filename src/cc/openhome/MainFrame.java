@@ -120,4 +120,10 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(null, message,
                 "Info.", JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    public void createInternalFrame(String title, Image image) {
+        ImageInternalFrame internalFrame = new ImageInternalFrame(this, title, image);
+        getDesktopPane().add(internalFrame);
+        internalFrame.showInMainFrame();
+    }    
 }
