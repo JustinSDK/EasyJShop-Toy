@@ -42,6 +42,8 @@ import cc.openhome.frame.ColorDemoBox;
 import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.frame.InternalFrameExecutor;
 import cc.openhome.img.ImageMementoManager;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
@@ -74,6 +76,8 @@ public class EditMenu extends JMenu {
     private boolean resizeLocker;
 
     private MainFrame mainFrame;
+
+    private Map<Integer, InternalFrameExecutor> executors = new HashMap<>();
 
     private interface ImageExecutor {
 
@@ -127,6 +131,25 @@ public class EditMenu extends JMenu {
         copyIcon = new ImageIcon(EditMenu.class.getResource("../images/copy.gif"));
         pasteIcon = new ImageIcon(EditMenu.class.getResource("../images/paste.gif"));
         cropIcon = new ImageIcon(EditMenu.class.getResource("../images/crop.gif"));
+
+        executors.put(1, internalFrame -> {
+            mirror(internalFrame, ImageProcessor::horizontalMirror);
+        });
+        executors.put(2, internalFrame -> {
+            mirror(internalFrame, ImageProcessor::verticalMirror);
+        });
+        executors.put(3, internalFrame -> {
+            clockwise(internalFrame, ImageProcessor::clockwise);
+        });
+        executors.put(4, internalFrame -> {
+            clockwise(internalFrame, ImageProcessor::counterClockwise);
+        });
+        executors.put(5, internalFrame -> {
+            resizeImage(ResizeDialog.getScalePercentage());
+        });
+        executors.put(6, internalFrame -> {
+            resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
+        });
     }
 
     private void setupUIComponent() {
@@ -790,56 +813,20 @@ public class EditMenu extends JMenu {
 
         if (option == JOptionPane.OK_OPTION) {
             int selected = batchComboBox.getSelectedIndex();
-            InternalFrameExecutor batcher = null;
-            switch (selected) {
-                case 0: // resize
-                    Image image = getCanvasOfSelectedFrame().getImage();
-
-                    option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
-
-                    if (option == JOptionPane.OK_OPTION) {
-                        try {
-                            if (ResizeDialog.isPercentage()) {
-                                batcher = internalFrame -> {
-                                    resizeImage(ResizeDialog.getScalePercentage());
-                                };
-                            } else if (ResizeDialog.isCustomWidthHeight()) {
-                                batcher = internalFrame -> {
-                                    resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
-                                };
-                            }
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    } else {
-                        return;
-                    }
-
-                    break;
-                case 1: // horizontal mirror
-                    batcher = internalFrame -> {
-                        mirror(internalFrame, ImageProcessor::horizontalMirror);
-                    };
-                    break;
-                case 2: // vertical mirror
-                    batcher = internalFrame -> {
-                        mirror(internalFrame, ImageProcessor::verticalMirror);
-                    };
-                    break;
-                case 3: // clockwise
-                    batcher = internalFrame -> {
-                        clockwise(internalFrame, ImageProcessor::counterClockwise);
-                    };
-                    break;
-                case 4: // counter-clockwise
-                    batcher = internalFrame -> {
-                        clockwise(internalFrame, ImageProcessor::clockwise);
-                    };
-                    break;
-                default: // do nothing
+            if (selected == 0) {
+                batchResize();
+            } else {
+                mainFrame.forEachInternalFrame(executors.get(selected));
             }
+        }
+    }
 
-            mainFrame.forEachInternalFrame(batcher);
+    private void batchResize() {
+        int option;
+        Image image = getCanvasOfSelectedFrame().getImage();
+        option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+        if (option == JOptionPane.OK_OPTION) {
+            mainFrame.forEachInternalFrame(executors.get(ResizeDialog.isPercentage() ? 5 : 6));
         }
     }
 
