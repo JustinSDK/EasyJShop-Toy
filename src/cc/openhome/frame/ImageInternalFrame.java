@@ -220,7 +220,7 @@ public class ImageInternalFrame extends JInternalFrame {
     
     private void process(ImageExecutor executor) {
         // set up undo
-        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+        setUpUndo(canvas.getImage());
         Image image = executor.execute(canvas.getImage());
         canvas.setImage(image);
         setModifiedTitle();
@@ -240,7 +240,7 @@ public class ImageInternalFrame extends JInternalFrame {
     
     private void preResize() {
         canvas.resetRect();
-        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+        setUpUndo(canvas.getImage());
     }
 
     private void postResize(Image image) {
@@ -269,7 +269,7 @@ public class ImageInternalFrame extends JInternalFrame {
     public void crop() {
         if (isAreaSelected()) {
             Image image = copySelectedImage();
-            mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+            setUpUndo(canvas.getImage());
             // use current internalFrame for the corped image
             canvas.setImage(image);
             // let the dashed rect disappear
@@ -281,4 +281,21 @@ public class ImageInternalFrame extends JInternalFrame {
                     "Info.", JOptionPane.INFORMATION_MESSAGE);
         }
     }    
+    
+    public void cut() {
+        Image image = ImageProcessor.copyImage(canvas.getImage());
+        setUpUndo(image);
+        Graphics g = canvas.getImage().getGraphics();
+        Rectangle2D rect = canvas.getSelectedRect();
+        g.setColor(canvas.getBackground());
+        g.fillRect((int) rect.getX(), (int) rect.getY(),
+                (int) rect.getWidth(), (int) rect.getHeight());
+        repaint();
+        setModifiedTitle();
+    }    
+
+    private void setUpUndo(Image image) {
+        // set up undo
+        mainFrame.getMementoManager(canvas).addImage(image);
+    }
 }

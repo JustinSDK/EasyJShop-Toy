@@ -354,13 +354,14 @@ public class EditMenu extends JMenu {
         });
 
         cutMenuItem.addActionListener(e -> {
-            copyToClipBoard(true);
+            copyToClipBoard();
+            getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
 
         copyMenuItem.addActionListener(e -> {
-            copyToClipBoard(false);
+            copyToClipBoard();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
@@ -462,13 +463,14 @@ public class EditMenu extends JMenu {
         });
 
         cutBtn.addActionListener(e -> {
-            copyToClipBoard(true);
+            copyToClipBoard();
+            getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
 
         copyBtn.addActionListener(e -> {
-            copyToClipBoard(false);
+            copyToClipBoard();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
@@ -572,34 +574,17 @@ public class EditMenu extends JMenu {
         }
     }
 
-    private void copyToClipBoard(boolean cut) {
+    private void copyToClipBoard() {
         if (getSelectedFrame().isAreaSelected()) {
             Image image = getSelectedFrame().copySelectedImage();
             transferableImage.setImage(image);
             ClipboardHelper.imageToClipboard(transferableImage);
-
-            if (cut) {
-                CanvasComponent canvas = getCanvasOfSelectedFrame();
-
-                image = ImageProcessor.copyImage(canvas.getImage());
-
-                // set up undo
-                getMementoManager(canvas).addImage(image);
-
-                Graphics g = canvas.getImage().getGraphics();
-                Rectangle2D rect = getCanvasOfSelectedFrame().getSelectedRect();
-                g.setColor(getCanvasOfSelectedFrame().getBackground());
-                g.fillRect((int) rect.getX(), (int) rect.getY(),
-                        (int) rect.getWidth(), (int) rect.getHeight());
-                getCanvasOfSelectedFrame().repaint();
-                getSelectedFrame().setModifiedTitle();
-            }
         } else {
             JOptionPane.showMessageDialog(null, "No area selected.",
                     "Info.", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-
+    
     private void pasteToNew() {
         Image image = ClipboardHelper.getImageFromClipboard();
 
@@ -610,29 +595,6 @@ public class EditMenu extends JMenu {
         // new a internalFrame for the copied image
         mainFrame.createInternalFrame("*untitled", image);
     }
-
-//    private void crop() {
-//        if (getSelectedFrame().isAreaSelected()) {
-//            Image image = getSelectedFrame().copySelectedImage();
-//            CanvasComponent canvas = getCanvasOfSelectedFrame();
-//
-//            // set up undo
-//            getMementoManager(canvas).addImage(canvas.getImage());
-//
-//            // use current internalFrame for the corped image
-//            canvas.setImage(image);
-//
-//            // let the dashed rect disappear
-//            canvas.resetRect();
-//
-//            getSelectedFrame().open();
-//
-//            getSelectedFrame().setModifiedTitle();
-//        } else {
-//            JOptionPane.showMessageDialog(null, "No area selected.",
-//                    "Info.", JOptionPane.INFORMATION_MESSAGE);
-//        }
-//    }
 
     private void paste() {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
