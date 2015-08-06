@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
@@ -255,4 +256,29 @@ public class ImageInternalFrame extends JInternalFrame {
     public int getImageHeight() {
         return canvas.getImage().getHeight(null);
     }
+    
+    public boolean isAreaSelected() {
+        Rectangle2D rect = canvas.getSelectedRect();
+        return rect.getWidth() > 0 && rect.getWidth() > 0;
+    }
+    
+    public Image copySelectedImage() {
+        return ImageProcessor.copyRectImage(canvas.getImage(), canvas.getSelectedRect());
+    }    
+    
+    public void crop() {
+        if (isAreaSelected()) {
+            Image image = copySelectedImage();
+            mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+            // use current internalFrame for the corped image
+            canvas.setImage(image);
+            // let the dashed rect disappear
+            canvas.resetRect();
+            setModifiedTitle();
+            open();
+        } else {
+            JOptionPane.showMessageDialog(null, "No area selected.",
+                    "Info.", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }    
 }

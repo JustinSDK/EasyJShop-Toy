@@ -313,32 +313,28 @@ public class EditMenu extends JMenu {
         cropMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK));
 
-        undoMenuItem.addActionListener(
-                new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        if (getDesktopPane().getSelectedFrame() == null) {
-                            return;
-                        }
+        undoMenuItem.addActionListener((ActionEvent e) -> {
+            if (getDesktopPane().getSelectedFrame() == null) {
+                return;
+            }
 
-                        if (getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
-                            getMementoManager(getCanvasOfSelectedFrame())
-                            .addImage(getCanvasOfSelectedFrame().getImage());
-                            getMementoManager(getCanvasOfSelectedFrame()).undoImage();
-                        }
+            if (getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
+                getMementoManager(getCanvasOfSelectedFrame())
+                        .addImage(getCanvasOfSelectedFrame().getImage());
+                getMementoManager(getCanvasOfSelectedFrame()).undoImage();
+            }
 
-                        Image image = getMementoManager(getCanvasOfSelectedFrame()).undoImage();
+            Image image = getMementoManager(getCanvasOfSelectedFrame()).undoImage();
 
-                        if (image != null) {
-                            getCanvasOfSelectedFrame().setImage(image);
+            if (image != null) {
+                getCanvasOfSelectedFrame().setImage(image);
 
-                            // if the image is full screen size, resize it to fit the frame size.
-                            getSelectedFrame().open();
-                        }
+                // if the image is full screen size, resize it to fit the frame size.
+                getSelectedFrame().open();
+            }
 
-                        checkEditMenuItem();
-                    }
-                }
-        );
+            checkEditMenuItem();
+        });
 
         redoMenuItem.addActionListener(e -> {
             if (getDesktopPane().getSelectedFrame() == null) {
@@ -378,7 +374,7 @@ public class EditMenu extends JMenu {
         });
 
         cropMenuItem.addActionListener(e -> {
-            crop();
+            getSelectedFrame().crop();
             checkEditMenuItem();
         });
 
@@ -482,7 +478,7 @@ public class EditMenu extends JMenu {
         });
 
         cropBtn.addActionListener(e -> {
-            crop();
+            getSelectedFrame().crop();
             checkEditMenuItem();
         });
 
@@ -576,45 +572,31 @@ public class EditMenu extends JMenu {
         }
     }
 
-    private Image copySelectedImage() {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-        Rectangle2D rect = canvas.getSelectedRect();
+    private void copyToClipBoard(boolean cut) {
+        if (getSelectedFrame().isAreaSelected()) {
+            Image image = getSelectedFrame().copySelectedImage();
+            transferableImage.setImage(image);
+            ClipboardHelper.imageToClipboard(transferableImage);
 
-        if (rect.getWidth() <= 0 || rect.getWidth() <= 0) {
+            if (cut) {
+                CanvasComponent canvas = getCanvasOfSelectedFrame();
+
+                image = ImageProcessor.copyImage(canvas.getImage());
+
+                // set up undo
+                getMementoManager(canvas).addImage(image);
+
+                Graphics g = canvas.getImage().getGraphics();
+                Rectangle2D rect = getCanvasOfSelectedFrame().getSelectedRect();
+                g.setColor(getCanvasOfSelectedFrame().getBackground());
+                g.fillRect((int) rect.getX(), (int) rect.getY(),
+                        (int) rect.getWidth(), (int) rect.getHeight());
+                getCanvasOfSelectedFrame().repaint();
+                getSelectedFrame().setModifiedTitle();
+            }
+        } else {
             JOptionPane.showMessageDialog(null, "No area selected.",
                     "Info.", JOptionPane.INFORMATION_MESSAGE);
-            return null;
-        }
-
-        return ImageProcessor.copyRectImage(canvas.getImage(), rect);
-    }
-
-    private void copyToClipBoard(boolean cut) {
-        Image image = copySelectedImage();
-
-        if (image == null) {
-            return;
-        }
-
-        transferableImage.setImage(image);
-
-        ClipboardHelper.imageToClipboard(transferableImage);
-
-        if (cut) {
-            CanvasComponent canvas = getCanvasOfSelectedFrame();
-
-            image = ImageProcessor.copyImage(canvas.getImage());
-
-            // set up undo
-            getMementoManager(canvas).addImage(image);
-
-            Graphics g = canvas.getImage().getGraphics();
-            Rectangle2D rect = getCanvasOfSelectedFrame().getSelectedRect();
-            g.setColor(getCanvasOfSelectedFrame().getBackground());
-            g.fillRect((int) rect.getX(), (int) rect.getY(),
-                    (int) rect.getWidth(), (int) rect.getHeight());
-            getCanvasOfSelectedFrame().repaint();
-            getSelectedFrame().setModifiedTitle();
         }
     }
 
@@ -629,28 +611,28 @@ public class EditMenu extends JMenu {
         mainFrame.createInternalFrame("*untitled", image);
     }
 
-    private void crop() {
-        Image image = copySelectedImage();
-
-        if (image == null) {
-            return;
-        }
-
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-
-        // set up undo
-        getMementoManager(canvas).addImage(canvas.getImage());
-
-        // use current internalFrame for the corped image
-        canvas.setImage(image);
-
-        // let the dashed rect disappear
-        canvas.resetRect();
-
-        getSelectedFrame().open();
-
-        getSelectedFrame().setModifiedTitle();
-    }
+//    private void crop() {
+//        if (getSelectedFrame().isAreaSelected()) {
+//            Image image = getSelectedFrame().copySelectedImage();
+//            CanvasComponent canvas = getCanvasOfSelectedFrame();
+//
+//            // set up undo
+//            getMementoManager(canvas).addImage(canvas.getImage());
+//
+//            // use current internalFrame for the corped image
+//            canvas.setImage(image);
+//
+//            // let the dashed rect disappear
+//            canvas.resetRect();
+//
+//            getSelectedFrame().open();
+//
+//            getSelectedFrame().setModifiedTitle();
+//        } else {
+//            JOptionPane.showMessageDialog(null, "No area selected.",
+//                    "Info.", JOptionPane.INFORMATION_MESSAGE);
+//        }
+//    }
 
     private void paste() {
         CanvasComponent canvas = getCanvasOfSelectedFrame();
@@ -722,7 +704,7 @@ public class EditMenu extends JMenu {
     }
 
     private void resize() {
-        int option = ResizeDialog.showDialog(null, "Resize Information", 
+        int option = ResizeDialog.showDialog(null, "Resize Information",
                 getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
 
         if (option == JOptionPane.OK_OPTION) {
@@ -747,11 +729,11 @@ public class EditMenu extends JMenu {
                 mainFrame.forEachInternalFrame(executors.get(selected));
             }
         }
-        
+
     }
 
     private void batchResize() {
-        int option = ResizeDialog.showDialog(null, "Resize Information", 
+        int option = ResizeDialog.showDialog(null, "Resize Information",
                 getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             mainFrame.forEachInternalFrame(executors.get(ResizeDialog.isPercentage() ? SCALE_RESIZE : WH_RESIZE));
