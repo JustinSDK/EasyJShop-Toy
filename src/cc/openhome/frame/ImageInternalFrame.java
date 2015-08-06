@@ -208,14 +208,20 @@ public class ImageInternalFrame extends JInternalFrame {
     
     public void clockwise(ImageExecutor executor) {
         canvas.resetRect();
-
+        process(executor);
+        open();
+    } 
+    
+    public void mirror(ImageExecutor executor) {
+        process(executor);
+        canvas.repaint();        
+    } 
+    
+    private void process(ImageExecutor executor) {
         // set up undo
         mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
-
         Image image = executor.execute(canvas.getImage());
         canvas.setImage(image);
-
         setModifiedTitle();
-        open();
     }    
 }

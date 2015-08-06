@@ -136,10 +136,10 @@ public class EditMenu extends JMenu {
         cropIcon = new ImageIcon(EditMenu.class.getResource("../images/crop.gif"));
 
         executors.put(HZ_MIRROR, internalFrame -> {
-            mirror(internalFrame, ImageProcessor::horizontalMirror);
+            internalFrame.mirror(ImageProcessor::horizontalMirror);
         });
         executors.put(VT_MIRROR, internalFrame -> {
-            mirror(internalFrame, ImageProcessor::verticalMirror);
+            internalFrame.mirror(ImageProcessor::verticalMirror);
         });
         executors.put(CLK_ROTATE, internalFrame -> {
             internalFrame.clockwise(ImageProcessor::clockwise);
@@ -387,12 +387,12 @@ public class EditMenu extends JMenu {
         });
 
         horizontalMirrorMenuItem.addActionListener(e -> {
-            mirror(getSelectedFrame(), ImageProcessor::horizontalMirror);
+            getSelectedFrame().mirror(ImageProcessor::horizontalMirror);
             checkEditMenuItem();
         });
 
         verticalMirrorMenuItem.addActionListener(e -> {
-            mirror(getSelectedFrame(), ImageProcessor::verticalMirror);
+            getSelectedFrame().mirror(ImageProcessor::verticalMirror);
             checkEditMenuItem();
         });
 
@@ -775,21 +775,6 @@ public class EditMenu extends JMenu {
         getSelectedFrame().open();
 
         getSelectedFrame().setModifiedTitle();
-    }
-
-    private void mirror(ImageInternalFrame internalFrame, ImageExecutor executor) {
-        CanvasComponent canvas = internalFrame.getCanvas();
-
-        // set up undo
-        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
-
-        Image image = canvas.getImage();
-        image = executor.execute(image);
-
-        canvas.setImage(image);
-        canvas.repaint();
-
-        internalFrame.setModifiedTitle();
     }
 
     private void batch() {
