@@ -128,7 +128,8 @@ public class CanvasComponent extends JComponent {
                         setEnd(e.getPoint());
                         repaint();
                         break;
-                    case 3 | 4:
+                    case 3:
+                    case 4:
                         break;
                     default: // SelectionMode
                         dragRect(e.getPoint());

@@ -47,7 +47,14 @@ import java.util.Map;
 import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
-
+    private static final int RESIZE = 0;
+    private static final int HZ_MIRROR = 1;
+    private static final int VT_MIRROR = 2;
+    private static final int CLK_ROTATE = 3;
+    private static final int CT_CLK_ROTATE = 4;
+    private static final int SCALE_RESIZE = 5;
+    private static final int WH_RESIZE = 6;
+    
     private TransferableImage transferableImage;
 
     private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
@@ -86,7 +93,7 @@ public class EditMenu extends JMenu {
 
     public EditMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        initResource();
+        initResources();
         setupUIComponent();
         setupEventListener();
 
@@ -118,7 +125,7 @@ public class EditMenu extends JMenu {
         clipboradChecker.start();
     }
 
-    private void initResource() {
+    private void initResources() {
         transferableImage = new TransferableImage();
 
         selectIcon = new ImageIcon(EditMenu.class.getResource("../images/select.gif"));
@@ -132,22 +139,22 @@ public class EditMenu extends JMenu {
         pasteIcon = new ImageIcon(EditMenu.class.getResource("../images/paste.gif"));
         cropIcon = new ImageIcon(EditMenu.class.getResource("../images/crop.gif"));
 
-        executors.put(1, internalFrame -> {
+        executors.put(HZ_MIRROR, internalFrame -> {
             mirror(internalFrame, ImageProcessor::horizontalMirror);
         });
-        executors.put(2, internalFrame -> {
+        executors.put(VT_MIRROR, internalFrame -> {
             mirror(internalFrame, ImageProcessor::verticalMirror);
         });
-        executors.put(3, internalFrame -> {
+        executors.put(CLK_ROTATE, internalFrame -> {
             clockwise(internalFrame, ImageProcessor::clockwise);
         });
-        executors.put(4, internalFrame -> {
+        executors.put(CT_CLK_ROTATE, internalFrame -> {
             clockwise(internalFrame, ImageProcessor::counterClockwise);
         });
-        executors.put(5, internalFrame -> {
+        executors.put(SCALE_RESIZE, internalFrame -> {
             resizeImage(ResizeDialog.getScalePercentage());
         });
-        executors.put(6, internalFrame -> {
+        executors.put(WH_RESIZE, internalFrame -> {
             resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
         });
     }
@@ -813,7 +820,7 @@ public class EditMenu extends JMenu {
 
         if (option == JOptionPane.OK_OPTION) {
             int selected = batchComboBox.getSelectedIndex();
-            if (selected == 0) {
+            if (selected == RESIZE) {
                 batchResize();
             } else {
                 mainFrame.forEachInternalFrame(executors.get(selected));
@@ -822,11 +829,10 @@ public class EditMenu extends JMenu {
     }
 
     private void batchResize() {
-        int option;
         Image image = getCanvasOfSelectedFrame().getImage();
-        option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
-            mainFrame.forEachInternalFrame(executors.get(ResizeDialog.isPercentage() ? 5 : 6));
+            mainFrame.forEachInternalFrame(executors.get(ResizeDialog.isPercentage() ? SCALE_RESIZE : WH_RESIZE));
         }
     }
 
