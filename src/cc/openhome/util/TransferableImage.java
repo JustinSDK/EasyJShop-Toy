@@ -1,4 +1,4 @@
-package cc.openhome.img;
+package cc.openhome.util;
 
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;

@@ -1,7 +1,7 @@
 package cc.openhome.frame;
 
 import cc.openhome.dialog.FontDialog;
-import cc.openhome.img.ImageProcessor;
+import cc.openhome.util.ImageProcessor;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -420,7 +420,7 @@ public class CanvasComponent extends JComponent {
                 mainFrame.getMementoManager(this).addImage(ImageProcessor.copyImage(getImage()));
                 mergePastedImage();
                 mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().checkEditMenuItemBtn();
+                mainFrame.getEditMenu().updateEditMenuItemBtn();
                 break;
             case JOptionPane.CANCEL_OPTION:
                 setPastedImage(null);
@@ -446,7 +446,7 @@ public class CanvasComponent extends JComponent {
                     repaint();
                 }
                 mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().checkEditMenuItemBtn();
+                mainFrame.getEditMenu().updateEditMenuItemBtn();
             case JOptionPane.CANCEL_OPTION:
                 setText(null, null);
                 setStart(null);

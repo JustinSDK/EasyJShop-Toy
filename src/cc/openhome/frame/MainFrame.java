@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.*;
 
-import cc.openhome.img.ImageMementoManager;
+import cc.openhome.util.ImageMementoManager;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
@@ -44,25 +44,20 @@ public class MainFrame extends JFrame {
 
     private void setUpUIComponent() {
         setIconImage(icon.getImage());
-
         setSize(640, 480);
-
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-        JMenuBar bar = new JMenuBar();
-
-        bar.add(imageMenu);
-        bar.add(editMenu);
-        getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
-        bar.add(new AboutMenu());
-
-        setJMenuBar(bar);
 
         desktopPane = new JDesktopPane();
         getContentPane().add(desktopPane);
         
-        imageMenu.checkSavingMenuItems();
-        editMenu.checkEditMenuItemBtn();
+        JMenuBar bar = new JMenuBar();
+        bar.add(imageMenu);
+        bar.add(editMenu);
+        getContentPane().add(editMenu.getToolBar(), BorderLayout.NORTH);
+        bar.add(new AboutMenu());
+        setJMenuBar(bar);
+        
+        updateMenuStatus();
     }
 
     private void setUpEventListener() {
@@ -108,12 +103,12 @@ public class MainFrame extends JFrame {
     }
     
     public void updateMenuStatus() {
-        getImageMenu().checkSavingMenuItems();
-        getEditMenu().checkEditMenuItemBtn();
+        getImageMenu().updateSavingMenuItems();
+        getEditMenu().updateEditMenuItemBtn();
     }
     
     public void updateEditMenuStatus() {
-        getEditMenu().checkEditMenuItemBtn();
+        getEditMenu().updateEditMenuItemBtn();
     }
     
     public boolean noInternalFrame() {

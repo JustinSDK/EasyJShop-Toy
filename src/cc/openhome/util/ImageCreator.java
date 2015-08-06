@@ -1,4 +1,4 @@
-package cc.openhome.img;
+package cc.openhome.util;
 
 import java.awt.AWTException;
 import java.awt.Rectangle;

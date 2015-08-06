@@ -1,8 +1,8 @@
 package cc.openhome.frame;
 
-import cc.openhome.img.ClipboardHelper;
-import cc.openhome.img.ImageMementoManager;
-import cc.openhome.img.ImageProcessor;
+import cc.openhome.util.ClipboardHelper;
+import cc.openhome.util.ImageMementoManager;
+import cc.openhome.util.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;
 import java.awt.Graphics;

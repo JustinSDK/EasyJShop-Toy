@@ -22,7 +22,7 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import cc.openhome.img.ImageCreator;
+import cc.openhome.util.ImageCreator;
 import cc.openhome.frame.ColorDemoBox;
 import javax.swing.JMenu;
 
@@ -166,7 +166,7 @@ public class ImageMenu extends JMenu {
         saveAllMenuItem.setEnabled(flag);
     }
 
-    public void checkSavingMenuItems() {
+    public void updateSavingMenuItems() {
         if (mainFrame.noInternalFrame() || mainFrame.noSelectedFrame()) {
             setSavingMenuItemsEnabled(false);
         } else {

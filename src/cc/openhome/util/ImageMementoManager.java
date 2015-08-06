@@ -1,4 +1,4 @@
-package cc.openhome.img;
+package cc.openhome.util;
 
 import java.util.ArrayList;
 import java.awt.Image;

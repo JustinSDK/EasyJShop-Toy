@@ -30,14 +30,14 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 
 import cc.openhome.dialog.ResizeDialog;
-import cc.openhome.img.ClipboardHelper;
-import cc.openhome.img.ImageProcessor;
-import cc.openhome.img.TransferableImage;
+import cc.openhome.util.ClipboardHelper;
+import cc.openhome.util.ImageProcessor;
+import cc.openhome.util.TransferableImage;
 import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
 import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.frame.InternalFrameExecutor;
-import cc.openhome.img.ImageMementoManager;
+import cc.openhome.util.ImageMementoManager;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JDesktopPane;
@@ -97,7 +97,7 @@ public class EditMenu extends JMenu {
                     pasteBtn.setEnabled(false);
                 } else {
                     pasteToNewMenuItem.setEnabled(true);
-                    if (getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
+                    if (!mainFrame.noSelectedFrame()) {
                         setPasteEnabled(true);
                     }
                 }
@@ -303,7 +303,7 @@ public class EditMenu extends JMenu {
                 getSelectedFrame().open();
             }
 
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         redoMenuItem.addActionListener(e -> {
@@ -316,20 +316,20 @@ public class EditMenu extends JMenu {
                 getSelectedFrame().open();
             }
 
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         cutMenuItem.addActionListener(e -> {
             copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         copyMenuItem.addActionListener(e -> {
             copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         pasteMenuItem.addActionListener(e -> {
@@ -342,37 +342,37 @@ public class EditMenu extends JMenu {
 
         cropMenuItem.addActionListener(e -> {
             getSelectedFrame().crop();
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         resizeMenuItem.addActionListener(e -> {
             resize();
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         horizontalMirrorMenuItem.addActionListener(e -> {
             getSelectedFrame().mirror(ImageProcessor::horizontalMirror);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         verticalMirrorMenuItem.addActionListener(e -> {
             getSelectedFrame().mirror(ImageProcessor::verticalMirror);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         clockwiseMenuItem.addActionListener(e -> {
             getSelectedFrame().clockwise(ImageProcessor::clockwise);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         counterClockwiseMenuItem.addActionListener(e -> {
             getSelectedFrame().clockwise(ImageProcessor::counterClockwise);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         batchMenuItem.addActionListener(e -> {
             batch();
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         // tool bar
@@ -432,13 +432,13 @@ public class EditMenu extends JMenu {
             copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         copyBtn.addActionListener(e -> {
             copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
         pasteBtn.addActionListener(e -> {
@@ -447,7 +447,7 @@ public class EditMenu extends JMenu {
 
         cropBtn.addActionListener(e -> {
             getSelectedFrame().crop();
-            checkEditMenuItemBtn();
+            updateEditMenuItemBtn();
         });
 
     }
@@ -464,7 +464,7 @@ public class EditMenu extends JMenu {
         return viewCursor;
     }
 
-    public void checkEditMenuItemBtn() {
+    public void updateEditMenuItemBtn() {
         if (mainFrame.noSelectedFrame()) {
             undoMenuItem.setEnabled(false);
             redoMenuItem.setEnabled(false);
