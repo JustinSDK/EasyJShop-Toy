@@ -367,7 +367,7 @@ public class EditMenu extends JMenu {
         });
 
         pasteMenuItem.addActionListener(e -> {
-            paste();
+            getSelectedFrame().paste();
         });
 
         pasteToNewMenuItem.addActionListener(e -> {
@@ -476,7 +476,7 @@ public class EditMenu extends JMenu {
         });
 
         pasteBtn.addActionListener(e -> {
-            paste();
+            getSelectedFrame().paste();
         });
 
         cropBtn.addActionListener(e -> {
@@ -581,23 +581,7 @@ public class EditMenu extends JMenu {
     }
 
     private void pasteToNew() {
-        // new a internalFrame for the copied image
         mainFrame.createInternalFrame("*untitled", ClipboardHelper.getImageFromClipboard());
-    }
-
-    private void paste() {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-
-        if (canvas == null) {
-            return;
-        }
-
-        Image image = ClipboardHelper.getImageFromClipboard();
-
-        if (image != null) {
-            canvas.setEditMode(CanvasComponent.PasteMode);
-            canvas.setPastedImage(image);
-        }
     }
 
     public int mergeImage(CanvasComponent canvas) {

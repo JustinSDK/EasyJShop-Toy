@@ -294,4 +294,10 @@ public class ImageInternalFrame extends JInternalFrame {
     private void setUpUndo(Image image) {
         mainFrame.getMementoManager(canvas).addImage(image);
     }
+
+    public void paste() {
+        canvas.setEditMode(CanvasComponent.PasteMode);
+        canvas.setPastedImage(ClipboardHelper.getImageFromClipboard());
+
+    }
 }
