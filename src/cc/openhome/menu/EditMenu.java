@@ -148,10 +148,10 @@ public class EditMenu extends JMenu {
             internalFrame.clockwise(ImageProcessor::counterClockwise);
         });
         executors.put(SCALE_RESIZE, internalFrame -> {
-            resizeImage(ResizeDialog.getScalePercentage());
+            internalFrame.resizeImage(ResizeDialog.getScalePercentage());
         });
         executors.put(WH_RESIZE, internalFrame -> {
-            resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
+            internalFrame.resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
         });
     }
 
@@ -726,55 +726,19 @@ public class EditMenu extends JMenu {
         int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
 
         if (option == JOptionPane.OK_OPTION) {
-            try {
+            try { 
                 if (ResizeDialog.isPercentage()) {
                     int scale = ResizeDialog.getScalePercentage();
-                    resizeImage(scale);
+                    getSelectedFrame().resizeImage(scale);
                 } else if (ResizeDialog.isCustomWidthHeight()) {
                     int width = ResizeDialog.getPixelWidth();
                     int height = ResizeDialog.getPixelHeight();
-                    resizeImage(width, height);
+                    getSelectedFrame().resizeImage(width, height);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private Image preResize() {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-        canvas.resetRect();
-
-        // set up undo
-        getMementoManager(canvas).addImage(canvas.getImage());
-
-        return canvas.getImage();
-    }
-
-    private void resizeImage(int scale) {
-        Image image = preResize();
-
-        image = ImageProcessor.resize(image, scale * 0.01);
-
-        postResize(image);
-    }
-
-    private void resizeImage(int width, int height) {
-        Image image = preResize();
-
-        image = ImageProcessor.resize(image, width, height);
-
-        postResize(image);
-    }
-
-    private void postResize(Image image) {
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
-
-        canvas.setImage(image);
-
-        getSelectedFrame().open();
-
-        getSelectedFrame().setModifiedTitle();
     }
 
     private void batch() {

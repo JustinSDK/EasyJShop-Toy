@@ -8,9 +8,6 @@ import java.util.Map;
 import javax.swing.*;
 
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.frame.CanvasComponent;
-import cc.openhome.frame.InternalFrameExecutor;
-import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
@@ -82,13 +79,6 @@ public class MainFrame extends JFrame {
     public JDesktopPane getDesktopPane() {
         return desktopPane;
     }
-
-//    public void setStarBeforeTitle() {
-//        String title = desktopPane.getSelectedFrame().getTitle();
-//        if (!title.startsWith("*")) {
-//            desktopPane.getSelectedFrame().setTitle("*" + title);
-//        }
-//    }
 
     public ImageMementoManager getMementoManager(CanvasComponent canvas) {
         return (ImageMementoManager) mementoManagers.get(canvas);

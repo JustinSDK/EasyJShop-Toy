@@ -1,7 +1,7 @@
 package cc.openhome.frame;
 
 import cc.openhome.img.ImageMementoManager;
-import cc.openhome.menu.EditMenu;
+import cc.openhome.img.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -61,7 +61,7 @@ public class ImageInternalFrame extends JInternalFrame {
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
                 mainFrame.updateMenuStatus();
-                mainFrame.getEditMenu().setEditInfo(getCanvas());
+                mainFrame.getEditMenu().setEditInfo(canvas);
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -115,7 +115,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void close() {
-        mainFrame.getMementoManagers().remove(getCanvas());
+        mainFrame.getMementoManagers().remove(canvas);
         setVisible(false);
         dispose();
     }
@@ -171,7 +171,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     private BufferedImage createImage() {
-        Image image = getCanvas().getImage();
+        Image image = canvas.getImage();
         BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
                 image.getHeight(null), BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
@@ -223,5 +223,28 @@ public class ImageInternalFrame extends JInternalFrame {
         Image image = executor.execute(canvas.getImage());
         canvas.setImage(image);
         setModifiedTitle();
+    }    
+    
+    public void resizeImage(int scale) {
+        preResize();
+        Image image = ImageProcessor.resize(canvas.getImage(), scale * 0.01);
+        postResize(image);
+    }
+
+    public void resizeImage(int width, int height) {
+        preResize();
+        Image image = ImageProcessor.resize(canvas.getImage(), width, height);
+        postResize(image);
+    }
+    
+    private void preResize() {
+        canvas.resetRect();
+        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+    }
+
+    private void postResize(Image image) {
+        canvas.setImage(image);
+        setModifiedTitle();
+        open();
     }    
 }
