@@ -70,7 +70,7 @@ public class CanvasComponent extends JComponent {
 
             public void mousePressed(MouseEvent e) {
                 if (getEditMode() == CanvasComponent.PasteMode) {
-                    if (mainFrame.getEditMenu().mergeImage(CanvasComponent.this) != JOptionPane.NO_OPTION) {
+                    if (mergeImage() != JOptionPane.NO_OPTION) {
                         mainFrame.getEditMenu().setEditInfo(CanvasComponent.this);
                     }
                     return;
@@ -409,4 +409,25 @@ public class CanvasComponent extends JComponent {
         else
             this.scale = scale;
     }
+    
+    public int mergeImage() {
+        int option = JOptionPane.showOptionDialog(null,
+                "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+
+        switch (option) {
+            case JOptionPane.YES_OPTION:
+                mainFrame.getMementoManager(this).addImage(ImageProcessor.copyImage(getImage()));
+                mergePastedImage();
+                mainFrame.getSelectedFrame().setModifiedTitle();
+                mainFrame.getEditMenu().checkEditMenuItem();
+                break;
+            case JOptionPane.CANCEL_OPTION:
+                setPastedImage(null);
+                setStart(null);
+                break;
+        }
+
+        return option;
+    }    
 }
