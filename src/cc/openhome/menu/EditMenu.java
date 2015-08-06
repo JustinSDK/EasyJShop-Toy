@@ -354,14 +354,14 @@ public class EditMenu extends JMenu {
         });
 
         cutMenuItem.addActionListener(e -> {
-            copyToClipBoard();
+            copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
 
         copyMenuItem.addActionListener(e -> {
-            copyToClipBoard();
+            copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
@@ -463,14 +463,14 @@ public class EditMenu extends JMenu {
         });
 
         cutBtn.addActionListener(e -> {
-            copyToClipBoard();
+            copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
 
         copyBtn.addActionListener(e -> {
-            copyToClipBoard();
+            copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
             checkEditMenuItem();
         });
@@ -574,26 +574,15 @@ public class EditMenu extends JMenu {
         }
     }
 
-    private void copyToClipBoard() {
-        if (getSelectedFrame().isAreaSelected()) {
-            Image image = getSelectedFrame().copySelectedImage();
-            transferableImage.setImage(image);
-            ClipboardHelper.imageToClipboard(transferableImage);
-        } else {
-            JOptionPane.showMessageDialog(null, "No area selected.",
-                    "Info.", JOptionPane.INFORMATION_MESSAGE);
-        }
+    private void copyToClipboard() {
+        Image image = getSelectedFrame().copySelectedImage();
+        transferableImage.setImage(image);
+        ClipboardHelper.imageToClipboard(transferableImage);
     }
-    
+
     private void pasteToNew() {
-        Image image = ClipboardHelper.getImageFromClipboard();
-
-        if (image == null) {
-            return;
-        }
-
         // new a internalFrame for the copied image
-        mainFrame.createInternalFrame("*untitled", image);
+        mainFrame.createInternalFrame("*untitled", ClipboardHelper.getImageFromClipboard());
     }
 
     private void paste() {

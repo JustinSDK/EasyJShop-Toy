@@ -1,5 +1,6 @@
 package cc.openhome.frame;
 
+import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.img.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
@@ -23,6 +24,7 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
+
     private JFileChooser saveFileChooser;
 
     private MainFrame mainFrame;
@@ -36,7 +38,7 @@ public class ImageInternalFrame extends JInternalFrame {
         super(title, true, true, true, true);
 
         this.mainFrame = mainFrame;
-        
+
         initComponents(mainFrame, image);
         initEventListeners();
     }
@@ -199,33 +201,33 @@ public class ImageInternalFrame extends JInternalFrame {
             throw new RuntimeException(e);
         }
     }
-    
+
     public void setModifiedTitle() {
         String title = getTitle();
         if (!title.startsWith("*")) {
             setTitle("*" + title);
         }
-    }    
-    
+    }
+
     public void clockwise(ImageExecutor executor) {
         canvas.resetRect();
         process(executor);
         open();
-    } 
-    
+    }
+
     public void mirror(ImageExecutor executor) {
         process(executor);
-        canvas.repaint();        
-    } 
-    
+        canvas.repaint();
+    }
+
     private void process(ImageExecutor executor) {
         // set up undo
         setUpUndo(canvas.getImage());
         Image image = executor.execute(canvas.getImage());
         canvas.setImage(image);
         setModifiedTitle();
-    }    
-    
+    }
+
     public void resizeImage(int scale) {
         preResize();
         Image image = ImageProcessor.resize(canvas.getImage(), scale * 0.01);
@@ -237,7 +239,7 @@ public class ImageInternalFrame extends JInternalFrame {
         Image image = ImageProcessor.resize(canvas.getImage(), width, height);
         postResize(image);
     }
-    
+
     private void preResize() {
         canvas.resetRect();
         setUpUndo(canvas.getImage());
@@ -247,41 +249,36 @@ public class ImageInternalFrame extends JInternalFrame {
         canvas.setImage(image);
         setModifiedTitle();
         open();
-    }    
-    
+    }
+
     public int getImageWidth() {
         return canvas.getImage().getWidth(null);
     }
-    
+
     public int getImageHeight() {
         return canvas.getImage().getHeight(null);
     }
-    
+
     public boolean isAreaSelected() {
         Rectangle2D rect = canvas.getSelectedRect();
         return rect.getWidth() > 0 && rect.getWidth() > 0;
     }
-    
+
     public Image copySelectedImage() {
         return ImageProcessor.copyRectImage(canvas.getImage(), canvas.getSelectedRect());
-    }    
-    
+    }
+
     public void crop() {
-        if (isAreaSelected()) {
-            Image image = copySelectedImage();
-            setUpUndo(canvas.getImage());
-            // use current internalFrame for the corped image
-            canvas.setImage(image);
-            // let the dashed rect disappear
-            canvas.resetRect();
-            setModifiedTitle();
-            open();
-        } else {
-            JOptionPane.showMessageDialog(null, "No area selected.",
-                    "Info.", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }    
-    
+        Image image = copySelectedImage();
+        setUpUndo(canvas.getImage());
+        // use current internalFrame for the corped image
+        canvas.setImage(image);
+        // let the dashed rect disappear
+        canvas.resetRect();
+        setModifiedTitle();
+        open();
+    }
+
     public void cut() {
         Image image = ImageProcessor.copyImage(canvas.getImage());
         setUpUndo(image);
@@ -292,10 +289,9 @@ public class ImageInternalFrame extends JInternalFrame {
                 (int) rect.getWidth(), (int) rect.getHeight());
         repaint();
         setModifiedTitle();
-    }    
+    }
 
     private void setUpUndo(Image image) {
-        // set up undo
         mainFrame.getMementoManager(canvas).addImage(image);
     }
 }
