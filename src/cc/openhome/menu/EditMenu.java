@@ -584,29 +584,6 @@ public class EditMenu extends JMenu {
         mainFrame.createInternalFrame("*untitled", ClipboardHelper.getImageFromClipboard());
     }
 
-    public int mergeText(CanvasComponent canvas) {
-        int option = JOptionPane.showOptionDialog(null,
-                "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
-
-        switch (option) {
-            case JOptionPane.YES_OPTION:
-                getMementoManager(canvas).addImage(ImageProcessor.copyImage(canvas.getImage()));
-                canvas.mergeText();
-                getSelectedFrame().setModifiedTitle();
-                checkEditMenuItem();
-            //break;
-            case JOptionPane.CANCEL_OPTION:
-                canvas.setText(null, null);
-                canvas.setStart(null);
-                break;
-            case JOptionPane.NO_OPTION:
-                break;
-        }
-
-        return option;
-    }
-
     public void inputText(CanvasComponent canvas) {
         int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
 
