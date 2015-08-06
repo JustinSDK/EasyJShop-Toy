@@ -83,12 +83,12 @@ public class MainFrame extends JFrame {
         return desktopPane;
     }
 
-    public void setStarBeforeTitle() {
-        String title = desktopPane.getSelectedFrame().getTitle();
-        if (!title.startsWith("*")) {
-            desktopPane.getSelectedFrame().setTitle("*" + title);
-        }
-    }
+//    public void setStarBeforeTitle() {
+//        String title = desktopPane.getSelectedFrame().getTitle();
+//        if (!title.startsWith("*")) {
+//            desktopPane.getSelectedFrame().setTitle("*" + title);
+//        }
+//    }
 
     public ImageMementoManager getMementoManager(CanvasComponent canvas) {
         return (ImageMementoManager) mementoManagers.get(canvas);

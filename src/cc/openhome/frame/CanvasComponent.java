@@ -87,7 +87,7 @@ public class CanvasComponent extends JComponent {
                         resetRect();
                         setStart(e.getPoint());
                         repaint();
-                        mainFrame.setStarBeforeTitle();
+                        mainFrame.getSelectedFrame().setModifiedTitle();
                         break;
                     case 3: // TextMode
                         if (getText() != null) {

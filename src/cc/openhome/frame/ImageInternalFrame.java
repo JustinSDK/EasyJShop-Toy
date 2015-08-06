@@ -197,4 +197,11 @@ public class ImageInternalFrame extends JInternalFrame {
             throw new RuntimeException(e);
         }
     }
+    
+    public void setModifiedTitle() {
+        String title = getTitle();
+        if (!title.startsWith("*")) {
+            setTitle("*" + title);
+        }
+    }    
 }

@@ -617,7 +617,7 @@ public class EditMenu extends JMenu {
             g.fillRect((int) rect.getX(), (int) rect.getY(),
                     (int) rect.getWidth(), (int) rect.getHeight());
             getCanvasOfSelectedFrame().repaint();
-            setStarBeforeTitle();
+            getSelectedFrame().setModifiedTitle();
         }
     }
 
@@ -652,7 +652,7 @@ public class EditMenu extends JMenu {
 
         getSelectedFrame().open();
 
-        setStarBeforeTitle();
+        getSelectedFrame().setModifiedTitle();
     }
 
     private void paste() {
@@ -679,7 +679,7 @@ public class EditMenu extends JMenu {
             case JOptionPane.YES_OPTION:
                 getMementoManager(canvas).addImage(ImageProcessor.copyImage(canvas.getImage()));
                 canvas.mergePastedImage();
-                setStarBeforeTitle();
+                getSelectedFrame().setModifiedTitle();
                 checkEditMenuItem();
                 break;
             case JOptionPane.NO_OPTION:
@@ -702,7 +702,7 @@ public class EditMenu extends JMenu {
             case JOptionPane.YES_OPTION:
                 getMementoManager(canvas).addImage(ImageProcessor.copyImage(canvas.getImage()));
                 canvas.mergeText();
-                setStarBeforeTitle();
+                getSelectedFrame().setModifiedTitle();
                 checkEditMenuItem();
             //break;
             case JOptionPane.CANCEL_OPTION:
@@ -778,7 +778,7 @@ public class EditMenu extends JMenu {
 
         getSelectedFrame().open();
 
-        setStarBeforeTitle();
+        getSelectedFrame().setModifiedTitle();
     }
 
     private void mirror(ImageInternalFrame internalFrame, ImageExecutor executor) {
@@ -793,7 +793,7 @@ public class EditMenu extends JMenu {
         canvas.setImage(image);
         canvas.repaint();
 
-        setStarBeforeTitle();
+        internalFrame.setModifiedTitle();
     }
 
     private void clockwise(ImageInternalFrame internalFrame, ImageExecutor executor) {
@@ -809,8 +809,7 @@ public class EditMenu extends JMenu {
         canvas.setImage(image);
 
         internalFrame.open();
-
-        setStarBeforeTitle();
+        internalFrame.setModifiedTitle();
     }
 
     private void batch() {
@@ -853,10 +852,6 @@ public class EditMenu extends JMenu {
 
     protected JDesktopPane getDesktopPane() {
         return mainFrame.getDesktopPane();
-    }
-
-    protected void setStarBeforeTitle() {
-        mainFrame.setStarBeforeTitle();
     }
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
