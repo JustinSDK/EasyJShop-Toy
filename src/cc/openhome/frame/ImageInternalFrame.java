@@ -1,6 +1,7 @@
 package cc.openhome.frame;
 
 import cc.openhome.img.ImageMementoManager;
+import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Component;
 import java.awt.Graphics;
@@ -203,5 +204,18 @@ public class ImageInternalFrame extends JInternalFrame {
         if (!title.startsWith("*")) {
             setTitle("*" + title);
         }
+    }    
+    
+    public void clockwise(ImageExecutor executor) {
+        canvas.resetRect();
+
+        // set up undo
+        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
+
+        Image image = executor.execute(canvas.getImage());
+        canvas.setImage(image);
+
+        setModifiedTitle();
+        open();
     }    
 }

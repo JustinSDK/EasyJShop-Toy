@@ -39,6 +39,7 @@ import cc.openhome.img.ImageProcessor;
 import cc.openhome.img.TransferableImage;
 import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
+import cc.openhome.frame.ImageExecutor;
 import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.frame.InternalFrameExecutor;
 import cc.openhome.img.ImageMementoManager;
@@ -85,11 +86,6 @@ public class EditMenu extends JMenu {
     private MainFrame mainFrame;
 
     private Map<Integer, InternalFrameExecutor> executors = new HashMap<>();
-
-    private interface ImageExecutor {
-
-        Image execute(Image image);
-    }
 
     public EditMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -146,10 +142,10 @@ public class EditMenu extends JMenu {
             mirror(internalFrame, ImageProcessor::verticalMirror);
         });
         executors.put(CLK_ROTATE, internalFrame -> {
-            clockwise(internalFrame, ImageProcessor::clockwise);
+            internalFrame.clockwise(ImageProcessor::clockwise);
         });
         executors.put(CT_CLK_ROTATE, internalFrame -> {
-            clockwise(internalFrame, ImageProcessor::counterClockwise);
+            internalFrame.clockwise(ImageProcessor::counterClockwise);
         });
         executors.put(SCALE_RESIZE, internalFrame -> {
             resizeImage(ResizeDialog.getScalePercentage());
@@ -401,12 +397,12 @@ public class EditMenu extends JMenu {
         });
 
         clockwiseMenuItem.addActionListener(e -> {
-            clockwise(getSelectedFrame(), ImageProcessor::clockwise);
+            getSelectedFrame().clockwise(ImageProcessor::clockwise);
             checkEditMenuItem();
         });
 
         counterClockwiseMenuItem.addActionListener(e -> {
-            clockwise(getSelectedFrame(), ImageProcessor::counterClockwise);
+            getSelectedFrame().clockwise(ImageProcessor::counterClockwise);
             checkEditMenuItem();
         });
 
@@ -793,22 +789,6 @@ public class EditMenu extends JMenu {
         canvas.setImage(image);
         canvas.repaint();
 
-        internalFrame.setModifiedTitle();
-    }
-
-    private void clockwise(ImageInternalFrame internalFrame, ImageExecutor executor) {
-        CanvasComponent canvas = internalFrame.getCanvas();
-        canvas.resetRect();
-
-        // set up undo
-        mainFrame.getMementoManager(canvas).addImage(canvas.getImage());
-
-        Image image = canvas.getImage();
-        image = executor.execute(image);
-
-        canvas.setImage(image);
-
-        internalFrame.open();
         internalFrame.setModifiedTitle();
     }
 
