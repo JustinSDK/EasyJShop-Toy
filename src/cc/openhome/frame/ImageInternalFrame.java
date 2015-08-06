@@ -1,5 +1,6 @@
 package cc.openhome.frame;
 
+import cc.openhome.dialog.FontDialog;
 import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.img.ImageProcessor;
@@ -298,6 +299,5 @@ public class ImageInternalFrame extends JInternalFrame {
     public void paste() {
         canvas.setEditMode(CanvasComponent.PasteMode);
         canvas.setPastedImage(ClipboardHelper.getImageFromClipboard());
-
     }
 }

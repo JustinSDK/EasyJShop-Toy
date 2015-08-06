@@ -584,14 +584,6 @@ public class EditMenu extends JMenu {
         mainFrame.createInternalFrame("*untitled", ClipboardHelper.getImageFromClipboard());
     }
 
-    public void inputText(CanvasComponent canvas) {
-        int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
-
-        if (option == JOptionPane.OK_OPTION) {
-            canvas.setText(FontDialog.getInputText(), FontDialog.getFont());
-        }
-    }
-
     private void resize() {
         int option = ResizeDialog.showDialog(null, "Resize Information",
                 getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);

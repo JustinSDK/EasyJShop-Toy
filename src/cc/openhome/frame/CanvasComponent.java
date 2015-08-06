@@ -1,5 +1,6 @@
 package cc.openhome.frame;
 
+import cc.openhome.dialog.FontDialog;
 import cc.openhome.img.ImageProcessor;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -94,7 +95,7 @@ public class CanvasComponent extends JComponent {
                         if (getText() != null) {
                             mergeText();
                         } else {
-                            mainFrame.getEditMenu().inputText(CanvasComponent.this);
+                            inputText();
                         }
                         break;
                     case 4: // ViewMode
@@ -228,17 +229,6 @@ public class CanvasComponent extends JComponent {
             repaint();
         }
     }
-//    
-//    public void mergeText() {
-//        if(text != null) {
-//            Graphics g = image.getGraphics();
-//            g.setFont(textFont);
-//            g.setColor(getForeground());
-//            g.drawString(text, (int)(start.getX()/scale), (int)(start.getY()/scale));
-//            repaint();
-//        }
-//    }
-//    
 
     private void pasteImage(Graphics g) {
         Graphics fakeGraphics = fakeImage.getGraphics();
@@ -464,4 +454,11 @@ public class CanvasComponent extends JComponent {
         }
         return option;
     }
+    
+    private void inputText() {
+        int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
+        if (option == JOptionPane.OK_OPTION) {
+            setText(FontDialog.getInputText(), FontDialog.getFont());
+        } 
+    }    
 }
