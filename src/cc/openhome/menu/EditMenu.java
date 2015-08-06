@@ -48,6 +48,7 @@ import java.util.Map;
 import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
+
     private static final int RESIZE = 0;
     private static final int HZ_MIRROR = 1;
     private static final int VT_MIRROR = 2;
@@ -55,7 +56,7 @@ public class EditMenu extends JMenu {
     private static final int CT_CLK_ROTATE = 4;
     private static final int SCALE_RESIZE = 5;
     private static final int WH_RESIZE = 6;
-    
+
     private TransferableImage transferableImage;
 
     private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
@@ -721,22 +722,14 @@ public class EditMenu extends JMenu {
     }
 
     private void resize() {
-        Image image = getCanvasOfSelectedFrame().getImage();
-
-        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+        int option = ResizeDialog.showDialog(null, "Resize Information", 
+                getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
 
         if (option == JOptionPane.OK_OPTION) {
-            try { 
-                if (ResizeDialog.isPercentage()) {
-                    int scale = ResizeDialog.getScalePercentage();
-                    getSelectedFrame().resizeImage(scale);
-                } else if (ResizeDialog.isCustomWidthHeight()) {
-                    int width = ResizeDialog.getPixelWidth();
-                    int height = ResizeDialog.getPixelHeight();
-                    getSelectedFrame().resizeImage(width, height);
-                }
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            if (ResizeDialog.isPercentage()) {
+                getSelectedFrame().resizeImage(ResizeDialog.getScalePercentage());
+            } else {
+                getSelectedFrame().resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
             }
         }
     }
@@ -754,11 +747,12 @@ public class EditMenu extends JMenu {
                 mainFrame.forEachInternalFrame(executors.get(selected));
             }
         }
+        
     }
 
     private void batchResize() {
-        Image image = getCanvasOfSelectedFrame().getImage();
-        int option = ResizeDialog.showDialog(null, "Resize Information", image.getWidth(null), image.getHeight(null), mainFrame.smallLogo);
+        int option = ResizeDialog.showDialog(null, "Resize Information", 
+                getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             mainFrame.forEachInternalFrame(executors.get(ResizeDialog.isPercentage() ? SCALE_RESIZE : WH_RESIZE));
         }

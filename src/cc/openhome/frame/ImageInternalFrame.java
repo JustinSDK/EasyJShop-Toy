@@ -247,4 +247,12 @@ public class ImageInternalFrame extends JInternalFrame {
         setModifiedTitle();
         open();
     }    
+    
+    public int getImageWidth() {
+        return canvas.getImage().getWidth(null);
+    }
+    
+    public int getImageHeight() {
+        return canvas.getImage().getHeight(null);
+    }
 }
