@@ -60,6 +60,9 @@ public class MainFrame extends JFrame {
 
         desktopPane = new JDesktopPane();
         getContentPane().add(desktopPane);
+        
+        imageMenu.checkSavingMenuItems();
+        editMenu.checkEditMenuItemBtn();
     }
 
     private void setUpEventListener() {
@@ -106,11 +109,11 @@ public class MainFrame extends JFrame {
     
     public void updateMenuStatus() {
         getImageMenu().checkSavingMenuItems();
-        getEditMenu().checkEditMenuItem();
+        getEditMenu().checkEditMenuItemBtn();
     }
     
     public void updateEditMenuStatus() {
-        getEditMenu().checkEditMenuItem();
+        getEditMenu().checkEditMenuItemBtn();
     }
     
     public boolean noInternalFrame() {

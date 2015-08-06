@@ -106,8 +106,7 @@ public class EditMenu extends JMenu {
                             pasteToNewMenuItem.setEnabled(true);
 
                             if (getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
-                                pasteMenuItem.setEnabled(true);
-                                pasteBtn.setEnabled(true);
+                                setPasteEnabled(true);
                             }
                         }
 
@@ -207,19 +206,6 @@ public class EditMenu extends JMenu {
             "Rotate clockwise", "Rotate counter-clockwise"};
         batchComboBox = new JComboBox(items);
 
-        undoMenuItem.setEnabled(false);
-        redoMenuItem.setEnabled(false);
-        cutMenuItem.setEnabled(false);
-        copyMenuItem.setEnabled(false);
-        pasteMenuItem.setEnabled(false);
-        cropMenuItem.setEnabled(false);
-        resizeMenuItem.setEnabled(false);
-        horizontalMirrorMenuItem.setEnabled(false);
-        verticalMirrorMenuItem.setEnabled(false);
-        clockwiseMenuItem.setEnabled(false);
-        counterClockwiseMenuItem.setEnabled(false);
-        batchMenuItem.setEnabled(false);
-
         // set up toolbar
         toolBar = new JToolBar("Edit toolbar");
         toolBar.setLayout(new FlowLayout(FlowLayout.LEFT));
@@ -289,11 +275,6 @@ public class EditMenu extends JMenu {
         toolBar.addSeparator();
 
         toolBar.add(cropBtn);
-
-        cutBtn.setEnabled(false);
-        copyBtn.setEnabled(false);
-        pasteBtn.setEnabled(false);
-        cropBtn.setEnabled(false);
     }
 
     private void setupEventListener() {
@@ -333,7 +314,7 @@ public class EditMenu extends JMenu {
                 getSelectedFrame().open();
             }
 
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         redoMenuItem.addActionListener(e -> {
@@ -350,20 +331,20 @@ public class EditMenu extends JMenu {
                 getSelectedFrame().open();
             }
 
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         cutMenuItem.addActionListener(e -> {
             copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         copyMenuItem.addActionListener(e -> {
             copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         pasteMenuItem.addActionListener(e -> {
@@ -376,37 +357,37 @@ public class EditMenu extends JMenu {
 
         cropMenuItem.addActionListener(e -> {
             getSelectedFrame().crop();
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         resizeMenuItem.addActionListener(e -> {
             resize();
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         horizontalMirrorMenuItem.addActionListener(e -> {
             getSelectedFrame().mirror(ImageProcessor::horizontalMirror);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         verticalMirrorMenuItem.addActionListener(e -> {
             getSelectedFrame().mirror(ImageProcessor::verticalMirror);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         clockwiseMenuItem.addActionListener(e -> {
             getSelectedFrame().clockwise(ImageProcessor::clockwise);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         counterClockwiseMenuItem.addActionListener(e -> {
             getSelectedFrame().clockwise(ImageProcessor::counterClockwise);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         batchMenuItem.addActionListener(e -> {
             batch();
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         // tool bar
@@ -466,13 +447,13 @@ public class EditMenu extends JMenu {
             copyToClipboard();
             getSelectedFrame().cut();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         copyBtn.addActionListener(e -> {
             copyToClipboard();
             pasteToNewMenuItem.setEnabled(true);
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
         pasteBtn.addActionListener(e -> {
@@ -481,7 +462,7 @@ public class EditMenu extends JMenu {
 
         cropBtn.addActionListener(e -> {
             getSelectedFrame().crop();
-            checkEditMenuItem();
+            checkEditMenuItemBtn();
         });
 
     }
@@ -498,80 +479,45 @@ public class EditMenu extends JMenu {
         return viewCursor;
     }
 
-    public void checkEditMenuItem() {
-        // check all
-        if (getDesktopPane().getSelectedFrame() == null) {
+    public void checkEditMenuItemBtn() {
+        if (mainFrame.noSelectedFrame()) {
             undoMenuItem.setEnabled(false);
             redoMenuItem.setEnabled(false);
-            cutMenuItem.setEnabled(false);
-            copyMenuItem.setEnabled(false);
-            pasteMenuItem.setEnabled(false);
-            cropMenuItem.setEnabled(false);
-            resizeMenuItem.setEnabled(false);
-            horizontalMirrorMenuItem.setEnabled(false);
-            verticalMirrorMenuItem.setEnabled(false);
-            clockwiseMenuItem.setEnabled(false);
-            counterClockwiseMenuItem.setEnabled(false);
-            batchMenuItem.setEnabled(false);
-
-            cutBtn.setEnabled(false);
-            copyBtn.setEnabled(false);
-            pasteBtn.setEnabled(false);
-            cropBtn.setEnabled(false);
-
-            return;
+            setResizeMirrorRotateBatchEnabled(false);
+            setCutCopyCropEnabled(false);
+            setPasteEnabled(false);
         } else {
-            resizeMenuItem.setEnabled(true);
-            horizontalMirrorMenuItem.setEnabled(true);
-            verticalMirrorMenuItem.setEnabled(true);
-            clockwiseMenuItem.setEnabled(true);
-            counterClockwiseMenuItem.setEnabled(true);
-            batchMenuItem.setEnabled(true);
+            setResizeMirrorRotateBatchEnabled(true);
+            
+            setCutCopyCropEnabled(getSelectedFrame().isAreaSelected());
+            setPasteEnabled(ClipboardHelper.getImageFromClipboard() != null);
+            undoMenuItem.setEnabled(getSelectedFrame().isUndoable());
+            redoMenuItem.setEnabled(getSelectedFrame().isUndoable());
         }
+    }
 
-        CanvasComponent canvas = getCanvasOfSelectedFrame();
+    private void setResizeMirrorRotateBatchEnabled(boolean flag) {
+        resizeMenuItem.setEnabled(flag);
+        horizontalMirrorMenuItem.setEnabled(flag);
+        verticalMirrorMenuItem.setEnabled(flag);
+        clockwiseMenuItem.setEnabled(flag);
+        counterClockwiseMenuItem.setEnabled(flag);
+        batchMenuItem.setEnabled(flag);
+    }
 
-        // check cut, copy and paste menuitem
-        if (canvas.getSelectedRect().getWidth() <= 0) {
-            cutMenuItem.setEnabled(false);
-            copyMenuItem.setEnabled(false);
-            cropMenuItem.setEnabled(false);
+    private void setCutCopyCropEnabled(boolean flag) {
+        cutMenuItem.setEnabled(flag);
+        copyMenuItem.setEnabled(flag);
+        cropMenuItem.setEnabled(flag);
+        
+        cutBtn.setEnabled(flag);
+        copyBtn.setEnabled(flag);
+        cropBtn.setEnabled(flag);
+    }
 
-            cutBtn.setEnabled(false);
-            copyBtn.setEnabled(false);
-            cropBtn.setEnabled(false);
-        } else {
-            cutMenuItem.setEnabled(true);
-            copyMenuItem.setEnabled(true);
-            cropMenuItem.setEnabled(true);
-
-            cutBtn.setEnabled(true);
-            copyBtn.setEnabled(true);
-            cropBtn.setEnabled(true);
-        }
-
-        // check paste menuitem
-        if (ClipboardHelper.getImageFromClipboard() != null) {
-            pasteMenuItem.setEnabled(true);
-            pasteBtn.setEnabled(true);
-        } else {
-            pasteMenuItem.setEnabled(false);
-            pasteBtn.setEnabled(false);
-        }
-
-        // check undo menuitem
-        if (getMementoManager(canvas).isUndoable()) {
-            undoMenuItem.setEnabled(true);
-        } else {
-            undoMenuItem.setEnabled(false);
-        }
-
-        // check redo menuitem
-        if (getMementoManager(canvas).isRedoable()) {
-            redoMenuItem.setEnabled(true);
-        } else {
-            redoMenuItem.setEnabled(false);
-        }
+    private void setPasteEnabled(boolean flag) {
+        pasteMenuItem.setEnabled(flag);
+        pasteBtn.setEnabled(flag);
     }
 
     private void copyToClipboard() {

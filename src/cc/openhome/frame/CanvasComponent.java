@@ -410,7 +410,7 @@ public class CanvasComponent extends JComponent {
         }
     }
 
-    public int mergeImage() {
+    private int mergeImage() {
         int option = JOptionPane.showOptionDialog(null,
                 "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
@@ -420,7 +420,7 @@ public class CanvasComponent extends JComponent {
                 mainFrame.getMementoManager(this).addImage(ImageProcessor.copyImage(getImage()));
                 mergePastedImage();
                 mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.getEditMenu().checkEditMenuItemBtn();
                 break;
             case JOptionPane.CANCEL_OPTION:
                 setPastedImage(null);
@@ -431,7 +431,7 @@ public class CanvasComponent extends JComponent {
         return option;
     }
 
-    public int mergeText() {
+    private int mergeText() {
         int option = JOptionPane.showOptionDialog(null,
                 "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
@@ -446,7 +446,7 @@ public class CanvasComponent extends JComponent {
                     repaint();
                 }
                 mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().checkEditMenuItem();
+                mainFrame.getEditMenu().checkEditMenuItemBtn();
             case JOptionPane.CANCEL_OPTION:
                 setText(null, null);
                 setStart(null);

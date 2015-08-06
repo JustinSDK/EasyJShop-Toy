@@ -300,4 +300,12 @@ public class ImageInternalFrame extends JInternalFrame {
         canvas.setEditMode(CanvasComponent.PasteMode);
         canvas.setPastedImage(ClipboardHelper.getImageFromClipboard());
     }
+    
+    public boolean isUndoable() {
+        return mainFrame.getMementoManager(canvas).isUndoable();
+    }
+ 
+    public boolean isRedoable() {
+        return mainFrame.getMementoManager(canvas).isRedoable();
+    }    
 }

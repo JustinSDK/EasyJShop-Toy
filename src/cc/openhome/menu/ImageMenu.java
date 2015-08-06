@@ -80,10 +80,6 @@ public class ImageMenu extends JMenu {
         addSeparator();
         add(exitMenuItem);
 
-        saveMenuItem.setEnabled(false);
-        saveAsMenuItem.setEnabled(false);
-        saveAllMenuItem.setEnabled(false);
-
         widthSpinner = new JSpinner();
         widthSpinner.setValue(640);
         heightSpinner = new JSpinner();
@@ -234,7 +230,6 @@ public class ImageMenu extends JMenu {
 
     public void checkUnsavedImages() {
         class Operation {
-
             boolean notCancelled = true;
         }
         Operation operation = new Operation();
