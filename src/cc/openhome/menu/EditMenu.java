@@ -89,31 +89,29 @@ public class EditMenu extends JMenu {
         setupUIComponent();
         setupEventListener();
 
-        Thread clipboradChecker = new Thread(new Runnable() {
-            public void run() {
-                while (true) {
-                    try {
-                        if (ClipboardHelper.getImageFromClipboard() == null) {
-                            pasteMenuItem.setEnabled(false);
-                            pasteToNewMenuItem.setEnabled(false);
-                            pasteBtn.setEnabled(false);
-                        } else {
-                            pasteToNewMenuItem.setEnabled(true);
-
-                            if (getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
-                                setPasteEnabled(true);
-                            }
-                        }
-
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        new Thread(() -> {
+            while (true) {
+                if (ClipboardHelper.getImageFromClipboard() == null) {
+                    pasteMenuItem.setEnabled(false);
+                    pasteToNewMenuItem.setEnabled(false);
+                    pasteBtn.setEnabled(false);
+                } else {
+                    pasteToNewMenuItem.setEnabled(true);
+                    if (getDesktopPane() != null && getDesktopPane().getSelectedFrame() != null) {
+                        setPasteEnabled(true);
                     }
                 }
+                sleep(1000);
             }
-        });
+        }).start();
+    }
 
-        clipboradChecker.start();
+    private void sleep(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private void initResources() {
@@ -290,10 +288,6 @@ public class EditMenu extends JMenu {
                 KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK));
 
         undoMenuItem.addActionListener((ActionEvent e) -> {
-            if (getDesktopPane().getSelectedFrame() == null) {
-                return;
-            }
-
             if (getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
                 getMementoManager(getCanvasOfSelectedFrame())
                         .addImage(getCanvasOfSelectedFrame().getImage());
@@ -313,10 +307,6 @@ public class EditMenu extends JMenu {
         });
 
         redoMenuItem.addActionListener(e -> {
-            if (getDesktopPane().getSelectedFrame() == null) {
-                return;
-            }
-
             Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
 
             if (image != null) {
@@ -483,7 +473,6 @@ public class EditMenu extends JMenu {
             setPasteEnabled(false);
         } else {
             setResizeMirrorRotateBatchEnabled(true);
-            
             setCutCopyCropEnabled(getSelectedFrame().isAreaSelected());
             setPasteEnabled(ClipboardHelper.getImageFromClipboard() != null);
             undoMenuItem.setEnabled(getSelectedFrame().isUndoable());
@@ -504,7 +493,7 @@ public class EditMenu extends JMenu {
         cutMenuItem.setEnabled(flag);
         copyMenuItem.setEnabled(flag);
         cropMenuItem.setEnabled(flag);
-        
+
         cutBtn.setEnabled(flag);
         copyBtn.setEnabled(flag);
         cropBtn.setEnabled(flag);

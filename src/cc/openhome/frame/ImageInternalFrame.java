@@ -1,6 +1,5 @@
 package cc.openhome.frame;
 
-import cc.openhome.dialog.FontDialog;
 import cc.openhome.img.ClipboardHelper;
 import cc.openhome.img.ImageMementoManager;
 import cc.openhome.img.ImageProcessor;
