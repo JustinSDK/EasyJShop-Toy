@@ -75,12 +75,12 @@ public class CanvasComponent extends JComponent {
             public void mousePressed(MouseEvent e) {
                 switch (mainFrame.getEditMode()) {
                     case 0: // SelectionMode
-                        setBrushWidth(mainFrame.getBrushValue());
                         setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
                         setUpUndo(ImageProcessor.copyImage(getImage()));
                         resetRect();
+                        setBrushWidth(mainFrame.getBrushValue());
                         setStart(e.getPoint());
                         repaint();
                         mainFrame.getSelectedFrame().setModifiedTitle();
@@ -333,7 +333,6 @@ public class CanvasComponent extends JComponent {
 
     public void setBrushWidth(int brushWidth) {
         lineStroke = new BasicStroke(brushWidth);
-
     }
 
     public void setPastedImage(Image pastedImage) {
@@ -428,11 +427,7 @@ public class CanvasComponent extends JComponent {
             setText(FontDialog.getInputText(), FontDialog.getFont());
         }
     }
-
-    public void updateEditInfo() {
-        setBrushWidth(mainFrame.getBrushValue());
-    }
-
+    
     public boolean isUndable() {
         return mementoManager.isUndoable();
     }

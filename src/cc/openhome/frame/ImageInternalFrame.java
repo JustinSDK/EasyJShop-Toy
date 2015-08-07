@@ -61,7 +61,6 @@ public class ImageInternalFrame extends JInternalFrame {
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
                 mainFrame.updateMenuStatus();
-                canvas.updateEditInfo(); 
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
