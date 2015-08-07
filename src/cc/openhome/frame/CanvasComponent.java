@@ -1,6 +1,7 @@
 package cc.openhome.frame;
 
 import cc.openhome.dialog.FontDialog;
+import cc.openhome.util.ImageMementoManager;
 import cc.openhome.util.ImageProcessor;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -44,6 +45,8 @@ public class CanvasComponent extends JComponent {
     private Font textFont;
 
     private MainFrame mainFrame;
+    
+    private ImageMementoManager mementoManager = new ImageMementoManager();
 
     public CanvasComponent() {
         rect = new Rectangle2D.Double();
@@ -85,7 +88,7 @@ public class CanvasComponent extends JComponent {
                         setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
-                        mainFrame.getMementoManager(CanvasComponent.this).addImage(ImageProcessor.copyImage(getImage()));
+                        mementoManager.addImage(ImageProcessor.copyImage(getImage()));
                         resetRect();
                         setStart(e.getPoint());
                         repaint();
@@ -417,7 +420,7 @@ public class CanvasComponent extends JComponent {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                mainFrame.getMementoManager(this).addImage(ImageProcessor.copyImage(getImage()));
+                mementoManager.addImage(ImageProcessor.copyImage(getImage()));
                 mergePastedImage();
                 mainFrame.getSelectedFrame().setModifiedTitle();
                 mainFrame.getEditMenu().updateEditMenuItemBtn();
@@ -437,7 +440,7 @@ public class CanvasComponent extends JComponent {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         switch (option) {
             case JOptionPane.YES_OPTION:
-                mainFrame.getMementoManager(this).addImage(ImageProcessor.copyImage(getImage()));
+                mementoManager.addImage(ImageProcessor.copyImage(getImage()));
                 if (text != null) {
                     Graphics g = image.getGraphics();
                     g.setFont(textFont);
@@ -467,5 +470,29 @@ public class CanvasComponent extends JComponent {
         setForeground(mainFrame.getColorBoxForeground());
         setBackground(mainFrame.getColorBoxBackground());
         setBrushWidth(mainFrame.getBrushValue());
+    }    
+    
+    public boolean isUndable() {
+        return mementoManager.isUndoable();
+    }
+    
+    public boolean isRedoable() {
+        return mementoManager.isRedoable();
+    }
+    
+    public boolean isFirstUndo() {
+        return mementoManager.isFirstUndo();
+    }    
+    
+    public Image undoImage() {
+        return mementoManager.undoImage();
+    }
+    
+    public Image redoImage() {
+        return mementoManager.redoImage();
+    }
+    
+    public void setUpUndo() {
+        mementoManager.addImage(getImage());
     }    
 }

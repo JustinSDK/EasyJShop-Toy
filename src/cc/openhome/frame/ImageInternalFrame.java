@@ -45,7 +45,7 @@ public class ImageInternalFrame extends JInternalFrame {
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
         setFrameIcon(mainFrame1.getIcon());
-        mainFrame1.getMementoManagers().put(canvas, new ImageMementoManager());
+        
         JPanel panel = new JPanel();
         canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
         panel.add(canvas);
@@ -115,7 +115,6 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void close() {
-        mainFrame.getMementoManagers().remove(canvas);
         setVisible(false);
         dispose();
     }
@@ -268,9 +267,7 @@ public class ImageInternalFrame extends JInternalFrame {
     public void crop() {
         Image image = copySelectedImage();
         setUpUndo();
-        // use current internalFrame for the corped image
         canvas.setImage(image);
-        // let the dashed rect disappear
         canvas.resetRect();
         setModifiedTitle();
         open();
@@ -278,7 +275,7 @@ public class ImageInternalFrame extends JInternalFrame {
 
     public void cut() {
         Image image = ImageProcessor.copyImage(canvas.getImage());
-        setUpUndo(image);
+        setUpUndo();
         Graphics g = canvas.getImage().getGraphics();
         Rectangle2D rect = canvas.getSelectedRect();
         g.setColor(canvas.getBackground());
@@ -289,11 +286,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void setUpUndo() {
-        setUpUndo(canvas.getImage());
-    }
-
-    private void setUpUndo(Image image) {
-        mainFrame.getMementoManager(canvas).addImage(image);
+        canvas.setUpUndo();
     }
 
     public void paste() {
@@ -302,23 +295,23 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public boolean isUndoable() {
-        return mainFrame.getMementoManager(canvas).isUndoable();
+        return canvas.isUndable();
     }
 
     public boolean isRedoable() {
-        return mainFrame.getMementoManager(canvas).isRedoable();
+        return canvas.isRedoable();
     }
 
     public boolean isFirstUndo() {
-        return mainFrame.getMementoManager(canvas).isFirstUndo();
+        return canvas.isFirstUndo();
     }
 
     private Image undoImage() {
-        return mainFrame.getMementoManager(canvas).undoImage();
+        return canvas.undoImage(); 
     }
 
     private Image redoImage() {
-        return mainFrame.getMementoManager(canvas).redoImage();
+        return canvas.redoImage();
     }
 
     public void undo() {
@@ -334,7 +327,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void redo() {
-        if (mainFrame.getMementoManager(canvas).isRedoable()) {
+        if (canvas.isRedoable()) {
             canvas.setImage(redoImage());
             open();
         }

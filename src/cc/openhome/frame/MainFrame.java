@@ -2,12 +2,9 @@ package cc.openhome.frame;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.*;
 
-import cc.openhome.util.ImageMementoManager;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
@@ -15,8 +12,6 @@ import cc.openhome.menu.ImageMenu;
 public class MainFrame extends JFrame {
 
     private JDesktopPane desktopPane;
-
-    private Map mementoManagers = new HashMap();
 
     private ImageMenu imageMenu = new ImageMenu(this);
     private EditMenu editMenu = new EditMenu(this);
@@ -72,14 +67,6 @@ public class MainFrame extends JFrame {
                 }
             }
         });
-    }
-
-    public ImageMementoManager getMementoManager(CanvasComponent canvas) {
-        return (ImageMementoManager) mementoManagers.get(canvas);
-    }
-
-    public Map getMementoManagers() {
-        return mementoManagers;
     }
 
     public void forEachInternalFrame(InternalFrameExecutor executor) {
