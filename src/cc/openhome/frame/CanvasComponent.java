@@ -507,4 +507,13 @@ public class CanvasComponent extends JComponent {
         Image img = ImageProcessor.resize(getImage(), width, height);
         setImage(img);
     }
+    
+    public BufferedImage getImageAsBufferedImage() {
+        Image image = getImage();
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        return bufferedImage;
+    }    
 }

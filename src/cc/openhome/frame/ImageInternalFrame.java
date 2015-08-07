@@ -1,12 +1,9 @@
 package cc.openhome.frame;
 
-import cc.openhome.util.ClipboardHelper;
-import cc.openhome.util.ImageMementoManager;
 import cc.openhome.util.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
@@ -25,7 +22,6 @@ import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
-
     private JFileChooser saveFileChooser;
 
     private MainFrame mainFrame;
@@ -155,7 +151,6 @@ public class ImageInternalFrame extends JInternalFrame {
         File file = saveFileChooser.getSelectedFile();
         String filename = file.toString();
         String lowerCaseFilename = filename.toLowerCase();
-        // the default extension filename is 'jpg'.
         if (!lowerCaseFilename.endsWith(".jpg") && !lowerCaseFilename.endsWith(".png")) {
             filename = filename + ".jpg";
             file = new File(filename);
@@ -164,17 +159,8 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     private void saveTo(File file) {
-        saveImage(createImage(), file);
+        saveImage(canvas.getImageAsBufferedImage(), file); 
         setTitle(file.toString());
-    }
-
-    private BufferedImage createImage() {
-        Image image = canvas.getImage();
-        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
-                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
-        Graphics g = bufferedImage.getGraphics();
-        g.drawImage(image, 0, 0, null);
-        return bufferedImage;
     }
 
     private void saveImage(BufferedImage bufferedImage, File file) {
