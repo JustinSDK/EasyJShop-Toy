@@ -363,7 +363,7 @@ public class EditMenu extends JMenu {
                     JInternalFrame internalFrame = mainFrame.getSelectedFrame();
 
                     if (internalFrame != null) {
-                        getCanvasOfSelectedFrame().setForeground(color);
+                        getSelectedFrame().setImageForeground(color);
                     }
                 }
             }
@@ -378,7 +378,7 @@ public class EditMenu extends JMenu {
                     JInternalFrame internalFrame = mainFrame.getSelectedFrame();
 
                     if (internalFrame != null) {
-                        getCanvasOfSelectedFrame().setBackground(color);
+                        getSelectedFrame().setImageBackground(color);
                     }
                 }
             }
@@ -531,10 +531,6 @@ public class EditMenu extends JMenu {
 
     protected ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) mainFrame.getSelectedFrame();
-    }
-
-    protected CanvasComponent getCanvasOfSelectedFrame() {
-        return mainFrame.getCanvasOfSelectedFrame();
     }
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {

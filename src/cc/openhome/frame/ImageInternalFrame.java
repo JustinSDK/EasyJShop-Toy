@@ -4,6 +4,7 @@ import cc.openhome.util.ClipboardHelper;
 import cc.openhome.util.ImageMementoManager;
 import cc.openhome.util.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.HeadlessException;
@@ -29,10 +30,6 @@ public class ImageInternalFrame extends JInternalFrame {
 
     private MainFrame mainFrame;
     private CanvasComponent canvas;
-
-    public CanvasComponent getCanvas() {
-        return canvas;
-    }
 
     public ImageInternalFrame(MainFrame mainFrame, String title, Image image) {
         super(title, true, true, true, true);
@@ -342,4 +339,12 @@ public class ImageInternalFrame extends JInternalFrame {
             open();
         }
     }
+    
+    public void setImageBackground(Color color) {
+        canvas.setBackground(color);
+    }
+
+    public void setImageForeground(Color color) {
+        canvas.setForeground(color);
+    }    
 }

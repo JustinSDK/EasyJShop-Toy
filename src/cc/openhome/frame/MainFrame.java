@@ -82,10 +82,6 @@ public class MainFrame extends JFrame {
         return mementoManagers;
     }
 
-    public CanvasComponent getCanvasOfSelectedFrame() {
-        return ((ImageInternalFrame) getSelectedFrame()).getCanvas();
-    }
-
     public void forEachInternalFrame(InternalFrameExecutor executor) {
         for (JInternalFrame internalFrame : desktopPane.getAllFrames()) {
             executor.execute((ImageInternalFrame) internalFrame);
