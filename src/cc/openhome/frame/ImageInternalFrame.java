@@ -61,7 +61,7 @@ public class ImageInternalFrame extends JInternalFrame {
         addInternalFrameListener(new InternalFrameAdapter() {
             public void internalFrameOpened(InternalFrameEvent e) {
                 mainFrame.updateMenuStatus();
-                canvas.setEditInfo();
+                canvas.updateEditInfo(); 
             }
 
             public void internalFrameClosing(InternalFrameEvent e) {
@@ -199,7 +199,6 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void setModifiedTitle() {
-        String title = getTitle();
         if (!title.startsWith("*")) {
             setTitle("*" + title);
         }
@@ -217,7 +216,6 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     private void process(ImageExecutor executor) {
-        // set up undo
         setUpUndo();
         Image image = executor.execute(canvas.getImage());
         canvas.setImage(image);
@@ -273,14 +271,9 @@ public class ImageInternalFrame extends JInternalFrame {
         open();
     }
 
-    public void cut() {
-        Image image = ImageProcessor.copyImage(canvas.getImage());
+    public void cleanSelectedArea() {
         setUpUndo();
-        Graphics g = canvas.getImage().getGraphics();
-        Rectangle2D rect = canvas.getSelectedRect();
-        g.setColor(canvas.getBackground());
-        g.fillRect((int) rect.getX(), (int) rect.getY(),
-                (int) rect.getWidth(), (int) rect.getHeight());
+        canvas.cleanSelectedArea();
         repaint();
         setModifiedTitle();
     }
@@ -290,8 +283,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void paste() {
-        canvas.setEditMode(CanvasComponent.PasteMode);
-        canvas.setPastedImage(ClipboardHelper.getImageFromClipboard());
+        canvas.paste();
     }
 
     public boolean isUndoable() {

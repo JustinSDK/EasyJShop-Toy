@@ -1,6 +1,7 @@
 package cc.openhome.frame;
 
 import cc.openhome.dialog.FontDialog;
+import cc.openhome.util.ClipboardHelper;
 import cc.openhome.util.ImageMementoManager;
 import cc.openhome.util.ImageProcessor;
 import java.awt.BasicStroke;
@@ -45,7 +46,7 @@ public class CanvasComponent extends JComponent {
     private Font textFont;
 
     private MainFrame mainFrame;
-    
+
     private ImageMementoManager mementoManager = new ImageMementoManager();
 
     public CanvasComponent() {
@@ -76,12 +77,12 @@ public class CanvasComponent extends JComponent {
             public void mousePressed(MouseEvent e) {
                 if (getEditMode() == CanvasComponent.PasteMode) {
                     if (mergeImage() != JOptionPane.NO_OPTION) {
-                        setEditInfo();
+                        updateEditInfo();
                     }
                     return;
                 }
 
-                setEditInfo();
+                updateEditInfo();
 
                 switch (getEditMode()) {
                     case 0: // SelectionMode
@@ -354,10 +355,6 @@ public class CanvasComponent extends JComponent {
         this.foreColor = foreColor;
     }
 
-    public Color getBackground() {
-        return backColor;
-    }
-
     public void setBackground(Color backColor) {
         this.backColor = backColor;
     }
@@ -457,42 +454,55 @@ public class CanvasComponent extends JComponent {
         }
         return option;
     }
-    
+
     private void inputText() {
         int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             setText(FontDialog.getInputText(), FontDialog.getFont());
-        } 
-    }    
-    
-    public void setEditInfo() {
+        }
+    }
+
+    public void updateEditInfo() {
         setEditMode(mainFrame.getEditMode());
         setForeground(mainFrame.getColorBoxForeground());
         setBackground(mainFrame.getColorBoxBackground());
         setBrushWidth(mainFrame.getBrushValue());
-    }    
-    
+    }
+
     public boolean isUndable() {
         return mementoManager.isUndoable();
     }
-    
+
     public boolean isRedoable() {
         return mementoManager.isRedoable();
     }
-    
+
     public boolean isFirstUndo() {
         return mementoManager.isFirstUndo();
-    }    
-    
+    }
+
     public Image undoImage() {
         return mementoManager.undoImage();
     }
-    
+
     public Image redoImage() {
         return mementoManager.redoImage();
     }
-    
+
     public void setUpUndo() {
         mementoManager.addImage(getImage());
-    }    
+    }
+
+    public void cleanSelectedArea() {
+        Graphics g = getImage().getGraphics();
+        Rectangle2D rect = getSelectedRect();
+        g.setColor(mainFrame.getColorBoxBackground());
+        g.fillRect((int) rect.getX(), (int) rect.getY(),
+                (int) rect.getWidth(), (int) rect.getHeight());
+    }
+    
+    public void paste() {
+        setEditMode(CanvasComponent.PasteMode);
+        setPastedImage(ClipboardHelper.getImageFromClipboard());
+    }
 }

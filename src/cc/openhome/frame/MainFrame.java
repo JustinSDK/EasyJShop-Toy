@@ -103,11 +103,11 @@ public class MainFrame extends JFrame {
     } 
     
     public Color getColorBoxForeground() {
-        return getEditMenu().getForeground();
+        return getEditMenu().getForegroundBoxColor();
     }
     
     public Color getColorBoxBackground() {
-        return getEditMenu().getBackground();
+        return getEditMenu().getBackgroundBoxColor();
     }
     
     public int getBrushValue() {

@@ -295,7 +295,7 @@ public class EditMenu extends JMenu {
 
         cutMenuItem.addActionListener(e -> {
             copyToClipboard();
-            getSelectedFrame().cut();
+            getSelectedFrame().cleanSelectedArea();
             pasteToNewMenuItem.setEnabled(true);
             updateEditMenuItemBtn();
         });
@@ -400,7 +400,7 @@ public class EditMenu extends JMenu {
 
         cutBtn.addActionListener(e -> {
             copyToClipboard();
-            getSelectedFrame().cut();
+            getSelectedFrame().cleanSelectedArea();
             pasteToNewMenuItem.setEnabled(true);
             updateEditMenuItemBtn();
         });
@@ -527,5 +527,13 @@ public class EditMenu extends JMenu {
 
     public int getBrushValue() {
         return (Integer) brushSpinner.getValue();
+    }
+    
+    public Color getForegroundBoxColor() {
+        return foreColorBox.getColor();
+    }
+    
+    public Color getBackgroundBoxColor() {
+        return backColorBox.getColor();
     }
 }
