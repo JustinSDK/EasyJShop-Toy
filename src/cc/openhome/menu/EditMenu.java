@@ -8,7 +8,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
-import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -40,7 +39,6 @@ import cc.openhome.frame.InternalFrameExecutor;
 import cc.openhome.util.ImageMementoManager;
 import java.util.HashMap;
 import java.util.Map;
-import javax.swing.JDesktopPane;
 
 public class EditMenu extends JMenu {
 
@@ -360,9 +358,7 @@ public class EditMenu extends JMenu {
                 if (color != null) {
                     foreColorBox.setColor(color);
                     foreColorBox.repaint();
-                    JInternalFrame internalFrame = mainFrame.getSelectedFrame();
-
-                    if (internalFrame != null) {
+                    if(!mainFrame.noSelectedFrame()) {
                         getSelectedFrame().setImageForeground(color);
                     }
                 }
@@ -375,9 +371,7 @@ public class EditMenu extends JMenu {
                 if (color != null) {
                     backColorBox.setColor(color);
                     backColorBox.repaint();
-                    JInternalFrame internalFrame = mainFrame.getSelectedFrame();
-
-                    if (internalFrame != null) {
+                    if(!mainFrame.noSelectedFrame()) {
                         getSelectedFrame().setImageBackground(color);
                     }
                 }
