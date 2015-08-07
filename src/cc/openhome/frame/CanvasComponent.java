@@ -39,7 +39,7 @@ public class CanvasComponent extends JComponent {
 
     private int editMode;
     private double scale;
-    private Color foreColor, backColor;
+    
     private int brushWidth;
 
     private String text;
@@ -255,7 +255,7 @@ public class CanvasComponent extends JComponent {
 
         if (text != null) {
             fakeGraphics.setFont(textFont);
-            fakeGraphics.setColor(getForeground());
+            fakeGraphics.setColor(mainFrame.getColorBoxForeground());
             if (start != null) {
                 fakeGraphics.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
             } else {
@@ -286,7 +286,7 @@ public class CanvasComponent extends JComponent {
         int corner = getBrushWidth() / 2;
 
         Graphics imageGraphics = image.getGraphics();
-        imageGraphics.setColor(getForeground());
+        imageGraphics.setColor(mainFrame.getColorBoxForeground());
 
         if (start != null) {
             imageGraphics.fillOval((int) (start.getX() / scale - corner), (int) (start.getY() / scale - corner), getBrushWidth(), getBrushWidth());
@@ -294,7 +294,7 @@ public class CanvasComponent extends JComponent {
             if (end != null) {
                 Graphics2D imageGraphics2D = (Graphics2D) imageGraphics;
                 imageGraphics2D.setStroke(lineStroke);
-                imageGraphics2D.setColor(getForeground());
+                imageGraphics2D.setColor(mainFrame.getColorBoxForeground());
                 line.setLine(start.getX() / scale, start.getY() / scale, end.getX() / scale, end.getY() / scale);
                 imageGraphics2D.draw(line);
                 start = end;
@@ -345,18 +345,6 @@ public class CanvasComponent extends JComponent {
 
     public int getEditMode() {
         return editMode;
-    }
-
-    public Color getForeground() {
-        return foreColor;
-    }
-
-    public void setForeground(Color foreColor) {
-        this.foreColor = foreColor;
-    }
-
-    public void setBackground(Color backColor) {
-        this.backColor = backColor;
     }
 
     public int getBrushWidth() {
@@ -441,7 +429,7 @@ public class CanvasComponent extends JComponent {
                 if (text != null) {
                     Graphics g = image.getGraphics();
                     g.setFont(textFont);
-                    g.setColor(getForeground());
+                    g.setColor(mainFrame.getColorBoxForeground());
                     g.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
                     repaint();
                 }
