@@ -27,6 +27,7 @@ import cc.openhome.frame.ColorDemoBox;
 import javax.swing.JMenu;
 
 public class ImageMenu extends JMenu {
+
     private JMenuItem captureMenuItem, newImageMenuItem;
     private JMenuItem openMenuItem, saveMenuItem, saveAsMenuItem, saveAllMenuItem;
     private JMenuItem exitMenuItem;
@@ -40,7 +41,7 @@ public class ImageMenu extends JMenu {
     private JFileChooser openFileChooser;
 
     private ImageCreator imageCreator = new ImageCreator();
-    
+
     private MainFrame mainFrame;
 
     public ImageMenu(MainFrame mainFrame) {
@@ -62,7 +63,7 @@ public class ImageMenu extends JMenu {
         openFileChooser.addChoosableFileFilter(new OpenableFileFilter());
 
         setText("Image");
-        captureMenuItem = new JMenuItem("Get screen");
+        captureMenuItem = new JMenuItem("Capture");
         newImageMenuItem = new JMenuItem("New");
         openMenuItem = new JMenuItem("Open..");
         saveMenuItem = new JMenuItem("Save");
@@ -181,10 +182,10 @@ public class ImageMenu extends JMenu {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             sleep(delaySlider.getValue() * 1000);
+            Image image = imageCreator.capture();
+            mainFrame.createInternalFrame("*untitled", image);
         }
-        Image image = imageCreator.capture();
         mainFrame.setVisible(true);
-        mainFrame.createInternalFrame("*untitled", image);
     }
 
     private void sleep(int millis) throws RuntimeException {
@@ -230,6 +231,7 @@ public class ImageMenu extends JMenu {
 
     public void checkUnsavedImages() {
         class Operation {
+
             boolean notCancelled = true;
         }
         Operation operation = new Operation();

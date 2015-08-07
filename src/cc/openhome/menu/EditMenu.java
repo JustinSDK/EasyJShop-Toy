@@ -36,7 +36,6 @@ import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
 import cc.openhome.frame.ImageInternalFrame;
 import cc.openhome.frame.InternalFrameExecutor;
-import cc.openhome.util.ImageMementoManager;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -75,7 +74,6 @@ public class EditMenu extends JMenu {
     private JButton cutBtn, copyBtn, pasteBtn, cropBtn;
 
     private int editMode;
-    private boolean resizeLocker;
 
     private MainFrame mainFrame;
 
