@@ -37,7 +37,7 @@ public class CanvasComponent extends JComponent {
     private BasicStroke stroke, stroke2, lineStroke;
     private Line2D line;
 
-    private int editMode;
+    //private int editMode;
     private double scale;
 
     private String text;
@@ -46,6 +46,8 @@ public class CanvasComponent extends JComponent {
     private MainFrame mainFrame;
 
     private ImageMementoManager mementoManager = new ImageMementoManager();
+
+    private boolean isPasteMode;
 
     public CanvasComponent() {
         rect = new Rectangle2D.Double();
@@ -58,7 +60,7 @@ public class CanvasComponent extends JComponent {
         line = new Line2D.Double();
 
         setBrushWidth(10);
-        
+
         scale = 1.0;
         initEventListener();
     }
@@ -74,16 +76,17 @@ public class CanvasComponent extends JComponent {
             }
 
             public void mousePressed(MouseEvent e) {
-                if (getEditMode() == CanvasComponent.PasteMode) {
+                if (isPasteMode) {
                     if (mergeImage() != JOptionPane.NO_OPTION) {
                         updateEditInfo();
+                        isPasteMode = false;
                     }
                     return;
                 }
 
                 updateEditInfo();
 
-                switch (getEditMode()) {
+                switch (mainFrame.getEditMode()) {
                     case 0: // SelectionMode
                         setStart(e.getPoint());
                         break;
@@ -125,7 +128,7 @@ public class CanvasComponent extends JComponent {
 
         addMouseMotionListener(new MouseMotionListener() {
             public void mouseDragged(MouseEvent e) {
-                switch (getEditMode()) {
+                switch (mainFrame.getEditMode()) {
                     case 0: // SelectionMode
                         dragRect(e.getPoint());
                         break;
@@ -143,7 +146,7 @@ public class CanvasComponent extends JComponent {
 
             public void mouseMoved(MouseEvent e) {
                 CanvasComponent canvas = (CanvasComponent) e.getSource();
-                if (canvas.getEditMode() == CanvasComponent.PasteMode || canvas.getEditMode() == CanvasComponent.TextMode) {
+                if (isPasteMode || mainFrame.getEditMode() == CanvasComponent.TextMode) {
                     canvas.setStart(e.getPoint());
                     canvas.repaint();
                 }
@@ -207,21 +210,22 @@ public class CanvasComponent extends JComponent {
     }
 
     protected void paintComponent(Graphics g) {
-        switch (getEditMode()) {
-            case 0: // SelectionMode
-                drawDashedRect(g);
-                break;
-            case 1: // BrushMode
-                brushImage(g);
-                break;
-            case 2: // PasteMode
-                pasteImage(g);
-                break;
-            case 3:
-                drawText(g);
-                break;
-            default: // SelectionMode
-                drawDashedRect(g);
+        if (isPasteMode) {
+            pasteImage(g);
+        } else {
+            switch (mainFrame.getEditMode()) {
+                case 0: // SelectionMode
+                    drawDashedRect(g);
+                    break;
+                case 1: // BrushMode
+                    brushImage(g);
+                    break;
+                case 3:
+                    drawText(g);
+                    break;
+                default: // SelectionMode
+                    drawDashedRect(g);
+            }
         }
     }
 
@@ -338,14 +342,13 @@ public class CanvasComponent extends JComponent {
         return image;
     }
 
-    public void setEditMode(int editMode) {
-        this.editMode = editMode;
-    }
-
-    public int getEditMode() {
-        return editMode;
-    }
-
+//    public void setEditMode(int editMode) {
+//        this.editMode = editMode;
+//    }
+//
+//    public int getEditMode() {
+//        return editMode;
+//    }
     public int getBrushWidth() {
         return (int) lineStroke.getLineWidth();
     }
@@ -450,7 +453,6 @@ public class CanvasComponent extends JComponent {
     }
 
     public void updateEditInfo() {
-        setEditMode(mainFrame.getEditMode());
         setBrushWidth(mainFrame.getBrushValue());
     }
 
@@ -485,9 +487,9 @@ public class CanvasComponent extends JComponent {
         g.fillRect((int) rect.getX(), (int) rect.getY(),
                 (int) rect.getWidth(), (int) rect.getHeight());
     }
-    
+
     public void paste() {
-        setEditMode(CanvasComponent.PasteMode);
+        isPasteMode = true;
         setPastedImage(ClipboardHelper.getImageFromClipboard());
     }
 }
