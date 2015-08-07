@@ -527,10 +527,6 @@ public class EditMenu extends JMenu {
         return (ImageInternalFrame) mainFrame.getSelectedFrame();
     }
 
-    protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
-        return mainFrame.getMementoManager(canvas);
-    }
-    
     public int getBrushValue() {
         return (Integer) brushSpinner.getValue();
     }
