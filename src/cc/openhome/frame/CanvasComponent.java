@@ -39,8 +39,6 @@ public class CanvasComponent extends JComponent {
 
     private int editMode;
     private double scale;
-    
-    private int brushWidth;
 
     private String text;
     private Font textFont;
@@ -59,7 +57,8 @@ public class CanvasComponent extends JComponent {
 
         line = new Line2D.Double();
 
-        brushWidth = 10;
+        setBrushWidth(10);
+        
         scale = 1.0;
         initEventListener();
     }
@@ -348,12 +347,12 @@ public class CanvasComponent extends JComponent {
     }
 
     public int getBrushWidth() {
-        return brushWidth;
+        return (int) lineStroke.getLineWidth();
     }
 
     public void setBrushWidth(int brushWidth) {
-        this.brushWidth = brushWidth;
         lineStroke = new BasicStroke(brushWidth);
+
     }
 
     public void setPastedImage(Image pastedImage) {
@@ -452,8 +451,6 @@ public class CanvasComponent extends JComponent {
 
     public void updateEditInfo() {
         setEditMode(mainFrame.getEditMode());
-        setForeground(mainFrame.getColorBoxForeground());
-        setBackground(mainFrame.getColorBoxBackground());
         setBrushWidth(mainFrame.getBrushValue());
     }
 
