@@ -121,5 +121,21 @@ public class MainFrame extends JFrame {
     
     public ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
-    }    
+    } 
+    
+    public Color getColorBoxForeground() {
+        return getEditMenu().getForeground();
+    }
+    
+    public Color getColorBoxBackground() {
+        return getEditMenu().getBackground();
+    }
+    
+    public int getBrushValue() {
+        return getEditMenu().getBrushValue();
+    }
+    
+    public int getEditMode() {
+        return getEditMenu().getEditMode();
+    }
 }

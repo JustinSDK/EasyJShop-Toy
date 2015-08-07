@@ -73,12 +73,12 @@ public class CanvasComponent extends JComponent {
             public void mousePressed(MouseEvent e) {
                 if (getEditMode() == CanvasComponent.PasteMode) {
                     if (mergeImage() != JOptionPane.NO_OPTION) {
-                        mainFrame.getEditMenu().setEditInfo(CanvasComponent.this);
+                        setEditInfo();
                     }
                     return;
                 }
 
-                mainFrame.getEditMenu().setEditInfo(CanvasComponent.this);
+                setEditInfo();
 
                 switch (getEditMode()) {
                     case 0: // SelectionMode
@@ -460,5 +460,12 @@ public class CanvasComponent extends JComponent {
         if (option == JOptionPane.OK_OPTION) {
             setText(FontDialog.getInputText(), FontDialog.getFont());
         } 
+    }    
+    
+    public void setEditInfo() {
+        setEditMode(mainFrame.getEditMode());
+        setForeground(mainFrame.getColorBoxForeground());
+        setBackground(mainFrame.getColorBoxBackground());
+        setBrushWidth(mainFrame.getBrushValue());
     }    
 }

@@ -287,35 +287,13 @@ public class EditMenu extends JMenu {
         cropMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK));
 
-        undoMenuItem.addActionListener((ActionEvent e) -> {
-            if (getMementoManager(getCanvasOfSelectedFrame()).isFirstUndo()) {
-                getMementoManager(getCanvasOfSelectedFrame())
-                        .addImage(getCanvasOfSelectedFrame().getImage());
-                getMementoManager(getCanvasOfSelectedFrame()).undoImage();
-            }
-
-            Image image = getMementoManager(getCanvasOfSelectedFrame()).undoImage();
-
-            if (image != null) {
-                getCanvasOfSelectedFrame().setImage(image);
-
-                // if the image is full screen size, resize it to fit the frame size.
-                getSelectedFrame().open();
-            }
-
+        undoMenuItem.addActionListener(e -> {
+            getSelectedFrame().undo();
             updateEditMenuItemBtn();
         });
 
         redoMenuItem.addActionListener(e -> {
-            Image image = getMementoManager(getCanvasOfSelectedFrame()).redoImage();
-
-            if (image != null) {
-                getCanvasOfSelectedFrame().setImage(image);
-
-                // if the image is full screen size, resize it to fit the frame size.
-                getSelectedFrame().open();
-            }
-
+            getSelectedFrame().redo();
             updateEditMenuItemBtn();
         });
 
@@ -476,7 +454,7 @@ public class EditMenu extends JMenu {
             setCutCopyCropEnabled(getSelectedFrame().isAreaSelected());
             setPasteEnabled(ClipboardHelper.getImageFromClipboard() != null);
             undoMenuItem.setEnabled(getSelectedFrame().isUndoable());
-            redoMenuItem.setEnabled(getSelectedFrame().isUndoable());
+            redoMenuItem.setEnabled(getSelectedFrame().isRedoable());
         }
     }
 
@@ -551,13 +529,6 @@ public class EditMenu extends JMenu {
         }
     }
 
-    public void setEditInfo(CanvasComponent canvas) {
-        canvas.setEditMode(editMode);
-        canvas.setForeground(foreColorBox.getColor());
-        canvas.setBackground(backColorBox.getColor());
-        canvas.setBrushWidth(((Integer) brushSpinner.getValue()));
-    }
-
     protected ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
     }
@@ -572,5 +543,9 @@ public class EditMenu extends JMenu {
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
         return mainFrame.getMementoManager(canvas);
+    }
+    
+    public int getBrushValue() {
+        return (Integer) brushSpinner.getValue();
     }
 }
