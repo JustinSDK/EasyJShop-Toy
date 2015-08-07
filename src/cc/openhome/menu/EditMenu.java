@@ -412,6 +412,7 @@ public class EditMenu extends JMenu {
         });
 
         pasteBtn.addActionListener(e -> {
+            editMode = CanvasComponent.PasteMode;
             getSelectedFrame().paste();
         });
 

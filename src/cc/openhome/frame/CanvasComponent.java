@@ -47,8 +47,6 @@ public class CanvasComponent extends JComponent {
 
     private ImageMementoManager mementoManager = new ImageMementoManager();
 
-    private boolean isPasteMode;
-
     public CanvasComponent() {
         rect = new Rectangle2D.Double();
 
@@ -76,15 +74,15 @@ public class CanvasComponent extends JComponent {
             }
 
             public void mousePressed(MouseEvent e) {
-                if (isPasteMode) {
-                    if (mergeImage() != JOptionPane.NO_OPTION) {
-                        updateEditInfo();
-                        isPasteMode = false;
-                    }
-                    return;
-                }
-
-                updateEditInfo();
+//                if (isPasteMode) {
+//                    if (mergeImage() != JOptionPane.NO_OPTION) {
+//                        updateEditInfo();
+//                        isPasteMode = false;
+//                    }
+//                    return;
+//                }
+//
+//                updateEditInfo();
 
                 switch (mainFrame.getEditMode()) {
                     case 0: // SelectionMode
@@ -96,6 +94,9 @@ public class CanvasComponent extends JComponent {
                         setStart(e.getPoint());
                         repaint();
                         mainFrame.getSelectedFrame().setModifiedTitle();
+                        break;
+                    case 2: // PasteMode
+                        mergeImage();
                         break;
                     case 3: // TextMode
                         if (getText() != null) {
@@ -119,9 +120,8 @@ public class CanvasComponent extends JComponent {
             }
 
             public void mouseReleased(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                canvas.setStart(null);
-                canvas.setEnd(null);
+                setStart(null);
+                setEnd(null);
                 mainFrame.updateEditMenuStatus();
             }
         });
@@ -145,10 +145,9 @@ public class CanvasComponent extends JComponent {
             }
 
             public void mouseMoved(MouseEvent e) {
-                CanvasComponent canvas = (CanvasComponent) e.getSource();
-                if (isPasteMode || mainFrame.getEditMode() == CanvasComponent.TextMode) {
-                    canvas.setStart(e.getPoint());
-                    canvas.repaint();
+                if (mainFrame.getEditMode() == CanvasComponent.PasteMode || mainFrame.getEditMode() == CanvasComponent.TextMode) {
+                    setStart(e.getPoint());
+                    repaint();
                 }
             }
         });
@@ -210,22 +209,18 @@ public class CanvasComponent extends JComponent {
     }
 
     protected void paintComponent(Graphics g) {
-        if (isPasteMode) {
-            pasteImage(g);
-        } else {
-            switch (mainFrame.getEditMode()) {
-                case 0: // SelectionMode
-                    drawDashedRect(g);
-                    break;
-                case 1: // BrushMode
-                    brushImage(g);
-                    break;
-                case 3:
-                    drawText(g);
-                    break;
-                default: // SelectionMode
-                    drawDashedRect(g);
-            }
+        switch (mainFrame.getEditMode()) {
+            case 1: // BrushMode
+                brushImage(g);
+                break;
+            case 2: // PasteMode
+                pasteImage(g);
+                break;
+            case 3: // TextMode
+                drawText(g);
+                break;
+            default: // SelectionMode
+                drawDashedRect(g);
         }
     }
 
@@ -342,13 +337,6 @@ public class CanvasComponent extends JComponent {
         return image;
     }
 
-//    public void setEditMode(int editMode) {
-//        this.editMode = editMode;
-//    }
-//
-//    public int getEditMode() {
-//        return editMode;
-//    }
     public int getBrushWidth() {
         return (int) lineStroke.getLineWidth();
     }
@@ -411,7 +399,6 @@ public class CanvasComponent extends JComponent {
                 mergePastedImage();
                 mainFrame.getSelectedFrame().setModifiedTitle();
                 mainFrame.getEditMenu().updateEditMenuItemBtn();
-                break;
             case JOptionPane.CANCEL_OPTION:
                 setPastedImage(null);
                 setStart(null);
@@ -489,7 +476,6 @@ public class CanvasComponent extends JComponent {
     }
 
     public void paste() {
-        isPasteMode = true;
         setPastedImage(ClipboardHelper.getImageFromClipboard());
     }
 }
