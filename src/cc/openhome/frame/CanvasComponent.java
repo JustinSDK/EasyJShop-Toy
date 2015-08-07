@@ -37,7 +37,6 @@ public class CanvasComponent extends JComponent {
     private BasicStroke stroke, stroke2, lineStroke;
     private Line2D line;
 
-    //private int editMode;
     private double scale;
 
     private String text;
@@ -89,7 +88,7 @@ public class CanvasComponent extends JComponent {
                         setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
-                        mementoManager.addImage(ImageProcessor.copyImage(getImage()));
+                        setUpUndo(ImageProcessor.copyImage(getImage()));
                         resetRect();
                         setStart(e.getPoint());
                         repaint();
@@ -328,7 +327,7 @@ public class CanvasComponent extends JComponent {
         }
     }
 
-    public void setImage(Image image) {
+    private void setImage(Image image) {
         this.image = image;
         fakeImage = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_RGB);
     }
@@ -395,7 +394,7 @@ public class CanvasComponent extends JComponent {
 
         switch (option) {
             case JOptionPane.YES_OPTION:
-                mementoManager.addImage(ImageProcessor.copyImage(getImage()));
+                setUpUndo(ImageProcessor.copyImage(getImage()));
                 mergePastedImage();
                 mainFrame.getSelectedFrame().setModifiedTitle();
                 mainFrame.getEditMenu().updateEditMenuItemBtn();
@@ -414,7 +413,7 @@ public class CanvasComponent extends JComponent {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         switch (option) {
             case JOptionPane.YES_OPTION:
-                mementoManager.addImage(ImageProcessor.copyImage(getImage()));
+                setUpUndo(ImageProcessor.copyImage(getImage()));
                 if (text != null) {
                     Graphics g = image.getGraphics();
                     g.setFont(textFont);
@@ -463,11 +462,12 @@ public class CanvasComponent extends JComponent {
         return mementoManager.redoImage();
     }
 
-    public void setUpUndo() {
-        mementoManager.addImage(getImage());
+    public void setUpUndo(Image image) {
+        mementoManager.addImage(image);
     }
 
     public void cleanSelectedArea() {
+        setUpUndo(getImage());
         Graphics g = getImage().getGraphics();
         Rectangle2D rect = getSelectedRect();
         g.setColor(mainFrame.getColorBoxBackground());
@@ -477,5 +477,48 @@ public class CanvasComponent extends JComponent {
 
     public void paste() {
         setPastedImage(ClipboardHelper.getImageFromClipboard());
+    }
+
+    public void crop() {
+        Image img = ImageProcessor.copyRectImage(getImage(), getSelectedRect());
+        setUpUndo(getImage());
+        setImage(img);
+        resetRect();
+    }
+
+    public void process(ImageExecutor executor) {
+        setUpUndo(getImage());
+        Image img = executor.execute(getImage());
+        setImage(img);
+    }
+
+    public void preResize() {
+        resetRect();
+        setUpUndo(getImage());
+    }
+
+    public void firstUndo() {
+        setUpUndo(getImage());
+        undoImage();
+    }
+    
+    public void undo() {
+        setImage(undoImage());
+    }
+    
+    public void redo() {
+        setImage(redoImage());
+    }
+    
+    public void resize(int scale) {
+        preResize();
+        Image img = ImageProcessor.resize(getImage(), scale * 0.01);
+        setImage(img);
+    }
+    
+    public void resize(int width, int height) {
+        preResize();
+        Image img = ImageProcessor.resize(getImage(), width, height);
+        setImage(img);
     }
 }

@@ -216,31 +216,18 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     private void process(ImageExecutor executor) {
-        setUpUndo();
-        Image image = executor.execute(canvas.getImage());
-        canvas.setImage(image);
+        canvas.process(executor);
         setModifiedTitle();
     }
 
     public void resizeImage(int scale) {
-        preResize();
-        Image image = ImageProcessor.resize(canvas.getImage(), scale * 0.01);
-        postResize(image);
+        canvas.resize(scale);
+        setModifiedTitle();
+        open();
     }
 
     public void resizeImage(int width, int height) {
-        preResize();
-        Image image = ImageProcessor.resize(canvas.getImage(), width, height);
-        postResize(image);
-    }
-
-    private void preResize() {
-        canvas.resetRect();
-        setUpUndo();
-    }
-
-    private void postResize(Image image) {
-        canvas.setImage(image);
+        canvas.resize(width, height);
         setModifiedTitle();
         open();
     }
@@ -263,23 +250,15 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void crop() {
-        Image image = copySelectedImage();
-        setUpUndo();
-        canvas.setImage(image);
-        canvas.resetRect();
+        canvas.crop();
         setModifiedTitle();
         open();
     }
 
     public void cleanSelectedArea() {
-        setUpUndo();
         canvas.cleanSelectedArea();
         repaint();
         setModifiedTitle();
-    }
-
-    public void setUpUndo() {
-        canvas.setUpUndo();
     }
 
     public void paste() {
@@ -298,29 +277,20 @@ public class ImageInternalFrame extends JInternalFrame {
         return canvas.isFirstUndo();
     }
 
-    private Image undoImage() {
-        return canvas.undoImage(); 
-    }
-
-    private Image redoImage() {
-        return canvas.redoImage();
-    }
-
     public void undo() {
         if (isFirstUndo()) {
-            setUpUndo();
-            undoImage();
+            canvas.firstUndo();
         }
 
         if (isUndoable()) {
-            canvas.setImage(undoImage());
+            canvas.undo();
             open();
         }
     }
 
     public void redo() {
         if (canvas.isRedoable()) {
-            canvas.setImage(redoImage());
+            canvas.redo();
             open();
         }
     }
