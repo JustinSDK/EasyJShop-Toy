@@ -67,15 +67,11 @@ public class MainFrame extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 imageMenu.checkUnsavedImages();
-                if (getDesktopPane().getAllFrames().length == 0) {
+                if (noInternalFrame()) {
                     System.exit(0);
                 }
             }
         });
-    }
-
-    public JDesktopPane getDesktopPane() {
-        return desktopPane;
     }
 
     public ImageMementoManager getMementoManager(CanvasComponent canvas) {
@@ -87,18 +83,18 @@ public class MainFrame extends JFrame {
     }
 
     public CanvasComponent getCanvasOfSelectedFrame() {
-        return ((ImageInternalFrame) getDesktopPane().getSelectedFrame()).getCanvas();
+        return ((ImageInternalFrame) getSelectedFrame()).getCanvas();
     }
 
     public void forEachInternalFrame(InternalFrameExecutor executor) {
-        for (JInternalFrame internalFrame : getDesktopPane().getAllFrames()) {
+        for (JInternalFrame internalFrame : desktopPane.getAllFrames()) {
             executor.execute((ImageInternalFrame) internalFrame);
         }
     }
 
     public void createInternalFrame(String title, Image image) {
         ImageInternalFrame internalFrame = new ImageInternalFrame(this, title, image);
-        getDesktopPane().add(internalFrame);
+        desktopPane.add(internalFrame);
         internalFrame.open();
     }
     
@@ -112,15 +108,15 @@ public class MainFrame extends JFrame {
     }
     
     public boolean noInternalFrame() {
-        return getDesktopPane().getAllFrames().length == 0;
+        return desktopPane.getAllFrames().length == 0;
     }
 
     public boolean noSelectedFrame() {
-        return getDesktopPane().getSelectedFrame() == null;
+        return desktopPane.getSelectedFrame() == null;
     }    
     
     public ImageInternalFrame getSelectedFrame() {
-        return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
+        return (ImageInternalFrame) desktopPane.getSelectedFrame();
     } 
     
     public Color getColorBoxForeground() {

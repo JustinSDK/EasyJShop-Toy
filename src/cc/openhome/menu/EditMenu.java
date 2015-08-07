@@ -360,7 +360,7 @@ public class EditMenu extends JMenu {
                 if (color != null) {
                     foreColorBox.setColor(color);
                     foreColorBox.repaint();
-                    JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
+                    JInternalFrame internalFrame = mainFrame.getSelectedFrame();
 
                     if (internalFrame != null) {
                         getCanvasOfSelectedFrame().setForeground(color);
@@ -375,7 +375,7 @@ public class EditMenu extends JMenu {
                 if (color != null) {
                     backColorBox.setColor(color);
                     backColorBox.repaint();
-                    JInternalFrame internalFrame = getDesktopPane().getSelectedFrame();
+                    JInternalFrame internalFrame = mainFrame.getSelectedFrame();
 
                     if (internalFrame != null) {
                         getCanvasOfSelectedFrame().setBackground(color);
@@ -530,15 +530,11 @@ public class EditMenu extends JMenu {
     }
 
     protected ImageInternalFrame getSelectedFrame() {
-        return (ImageInternalFrame) getDesktopPane().getSelectedFrame();
+        return (ImageInternalFrame) mainFrame.getSelectedFrame();
     }
 
     protected CanvasComponent getCanvasOfSelectedFrame() {
         return mainFrame.getCanvasOfSelectedFrame();
-    }
-
-    protected JDesktopPane getDesktopPane() {
-        return mainFrame.getDesktopPane();
     }
 
     protected ImageMementoManager getMementoManager(CanvasComponent canvas) {
