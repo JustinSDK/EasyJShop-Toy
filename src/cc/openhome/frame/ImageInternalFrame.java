@@ -221,13 +221,13 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public void resizeImage(int scale) {
-        canvas.resize(scale);
+        canvas.resizeByScale(scale);
         setModifiedTitle();
         open();
     }
 
     public void resizeImage(int width, int height) {
-        canvas.resize(width, height);
+        canvas.resizeByWidthHeight(width, height);
         setModifiedTitle();
         open();
     }

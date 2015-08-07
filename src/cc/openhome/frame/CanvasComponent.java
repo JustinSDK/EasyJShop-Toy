@@ -73,18 +73,9 @@ public class CanvasComponent extends JComponent {
             }
 
             public void mousePressed(MouseEvent e) {
-//                if (isPasteMode) {
-//                    if (mergeImage() != JOptionPane.NO_OPTION) {
-//                        updateEditInfo();
-//                        isPasteMode = false;
-//                    }
-//                    return;
-//                }
-//
-//                updateEditInfo();
-
                 switch (mainFrame.getEditMode()) {
                     case 0: // SelectionMode
+                        setBrushWidth(mainFrame.getBrushValue());
                         setStart(e.getPoint());
                         break;
                     case 1: // BrushMode
@@ -327,7 +318,7 @@ public class CanvasComponent extends JComponent {
         }
     }
 
-    private void setImage(Image image) {
+    public void setImage(Image image) {
         this.image = image;
         fakeImage = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_RGB);
     }
@@ -510,13 +501,13 @@ public class CanvasComponent extends JComponent {
         setImage(redoImage());
     }
     
-    public void resize(int scale) {
+    public void resizeByScale(int scale) {
         preResize();
         Image img = ImageProcessor.resize(getImage(), scale * 0.01);
         setImage(img);
     }
     
-    public void resize(int width, int height) {
+    public void resizeByWidthHeight(int width, int height) {
         preResize();
         Image img = ImageProcessor.resize(getImage(), width, height);
         setImage(img);
