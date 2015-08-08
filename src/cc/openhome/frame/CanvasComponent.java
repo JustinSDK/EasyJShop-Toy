@@ -56,7 +56,7 @@ public class CanvasComponent extends JComponent {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (mainFrame.getEditMode() == MainFrame.ViewMode) {
-                    setCursor(mainFrame.getEditMenu().getViewCursor());
+                    setCursor(mainFrame.getViewCursor());
                 } else {
                     setCursor(null);
                 }
@@ -396,7 +396,7 @@ public class CanvasComponent extends JComponent {
                     setUpUndo(ImageProcessor.copyImage(getImage()));
                     mergePastedImage();
                     mainFrame.getSelectedFrame().setModifiedTitle();
-                    mainFrame.getEditMenu().updateEditMenuItemBtn();
+                    mainFrame.updateEditMenuStatus();
                 case JOptionPane.CANCEL_OPTION:
                     setPastedImage(null);
                     setStart(null);
@@ -416,7 +416,7 @@ public class CanvasComponent extends JComponent {
                     drawTextToImage();
                 }
                 mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().updateEditMenuItemBtn();
+                mainFrame.updateEditMenuStatus();
             case JOptionPane.CANCEL_OPTION:
                 setText(null, null);
                 setStart(null);

@@ -123,4 +123,8 @@ public class MainFrame extends JFrame {
     public int getEditMode() {
         return getEditMenu().getEditMode();
     }
+    
+    public Cursor getViewCursor() {
+        return getEditMenu().getViewCursor();
+    }
 }
