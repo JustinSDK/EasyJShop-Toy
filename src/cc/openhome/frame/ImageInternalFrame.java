@@ -37,11 +37,11 @@ public class ImageInternalFrame extends JInternalFrame {
         initEventListeners();
     }
 
-    private void initComponents(MainFrame mainFrame1, Image image) {
-        canvas = new CanvasComponent(image, mainFrame1);
+    private void initComponents(MainFrame mainFrame, Image image) {
+        canvas = new CanvasComponent(image, mainFrame);
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
-        setFrameIcon(mainFrame1.getIcon());
+        setFrameIcon(mainFrame.getIcon());
         
         JPanel panel = new JPanel();
         canvas.setAlignmentY(Component.CENTER_ALIGNMENT);
