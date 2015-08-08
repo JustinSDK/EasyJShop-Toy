@@ -1,5 +1,6 @@
 package cc.openhome.util;
 
+import java.awt.Color;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
@@ -14,14 +15,12 @@ public class ImageProcessor {
         int y = (int) rect.getY();
         int width = (int) rect.getWidth();
         int height = (int) rect.getHeight();
-        
         return mirror(original, 0, 0, width, height, x, y, x + width, y + height);
     }
     
     public static Image resize(Image original, double percentage) {
         int width = (int) (original.getWidth(null) * percentage);
         int height = (int) (original.getHeight(null) * percentage);
-
         return resize(original, width, height);
     }
     
@@ -99,4 +98,20 @@ public class ImageProcessor {
         rect.setRect(0, 0, image.getWidth(null), image.getHeight(null));
         return copyRectImage(image, rect);
     }    
+    
+    public static BufferedImage toBufferedImage(Image image) {
+        BufferedImage bufferedImage = new BufferedImage(image.getWidth(null),
+                image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.drawImage(image, 0, 0, null);
+        return bufferedImage;        
+    }    
+    
+    public static BufferedImage emptyImage(int width, int height, Color color) {
+        BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        Graphics g = bufferedImage.getGraphics();
+        g.setColor(color);
+        g.fillRect(0, 0, width, height);
+        return bufferedImage;
+    }        
 }

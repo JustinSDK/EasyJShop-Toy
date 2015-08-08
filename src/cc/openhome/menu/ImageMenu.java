@@ -21,8 +21,9 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
 
-import cc.openhome.util.ImageCreator;
+import cc.openhome.util.ScreenCapturer;
 import cc.openhome.frame.ColorDemoBox;
+import cc.openhome.util.ImageProcessor;
 import javax.swing.JMenu;
 
 public class ImageMenu extends JMenu {
@@ -39,7 +40,7 @@ public class ImageMenu extends JMenu {
 
     private JFileChooser openFileChooser;
 
-    private ImageCreator imageCreator = new ImageCreator();
+    private ScreenCapturer screenCapture = new ScreenCapturer();
 
     private MainFrame mainFrame;
 
@@ -181,7 +182,7 @@ public class ImageMenu extends JMenu {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             sleep(delaySlider.getValue() * 1000);
-            mainFrame.createInternalFrame("*untitled", imageCreator.createScreenCapture());
+            mainFrame.createInternalFrame("*untitled", screenCapture.createScreenCapture());
         }
         mainFrame.setVisible(true);
     }
@@ -200,7 +201,7 @@ public class ImageMenu extends JMenu {
         if (option == JOptionPane.OK_OPTION) {
             int width = ((Integer) widthSpinner.getValue());
             int height = ((Integer) heightSpinner.getValue());
-            mainFrame.createInternalFrame("untitled", imageCreator.emptyImage(width, height, backgroundColorBox.getColor()));
+            mainFrame.createInternalFrame("untitled", ImageProcessor.emptyImage(width, height, backgroundColorBox.getColor()));
         }
     }
 
