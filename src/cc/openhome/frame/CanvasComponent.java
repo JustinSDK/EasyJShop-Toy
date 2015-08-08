@@ -25,6 +25,7 @@ import java.util.function.Function;
 import javax.swing.JOptionPane;
 
 public class CanvasComponent extends JComponent {
+
     private Image image, pastedImage, fakeImage;
     private Point start, end;
 
@@ -54,7 +55,7 @@ public class CanvasComponent extends JComponent {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (mainFrame.getEditMenu().getEditMode() == MainFrame.ViewMode) {
+                if (mainFrame.getEditMode() == MainFrame.ViewMode) {
                     setCursor(mainFrame.getEditMenu().getViewCursor());
                 } else {
                     setCursor(null);
@@ -64,16 +65,16 @@ public class CanvasComponent extends JComponent {
             @Override
             public void mousePressed(MouseEvent e) {
                 switch (mainFrame.getEditMode()) {
-                    case MainFrame.BrushMode: 
+                    case MainFrame.BrushMode:
                         doBrushOnMousePressed(e);
                         break;
-                    case MainFrame.PasteMode: 
-                        mergeImage();
+                    case MainFrame.PasteMode:
+                        doMergeImage();
                         break;
-                    case MainFrame.TextMode: 
+                    case MainFrame.TextMode:
                         doTextOnMousePressed();
                         break;
-                    case MainFrame.ViewMode: 
+                    case MainFrame.ViewMode:
                         doViewOnMousePressed(e);
                         break;
                     default: // SelectionMode
@@ -93,7 +94,7 @@ public class CanvasComponent extends JComponent {
             @Override
             public void mouseDragged(MouseEvent e) {
                 switch (mainFrame.getEditMode()) {
-                    case MainFrame.BrushMode: 
+                    case MainFrame.BrushMode:
                         setEnd(e.getPoint());
                         repaint();
                         break;
@@ -209,10 +210,10 @@ public class CanvasComponent extends JComponent {
             case MainFrame.BrushMode:
                 brushImage(g);
                 break;
-            case MainFrame.PasteMode: 
+            case MainFrame.PasteMode:
                 pasteImage(g);
                 break;
-            case MainFrame.TextMode: 
+            case MainFrame.TextMode:
                 drawText(g);
                 break;
             default: // SelectionMode
@@ -229,43 +230,35 @@ public class CanvasComponent extends JComponent {
     }
 
     private void pasteImage(Graphics g) {
+        Graphics fakeGraphics = fakeImage.getGraphics();
+        fakeGraphics.drawImage(image, 0, 0, this);
         if (pastedImage != null) {
-            drawImage(g);
+            if (start != null) {
+                fakeGraphics.drawImage(pastedImage, (int) (start.getX() / scale), (int) (start.getY() / scale), this);
+            } else {
+                g.drawImage(pastedImage, 0, 0, this);
+            }
         }
         g.drawImage(fakeImage, 0, 0, (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
     }
 
-    private void drawImage(Graphics g) {
-        if (start != null) {
-            Graphics fakeGraphics = fakeImage.getGraphics();
-            fakeGraphics.drawImage(image, 0, 0, this);
-            fakeGraphics.drawImage(pastedImage, (int) (start.getX() / scale), (int) (start.getY() / scale), this);
-        } else {
-            g.drawImage(pastedImage, 0, 0, this);
-        }
-    }
-
     private void drawText(Graphics g) {
+        Graphics fakeGraphics = fakeImage.getGraphics();
+        fakeGraphics.drawImage(image, 0, 0, this);
         if (text != null) {
-            drawString(prepareFakeGraphics());
+            drawString(fakeGraphics);
         }
         g.drawImage(fakeImage, 0, 0, (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
     }
 
     private void drawString(Graphics fakeGraphics) {
+        fakeGraphics.setFont(textFont);
+        fakeGraphics.setColor(mainFrame.getColorBoxForeground());
         if (start != null) {
             fakeGraphics.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
         } else {
             fakeGraphics.drawString(text, 0, 0);
         }
-    }
-    
-    private Graphics prepareFakeGraphics() {
-        Graphics fakeGraphics = fakeImage.getGraphics();
-        fakeGraphics.drawImage(image, 0, 0, this);
-        fakeGraphics.setFont(textFont);
-        fakeGraphics.setColor(mainFrame.getColorBoxForeground());
-        return fakeGraphics;
     }
 
     private void drawDashedRect(Graphics g) {
@@ -392,24 +385,24 @@ public class CanvasComponent extends JComponent {
         }
     }
 
-    private int mergeImage() {
-        int option = JOptionPane.showOptionDialog(null,
-                "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+    private void doMergeImage() {
+        if (pastedImage != null) {
+            int option = JOptionPane.showOptionDialog(null,
+                    "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
 
-        switch (option) {
-            case JOptionPane.YES_OPTION:
-                setUpUndo(ImageProcessor.copyImage(getImage()));
-                mergePastedImage();
-                mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.getEditMenu().updateEditMenuItemBtn();
-            case JOptionPane.CANCEL_OPTION:
-                setPastedImage(null);
-                setStart(null);
-                break;
+            switch (option) {
+                case JOptionPane.YES_OPTION:
+                    setUpUndo(ImageProcessor.copyImage(getImage()));
+                    mergePastedImage();
+                    mainFrame.getSelectedFrame().setModifiedTitle();
+                    mainFrame.getEditMenu().updateEditMenuItemBtn();
+                case JOptionPane.CANCEL_OPTION:
+                    setPastedImage(null);
+                    setStart(null);
+                    break;
+            }
         }
-
-        return option;
     }
 
     private int mergeText() {

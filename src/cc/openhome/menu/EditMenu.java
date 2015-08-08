@@ -31,7 +31,6 @@ import cc.openhome.dialog.ResizeDialog;
 import cc.openhome.util.ClipboardHelper;
 import cc.openhome.util.ImageProcessor;
 import cc.openhome.util.TransferableImage;
-import cc.openhome.frame.CanvasComponent;
 import cc.openhome.frame.ColorDemoBox;
 import cc.openhome.frame.ImageInternalFrame;
 import java.util.HashMap;
