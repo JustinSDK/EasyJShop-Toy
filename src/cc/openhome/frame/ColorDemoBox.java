@@ -25,11 +25,13 @@ public class ColorDemoBox extends JComponent {
         return color;
     }
     
+    @Override
     public void paint(Graphics g) {
         g.setColor(color);
         g.fillRect(0, 0, getWidth(), getHeight());
     }
     
+    @Override
     public Dimension getPreferredSize() {
         Dimension dimension = super.getPreferredSize();        
         dimension.setSize(getWidth(), getHeight());
