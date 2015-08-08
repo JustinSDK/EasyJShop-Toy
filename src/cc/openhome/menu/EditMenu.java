@@ -376,19 +376,19 @@ public class EditMenu extends JMenu {
         });
 
         selectBtn.addActionListener(e -> {
-            editMode = CanvasComponent.SelectionMode;
+            editMode = MainFrame.SelectionMode;
         });
 
         brushBtn.addActionListener(e -> {
-            editMode = CanvasComponent.BrushMode;
+            editMode = MainFrame.BrushMode;
         });
 
         textBtn.addActionListener(e -> {
-            editMode = CanvasComponent.TextMode;
+            editMode = MainFrame.TextMode;
         });
 
         viewBtn.addActionListener(e -> {
-            editMode = CanvasComponent.ViewMode;
+            editMode = MainFrame.ViewMode;
         });
 
         brushSpinner.addChangeListener(e -> {
@@ -411,7 +411,7 @@ public class EditMenu extends JMenu {
         });
 
         pasteBtn.addActionListener(e -> {
-            editMode = CanvasComponent.PasteMode;
+            editMode = MainFrame.PasteMode;
             getSelectedFrame().paste();
         });
 
