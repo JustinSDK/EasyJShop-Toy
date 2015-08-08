@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Function;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.JInternalFrame;
@@ -189,19 +190,19 @@ public class ImageInternalFrame extends JInternalFrame {
         }
     }
 
-    public void clockwise(ImageExecutor executor) {
+    public void clockwise(Function<Image, Image> func) {
         canvas.resetRect();
-        process(executor);
+        process(func);
         open();
     }
 
-    public void mirror(ImageExecutor executor) {
-        process(executor);
+    public void mirror(Function<Image, Image> func) {
+        process(func);
         canvas.repaint();
     }
 
-    private void process(ImageExecutor executor) {
-        canvas.process(executor);
+    private void process(Function<Image, Image> func) {
+        canvas.process(func);
         setModifiedTitle();
     }
 

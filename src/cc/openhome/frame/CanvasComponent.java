@@ -21,6 +21,7 @@ import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.function.Function;
 import javax.swing.JOptionPane;
 
 public class CanvasComponent extends JComponent {
@@ -472,9 +473,9 @@ public class CanvasComponent extends JComponent {
         resetRect();
     }
 
-    public void process(ImageExecutor executor) {
+    public void process(Function<Image, Image> func) {
         setUpUndo(getImage());
-        Image img = executor.execute(getImage());
+        Image img = func.apply(getImage());
         setImage(img);
     }
 

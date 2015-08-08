@@ -8,6 +8,7 @@ import javax.swing.*;
 import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
+import java.util.function.Consumer;
 
 public class MainFrame extends JFrame {
 
@@ -69,9 +70,9 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public void forEachInternalFrame(InternalFrameExecutor executor) {
+    public void forEachInternalFrame(Consumer<ImageInternalFrame> consumer) {
         for (JInternalFrame internalFrame : desktopPane.getAllFrames()) {
-            executor.execute((ImageInternalFrame) internalFrame);
+            consumer.accept((ImageInternalFrame) internalFrame);
         }
     }
 

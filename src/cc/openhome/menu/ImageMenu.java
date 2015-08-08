@@ -1,7 +1,6 @@
 package cc.openhome.menu;
 
 import cc.openhome.frame.MainFrame;
-import java.awt.Image;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -182,8 +181,7 @@ public class ImageMenu extends JMenu {
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             sleep(delaySlider.getValue() * 1000);
-            Image image = imageCreator.capture();
-            mainFrame.createInternalFrame("*untitled", image);
+            mainFrame.createInternalFrame("*untitled", imageCreator.capture());
         }
         mainFrame.setVisible(true);
     }
@@ -231,7 +229,6 @@ public class ImageMenu extends JMenu {
 
     public void checkUnsavedImages() {
         class Operation {
-
             boolean notCancelled = true;
         }
         Operation operation = new Operation();
