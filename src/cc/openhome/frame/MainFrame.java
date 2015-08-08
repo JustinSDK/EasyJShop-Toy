@@ -11,6 +11,11 @@ import cc.openhome.menu.ImageMenu;
 import java.util.function.Consumer;
 
 public class MainFrame extends JFrame {
+    public final static int SelectionMode = 0;
+    public final static int BrushMode = 1;
+    public final static int PasteMode = 2;
+    public final static int TextMode = 3;
+    public final static int ViewMode = 4;    
 
     private JDesktopPane desktopPane;
 
