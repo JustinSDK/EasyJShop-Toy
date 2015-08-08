@@ -288,8 +288,4 @@ public class ImageInternalFrame extends JInternalFrame {
     public void setImageForeground(Color color) {
         canvas.setForeground(color);
     }    
-    
-    public void getViewCursor() {
-        return getEditMenu().getViewCursor();
-    }
 }
