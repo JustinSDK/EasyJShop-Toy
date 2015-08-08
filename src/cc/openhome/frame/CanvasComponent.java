@@ -25,20 +25,17 @@ import java.util.function.Function;
 import javax.swing.JOptionPane;
 
 public class CanvasComponent extends JComponent {
-
-    public final static int SelectionMode = 0;
-    public final static int BrushMode = 1;
-    public final static int PasteMode = 2;
-    public final static int TextMode = 3;
-    public final static int ViewMode = 4;
-
     private Image image, pastedImage, fakeImage;
     private Point start, end;
-    private Rectangle2D rect;
-    private BasicStroke stroke, stroke2, lineStroke;
-    private Line2D line;
 
-    private double scale;
+    private Rectangle2D rect = new Rectangle2D.Double();
+    private BasicStroke stroke = new BasicStroke(1, BasicStroke.CAP_ROUND, 0,
+            BasicStroke.JOIN_ROUND, new float[]{5, 5}, 0);
+    private BasicStroke stroke2 = new BasicStroke(1, BasicStroke.CAP_ROUND, 0,
+            BasicStroke.JOIN_ROUND, new float[]{5, 5}, 5);
+    private BasicStroke lineStroke = new BasicStroke(10);
+    private Line2D line = new Line2D.Double();
+    private double scale = 1.0;
 
     private String text;
     private Font textFont;
@@ -47,69 +44,44 @@ public class CanvasComponent extends JComponent {
 
     private ImageMementoManager mementoManager = new ImageMementoManager();
 
-    public CanvasComponent() {
-        rect = new Rectangle2D.Double();
-
-        stroke = new BasicStroke(1, BasicStroke.CAP_ROUND, 0,
-                BasicStroke.JOIN_ROUND, new float[]{5, 5}, 0);
-        stroke2 = new BasicStroke(1, BasicStroke.CAP_ROUND, 0,
-                BasicStroke.JOIN_ROUND, new float[]{5, 5}, 5);
-
-        line = new Line2D.Double();
-
-        setBrushWidth(10);
-
-        scale = 1.0;
-        initEventListener();
+    public CanvasComponent(Image image, MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        initEventListeners();
+        setImage(image);
     }
 
-    public void initEventListener() {
+    public void initEventListeners() {
         addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseEntered(MouseEvent e) {
-                if (mainFrame.getEditMenu().getEditMode() == CanvasComponent.ViewMode) {
+                if (mainFrame.getEditMenu().getEditMode() == MainFrame.ViewMode) {
                     setCursor(mainFrame.getEditMenu().getViewCursor());
                 } else {
                     setCursor(null);
                 }
             }
 
+            @Override
             public void mousePressed(MouseEvent e) {
                 switch (mainFrame.getEditMode()) {
-                    case 0: // SelectionMode
-                        setStart(e.getPoint());
+                    case MainFrame.BrushMode: 
+                        doBrushOnMousePressed(e);
                         break;
-                    case 1: // BrushMode
-                        setUpUndo(ImageProcessor.copyImage(getImage()));
-                        resetRect();
-                        setBrushWidth(mainFrame.getBrushValue());
-                        setStart(e.getPoint());
-                        repaint();
-                        mainFrame.getSelectedFrame().setModifiedTitle();
-                        break;
-                    case 2: // PasteMode
+                    case MainFrame.PasteMode: 
                         mergeImage();
                         break;
-                    case 3: // TextMode
-                        if (getText() != null) {
-                            mergeText();
-                        } else {
-                            inputText();
-                        }
+                    case MainFrame.TextMode: 
+                        doTextOnMousePressed();
                         break;
-                    case 4: // ViewMode
-                        if (e.getButton() == MouseEvent.BUTTON1) {
-                            increaseViewScale();
-                        } else if (e.getButton() == MouseEvent.BUTTON3) {
-                            decreaseViewScale();
-                        }
-                        mainFrame.getSelectedFrame().open();
-                        repaint();
+                    case MainFrame.ViewMode: 
+                        doViewOnMousePressed(e);
                         break;
                     default: // SelectionMode
                         setStart(e.getPoint());
                 }
             }
 
+            @Override
             public void mouseReleased(MouseEvent e) {
                 setStart(null);
                 setEnd(null);
@@ -118,25 +90,24 @@ public class CanvasComponent extends JComponent {
         });
 
         addMouseMotionListener(new MouseMotionListener() {
+            @Override
             public void mouseDragged(MouseEvent e) {
                 switch (mainFrame.getEditMode()) {
-                    case 0: // SelectionMode
-                        dragRect(e.getPoint());
-                        break;
-                    case 1: // BrushMode
+                    case MainFrame.BrushMode: 
                         setEnd(e.getPoint());
                         repaint();
                         break;
-                    case 3:
-                    case 4:
+                    case MainFrame.TextMode:
+                    case MainFrame.ViewMode:
                         break;
                     default: // SelectionMode
                         dragRect(e.getPoint());
                 }
             }
 
+            @Override
             public void mouseMoved(MouseEvent e) {
-                if (mainFrame.getEditMode() == CanvasComponent.PasteMode || mainFrame.getEditMode() == CanvasComponent.TextMode) {
+                if (mainFrame.getEditMode() == MainFrame.PasteMode || mainFrame.getEditMode() == MainFrame.TextMode) {
                     setStart(e.getPoint());
                     repaint();
                 }
@@ -144,16 +115,38 @@ public class CanvasComponent extends JComponent {
         });
     }
 
-    public CanvasComponent(Image image, MainFrame mainFrame) {
-        this();
-        this.mainFrame = mainFrame;
-        setImage(image);
+    private void doViewOnMousePressed(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON1) {
+            increaseViewScale();
+        } else if (e.getButton() == MouseEvent.BUTTON3) {
+            decreaseViewScale();
+        }
+        mainFrame.getSelectedFrame().open();
+        repaint();
+    }
+
+    private void doTextOnMousePressed() {
+        if (getText() != null) {
+            mergeText();
+        } else {
+            inputText();
+        }
+    }
+
+    private void doBrushOnMousePressed(MouseEvent e) {
+        setUpUndo(ImageProcessor.copyImage(getImage()));
+        resetRect();
+        setBrushWidth(mainFrame.getBrushValue());
+        setStart(e.getPoint());
+        repaint();
+        mainFrame.getSelectedFrame().setModifiedTitle();
     }
 
     public void resetRect() {
         rect.setRect(0, 0, 0, 0);
     }
 
+    @Override
     public Dimension getPreferredSize() {
         Dimension dimension = super.getPreferredSize();
         dimension.setSize(image.getWidth(this) * scale + 1, image.getHeight(this) * scale + 1);
@@ -161,7 +154,8 @@ public class CanvasComponent extends JComponent {
     }
 
     public Rectangle2D getSelectedRect() {
-        return new Rectangle2D.Double(rect.getX() / scale, rect.getY() / scale, rect.getWidth() / scale, rect.getHeight() / scale);
+        return new Rectangle2D.Double(rect.getX() / scale, rect.getY() / scale,
+                rect.getWidth() / scale, rect.getHeight() / scale);
     }
 
     public void setStart(Point start) {
@@ -173,41 +167,52 @@ public class CanvasComponent extends JComponent {
     }
 
     public void dragRect(Point point) {
-        end = point;
-
-        double tmpX = end.getX();
-        double tmpY = end.getY();
-        double tmpWidth = image.getWidth(this) * scale;
-        double tmpHeight = image.getHeight(this) * scale;
-
-        if (tmpX < 0) {
-            tmpX = 0;
-        }
-        if (tmpX > tmpWidth) {
-            tmpX = tmpWidth;
-        }
-        if (tmpY < 0) {
-            tmpY = 0;
-        }
-        if (tmpY > tmpHeight) {
-            tmpY = tmpHeight;
-        }
-
-        end.setLocation(tmpX, tmpY);
-
+        adjustMargin(point);
+        setEnd(point);
         calculateSelectedRect();
         repaint();
     }
 
+    private void adjustMargin(Point point) {
+        double x = adjustMarginX(point);
+        double y = adjustMarginY(point);
+        point.setLocation(x, y);
+    }
+
+    private double adjustMarginY(Point point) {
+        double y = point.getY();
+        if (y < 0) {
+            y = 0;
+        }
+        double height = image.getHeight(this) * scale;
+        if (y > height) {
+            y = height;
+        }
+        return y;
+    }
+
+    private double adjustMarginX(Point point) {
+        double x = point.getX();
+        if (x < 0) {
+            x = 0;
+        }
+        double width = image.getWidth(this) * scale;
+        if (x > width) {
+            x = width;
+        }
+        return x;
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         switch (mainFrame.getEditMode()) {
-            case 1: // BrushMode
+            case MainFrame.BrushMode:
                 brushImage(g);
                 break;
-            case 2: // PasteMode
+            case MainFrame.PasteMode: 
                 pasteImage(g);
                 break;
-            case 3: // TextMode
+            case MainFrame.TextMode: 
                 drawText(g);
                 break;
             default: // SelectionMode
@@ -224,74 +229,89 @@ public class CanvasComponent extends JComponent {
     }
 
     private void pasteImage(Graphics g) {
-        Graphics fakeGraphics = fakeImage.getGraphics();
-        fakeGraphics.drawImage(image, 0, 0, this);
-
         if (pastedImage != null) {
-            if (start != null) {
-                fakeGraphics.drawImage(pastedImage, (int) (start.getX() / scale), (int) (start.getY() / scale), this);
-            } else {
-                g.drawImage(pastedImage, 0, 0, this);
-            }
+            drawImage(g);
         }
-
         g.drawImage(fakeImage, 0, 0, (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
     }
 
-    private void drawText(Graphics g) {
-        Graphics fakeGraphics = fakeImage.getGraphics();
-        fakeGraphics.drawImage(image, 0, 0, this);
+    private void drawImage(Graphics g) {
+        if (start != null) {
+            Graphics fakeGraphics = fakeImage.getGraphics();
+            fakeGraphics.drawImage(image, 0, 0, this);
+            fakeGraphics.drawImage(pastedImage, (int) (start.getX() / scale), (int) (start.getY() / scale), this);
+        } else {
+            g.drawImage(pastedImage, 0, 0, this);
+        }
+    }
 
+    private void drawText(Graphics g) {
         if (text != null) {
-            fakeGraphics.setFont(textFont);
-            fakeGraphics.setColor(mainFrame.getColorBoxForeground());
-            if (start != null) {
-                fakeGraphics.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
-            } else {
-                fakeGraphics.drawString(text, 0, 0);
-            }
+            drawString(prepareFakeGraphics());
         }
         g.drawImage(fakeImage, 0, 0, (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
+    }
+
+    private void drawString(Graphics fakeGraphics) {
+        if (start != null) {
+            fakeGraphics.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
+        } else {
+            fakeGraphics.drawString(text, 0, 0);
+        }
+    }
+    
+    private Graphics prepareFakeGraphics() {
+        Graphics fakeGraphics = fakeImage.getGraphics();
+        fakeGraphics.drawImage(image, 0, 0, this);
+        fakeGraphics.setFont(textFont);
+        fakeGraphics.setColor(mainFrame.getColorBoxForeground());
+        return fakeGraphics;
     }
 
     private void drawDashedRect(Graphics g) {
         g.drawImage(image, 0, 0,
                 (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
+        blackDashedRect((Graphics2D) g);
+        whiteDashedRect((Graphics2D) g);
+    }
 
-        //g = fakeImage.getGraphics();
-        //g.drawImage(image, 0, 0, this);
-        Graphics2D g2 = (Graphics2D) g;
-
-        g2.setStroke(stroke);
-        g2.setPaint(Color.black);
-        g2.draw(rect);
-
+    private void whiteDashedRect(Graphics2D g2) {
         g2.setStroke(stroke2);
         g2.setPaint(Color.white);
         g2.draw(rect);
     }
 
+    private void blackDashedRect(Graphics2D g2) {
+        g2.setStroke(stroke);
+        g2.setPaint(Color.black);
+        g2.draw(rect);
+    }
+
     private void brushImage(Graphics g) {
-        int corner = getBrushWidth() / 2;
-
-        Graphics imageGraphics = image.getGraphics();
-        imageGraphics.setColor(mainFrame.getColorBoxForeground());
-
         if (start != null) {
-            imageGraphics.fillOval((int) (start.getX() / scale - corner), (int) (start.getY() / scale - corner), getBrushWidth(), getBrushWidth());
-
+            Graphics imageGraphics = image.getGraphics();
+            imageGraphics.setColor(mainFrame.getColorBoxForeground());
+            lineStart(imageGraphics);
             if (end != null) {
-                Graphics2D imageGraphics2D = (Graphics2D) imageGraphics;
-                imageGraphics2D.setStroke(lineStroke);
-                imageGraphics2D.setColor(mainFrame.getColorBoxForeground());
-                line.setLine(start.getX() / scale, start.getY() / scale, end.getX() / scale, end.getY() / scale);
-                imageGraphics2D.draw(line);
-                start = end;
+                lineToEnd(imageGraphics);
             }
         }
-
         g.drawImage(image, 0, 0,
                 (int) (image.getWidth(this) * scale), (int) (image.getHeight(this) * scale), this);
+    }
+
+    private void lineToEnd(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g;
+        g2.setStroke(lineStroke);
+        g2.setColor(mainFrame.getColorBoxForeground());
+        line.setLine(start.getX() / scale, start.getY() / scale, end.getX() / scale, end.getY() / scale);
+        g2.draw(line);
+        start = end;
+    }
+
+    private void lineStart(Graphics g) {
+        int corner = getBrushWidth() / 2;
+        g.fillOval((int) (start.getX() / scale - corner), (int) (start.getY() / scale - corner), getBrushWidth(), getBrushWidth());
     }
 
     private void calculateSelectedRect() {
@@ -299,23 +319,17 @@ public class CanvasComponent extends JComponent {
         double startY = start.getY();
         double endX = end.getX();
         double endY = end.getY();
-
         double swidth = endX - startX;
         double sheight = endY - startY;
 
         if (swidth > 0 && sheight > 0) {
-            rect.setRect(startX, startY,
-                    swidth, sheight);
+            rect.setRect(startX, startY, swidth, sheight);
         } else if (swidth > 0 && sheight < 0) {
-            rect.setRect(startX, endY,
-                    swidth, -sheight);
+            rect.setRect(startX, endY, swidth, -sheight);
         } else if (swidth < 0 && sheight > 0) {
-            rect.setRect(endX, startY,
-                    -swidth, sheight);
-
+            rect.setRect(endX, startY, -swidth, sheight);
         } else if (swidth < 0 && sheight < 0) {
-            rect.setRect(endX, endY,
-                    -swidth, -sheight);
+            rect.setRect(endX, endY, -swidth, -sheight);
         }
     }
 
@@ -406,11 +420,7 @@ public class CanvasComponent extends JComponent {
             case JOptionPane.YES_OPTION:
                 setUpUndo(ImageProcessor.copyImage(getImage()));
                 if (text != null) {
-                    Graphics g = image.getGraphics();
-                    g.setFont(textFont);
-                    g.setColor(mainFrame.getColorBoxForeground());
-                    g.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
-                    repaint();
+                    drawTextToImage();
                 }
                 mainFrame.getSelectedFrame().setModifiedTitle();
                 mainFrame.getEditMenu().updateEditMenuItemBtn();
@@ -422,13 +432,21 @@ public class CanvasComponent extends JComponent {
         return option;
     }
 
+    private void drawTextToImage() {
+        Graphics g = image.getGraphics();
+        g.setFont(textFont);
+        g.setColor(mainFrame.getColorBoxForeground());
+        g.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
+        repaint();
+    }
+
     private void inputText() {
         int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             setText(FontDialog.getInputText(), FontDialog.getFont());
         }
     }
-    
+
     public boolean isUndable() {
         return mementoManager.isUndoable();
     }
@@ -456,7 +474,6 @@ public class CanvasComponent extends JComponent {
     public void cleanSelectedArea() {
         setUpUndo(getImage());
         Graphics g = getImage().getGraphics();
-        Rectangle2D rect = getSelectedRect();
         g.setColor(mainFrame.getColorBoxBackground());
         g.fillRect((int) rect.getX(), (int) rect.getY(),
                 (int) rect.getWidth(), (int) rect.getHeight());
@@ -475,8 +492,7 @@ public class CanvasComponent extends JComponent {
 
     public void process(Function<Image, Image> func) {
         setUpUndo(getImage());
-        Image img = func.apply(getImage());
-        setImage(img);
+        setImage(func.apply(getImage()));
     }
 
     public void preResize() {
@@ -488,28 +504,26 @@ public class CanvasComponent extends JComponent {
         setUpUndo(getImage());
         undoImage();
     }
-    
+
     public void undo() {
         setImage(undoImage());
     }
-    
+
     public void redo() {
         setImage(redoImage());
     }
-    
+
     public void resizeByScale(int scale) {
         preResize();
-        Image img = ImageProcessor.resize(getImage(), scale * 0.01);
-        setImage(img);
+        setImage(ImageProcessor.resize(getImage(), scale * 0.01));
     }
-    
+
     public void resizeByWidthHeight(int width, int height) {
         preResize();
-        Image img = ImageProcessor.resize(getImage(), width, height);
-        setImage(img);
+        setImage(ImageProcessor.resize(getImage(), width, height));
     }
-    
+
     public BufferedImage getImageAsBufferedImage() {
         return ImageProcessor.toBufferedImage(image);
-    }    
+    }
 }
