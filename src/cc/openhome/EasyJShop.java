@@ -11,7 +11,7 @@ public class EasyJShop {
             new MainFrame().setVisible(true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e.toString(),
-                    "INFORMATION", JOptionPane.ERROR_MESSAGE);
+                    "ERROR", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }    
