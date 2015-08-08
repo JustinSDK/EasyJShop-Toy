@@ -1,9 +1,13 @@
 EasyJShop
 =========
 
-A simple implementation of an image processor using Java 2D. Written for my girl friend, currently my wife, in 2005.
+這個螢幕擷取與影像處理小程式，最初是在 2005 年後撰寫，作為一個對 Java 2D 的練習。
 
-EasyJShop is an easy image processor. It could help you capture screen, open files and do simple image processing, such as copying or cropping a selection, doing a horizontal or vertical mirror, rotating it clockwise or counter-clockwise.
+程式實際的使用者我當時女友、現在的老婆，她對影像處理不熟，用不了什麼 PhotoShop 之類軟體提供的複雜複雜功能，只是想要抓圖、裁剪、旋轉、鏡像、放大縮小等簡單功能。
+
+時隔十年（2015）之後，一時興起拿出來重構，除了過程中修正了幾個 Bug 之外，我沒有改變這個程式的功能，純綷只是想看看這十年自己有多少長進，結果是過程中，WTF/MIN 經常破表 ... XD
+
+誰人沒過去，以後不會再嘲笑別人對程式了 ... Orz
 
 ![Screenshot](/screenshot.png)
 
