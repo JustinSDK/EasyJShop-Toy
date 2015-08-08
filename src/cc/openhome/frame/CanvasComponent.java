@@ -41,22 +41,26 @@ public class CanvasComponent extends JComponent {
     private String text;
     private Font textFont;
 
-    private MainFrame mainFrame;
+    private ImageInternalFrame internalFrame;
 
     private ImageMementoManager mementoManager = new ImageMementoManager();
 
-    public CanvasComponent(Image image, MainFrame mainFrame) {
-        this.mainFrame = mainFrame;
+    public CanvasComponent(Image image, ImageInternalFrame internalFrame) {
+        this.internalFrame = internalFrame;
         initEventListeners();
         setImage(image);
     }
-
-    public void initEventListeners() {
+    
+    public MainFrame getMainFrame() {
+        return internalFrame.getMainFrame();
+    }
+    
+    private void initEventListeners() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                if (mainFrame.getEditMode() == MainFrame.ViewMode) {
-                    setCursor(mainFrame.getViewCursor());
+                if (getMainFrame().getEditMode() == MainFrame.ViewMode) {
+                    setCursor(getMainFrame().getViewCursor());
                 } else {
                     setCursor(null);
                 }
@@ -64,7 +68,7 @@ public class CanvasComponent extends JComponent {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                switch (mainFrame.getEditMode()) {
+                switch (getMainFrame().getEditMode()) {
                     case MainFrame.BrushMode:
                         doBrushOnMousePressed(e);
                         break;
@@ -86,14 +90,14 @@ public class CanvasComponent extends JComponent {
             public void mouseReleased(MouseEvent e) {
                 setStart(null);
                 setEnd(null);
-                mainFrame.updateEditMenuStatus();
+                getMainFrame().updateEditMenuStatus();
             }
         });
 
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                switch (mainFrame.getEditMode()) {
+                switch (getMainFrame().getEditMode()) {
                     case MainFrame.BrushMode:
                         setEnd(e.getPoint());
                         repaint();
@@ -108,7 +112,7 @@ public class CanvasComponent extends JComponent {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                if (mainFrame.getEditMode() == MainFrame.PasteMode || mainFrame.getEditMode() == MainFrame.TextMode) {
+                if (getMainFrame().getEditMode() == MainFrame.PasteMode || getMainFrame().getEditMode() == MainFrame.TextMode) {
                     setStart(e.getPoint());
                     repaint();
                 }
@@ -122,7 +126,7 @@ public class CanvasComponent extends JComponent {
         } else if (e.getButton() == MouseEvent.BUTTON3) {
             decreaseViewScale();
         }
-        mainFrame.getSelectedFrame().open();
+        internalFrame.open();
         repaint();
     }
 
@@ -137,10 +141,10 @@ public class CanvasComponent extends JComponent {
     private void doBrushOnMousePressed(MouseEvent e) {
         setUpUndo(ImageProcessor.copyImage(getImage()));
         resetRect();
-        setBrushWidth(mainFrame.getBrushValue());
+        setBrushWidth(getMainFrame().getBrushValue());
         setStart(e.getPoint());
         repaint();
-        mainFrame.getSelectedFrame().setModifiedTitle();
+        internalFrame.setModifiedTitle();
     }
 
     public void resetRect() {
@@ -206,7 +210,7 @@ public class CanvasComponent extends JComponent {
 
     @Override
     protected void paintComponent(Graphics g) {
-        switch (mainFrame.getEditMode()) {
+        switch (getMainFrame().getEditMode()) {
             case MainFrame.BrushMode:
                 brushImage(g);
                 break;
@@ -253,7 +257,7 @@ public class CanvasComponent extends JComponent {
 
     private void drawString(Graphics fakeGraphics) {
         fakeGraphics.setFont(textFont);
-        fakeGraphics.setColor(mainFrame.getColorBoxForeground());
+        fakeGraphics.setColor(getMainFrame().getColorBoxForeground());
         if (start != null) {
             fakeGraphics.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
         } else {
@@ -283,7 +287,7 @@ public class CanvasComponent extends JComponent {
     private void brushImage(Graphics g) {
         if (start != null) {
             Graphics imageGraphics = image.getGraphics();
-            imageGraphics.setColor(mainFrame.getColorBoxForeground());
+            imageGraphics.setColor(getMainFrame().getColorBoxForeground());
             lineStart(imageGraphics);
             if (end != null) {
                 lineToEnd(imageGraphics);
@@ -296,7 +300,7 @@ public class CanvasComponent extends JComponent {
     private void lineToEnd(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         g2.setStroke(lineStroke);
-        g2.setColor(mainFrame.getColorBoxForeground());
+        g2.setColor(getMainFrame().getColorBoxForeground());
         line.setLine(start.getX() / scale, start.getY() / scale, end.getX() / scale, end.getY() / scale);
         g2.draw(line);
         start = end;
@@ -389,14 +393,14 @@ public class CanvasComponent extends JComponent {
         if (pastedImage != null) {
             int option = JOptionPane.showOptionDialog(null,
                     "merge images?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+                    JOptionPane.QUESTION_MESSAGE, getMainFrame().smallLogo, null, null);
 
             switch (option) {
                 case JOptionPane.YES_OPTION:
                     setUpUndo(ImageProcessor.copyImage(getImage()));
                     mergePastedImage();
-                    mainFrame.getSelectedFrame().setModifiedTitle();
-                    mainFrame.updateEditMenuStatus();
+                    internalFrame.setModifiedTitle();
+                    getMainFrame().updateEditMenuStatus();
                 case JOptionPane.CANCEL_OPTION:
                     setPastedImage(null);
                     setStart(null);
@@ -408,15 +412,15 @@ public class CanvasComponent extends JComponent {
     private int mergeText() {
         int option = JOptionPane.showOptionDialog(null,
                 "merge text into image?", "merge?", JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
+                JOptionPane.QUESTION_MESSAGE, getMainFrame().smallLogo, null, null);
         switch (option) {
             case JOptionPane.YES_OPTION:
                 setUpUndo(ImageProcessor.copyImage(getImage()));
                 if (text != null) {
                     drawTextToImage();
                 }
-                mainFrame.getSelectedFrame().setModifiedTitle();
-                mainFrame.updateEditMenuStatus();
+                internalFrame.setModifiedTitle();
+                getMainFrame().updateEditMenuStatus();
             case JOptionPane.CANCEL_OPTION:
                 setText(null, null);
                 setStart(null);
@@ -428,13 +432,13 @@ public class CanvasComponent extends JComponent {
     private void drawTextToImage() {
         Graphics g = image.getGraphics();
         g.setFont(textFont);
-        g.setColor(mainFrame.getColorBoxForeground());
+        g.setColor(getMainFrame().getColorBoxForeground());
         g.drawString(text, (int) (start.getX() / scale), (int) (start.getY() / scale));
         repaint();
     }
 
     private void inputText() {
-        int option = FontDialog.showDialog(null, "Font information", mainFrame.smallLogo);
+        int option = FontDialog.showDialog(null, "Font information", getMainFrame().smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             setText(FontDialog.getInputText(), FontDialog.getFont());
         }
@@ -467,7 +471,7 @@ public class CanvasComponent extends JComponent {
     public void cleanSelectedArea() {
         setUpUndo(getImage());
         Graphics g = getImage().getGraphics();
-        g.setColor(mainFrame.getColorBoxBackground());
+        g.setColor(getMainFrame().getColorBoxBackground());
         g.fillRect((int) rect.getX(), (int) rect.getY(),
                 (int) rect.getWidth(), (int) rect.getHeight());
     }

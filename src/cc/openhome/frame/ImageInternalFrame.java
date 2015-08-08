@@ -24,7 +24,6 @@ import javax.swing.event.InternalFrameEvent;
 
 public class ImageInternalFrame extends JInternalFrame {
     private JFileChooser saveFileChooser;
-
     private MainFrame mainFrame;
     private CanvasComponent canvas;
 
@@ -37,8 +36,12 @@ public class ImageInternalFrame extends JInternalFrame {
         initEventListeners();
     }
 
+    public MainFrame getMainFrame() {
+        return mainFrame;
+    }
+
     private void initComponents(MainFrame mainFrame, Image image) {
-        canvas = new CanvasComponent(image, mainFrame);
+        canvas = new CanvasComponent(image, this);
         saveFileChooser = new JFileChooser();
         saveFileChooser.addChoosableFileFilter(new SavableFileFilter());
         setFrameIcon(mainFrame.getIcon());
