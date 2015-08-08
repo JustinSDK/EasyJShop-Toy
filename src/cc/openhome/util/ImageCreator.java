@@ -5,31 +5,21 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.ByteArrayOutputStream;
 import java.awt.Image;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class ImageCreator {
-    private Rectangle screenRect;
-    private Robot robot;
-    private float imageQuality; // 0.0f ~ 1.0f
+    private Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+    private Robot robot = createRobot();
 
-    public ImageCreator() {
-        screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+    private Robot createRobot() throws RuntimeException {
         try {
-            robot = new Robot();
+            return new Robot();
         } catch (AWTException ex) {
             throw new RuntimeException(ex);
         }
-        imageQuality = 0.5f;
     }
 
     public BufferedImage emptyImage(int width, int height, Color color) {
@@ -40,29 +30,7 @@ public class ImageCreator {
         return bufferedImage;
     }    
 
-    public Image capture() {
+    public Image createScreenCapture() {
         return robot.createScreenCapture(screenRect);
-    }
-
-    public byte[] captureAndToByte() throws IOException {
-        BufferedImage bufImage = robot.createScreenCapture(screenRect);
-
-        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(byteArrayStream);
-
-        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(bufImage);
-        param.setQuality(imageQuality, false);
-
-        encoder.encode(bufImage);
-
-        return byteArrayStream.toByteArray();
-    }
-
-    public void setImageQuality(float imageQuality) {
-        this.imageQuality = imageQuality;
-    }
-
-    public float getImageQuality() {
-        return imageQuality;
     }
 }

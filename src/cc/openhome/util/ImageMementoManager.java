@@ -4,42 +4,30 @@ import java.util.ArrayList;
 import java.awt.Image;
 
 public class ImageMementoManager {
-    private ArrayList mementoList;
-    private int undoIndex, redoIndex;
-    private int maxUndo;
-    
-    public ImageMementoManager() {
-        mementoList = new ArrayList();
-        undoIndex = -1;
-        redoIndex = 0;
-        maxUndo = 15;
-    }
+    private ArrayList<Image> mementoList = new ArrayList<>();
+    private int undoIndex = -1, redoIndex = 0;
+    private int maxUndo = 15;
     
     public Image undoImage() {
         Image image = null;
-        
         if(undoIndex >= 0) {
-            image = (Image) mementoList.get(undoIndex);
+            image = mementoList.get(undoIndex);
             undoIndex--;
             redoIndex--;
         }
-        
         return image;
     }
     
     public Image redoImage() {
         Image image = null;
-        
         if(redoIndex < mementoList.size() -1) {
             redoIndex++;
             undoIndex++;
-            image = (Image) mementoList.get(redoIndex);
-            
+            image = mementoList.get(redoIndex);
             if(redoIndex == mementoList.size() -1) {
                 mementoList.remove(redoIndex);
             }
         }
-        
         return image;
     }
     

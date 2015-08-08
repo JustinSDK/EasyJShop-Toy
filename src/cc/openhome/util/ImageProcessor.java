@@ -12,7 +12,6 @@ public class ImageProcessor {
     public static Image copyRectImage(Image original, Rectangle2D rect) {
         int x = (int) rect.getX();
         int y = (int) rect.getY();
-        
         int width = (int) rect.getWidth();
         int height = (int) rect.getHeight();
         
@@ -30,7 +29,8 @@ public class ImageProcessor {
         BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         Graphics2D g2 = bufferedImage.createGraphics();
-        g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+        g2.setRenderingHint(
+                RenderingHints.KEY_INTERPOLATION,
                 RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2.drawImage(original, 0, 0, width, height, null);
         
@@ -62,13 +62,13 @@ public class ImageProcessor {
                               int sx1, int sy1, int sx2, int sy2) {
         int width = Math.abs(sx1 - sx2);
         int height = Math.abs(sy1 - sy2);
-        BufferedImage bufferedImage = new BufferedImage(width, 
-                height, BufferedImage.TYPE_INT_RGB);
         
+        BufferedImage bufferedImage = new BufferedImage(
+                width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = bufferedImage.getGraphics();
-        
         g.drawImage(original, dx1, dy1, dx2, dy2,
                 sx1, sy1, sx2, sy2, null);
+        
         return bufferedImage;
     }
     
@@ -76,8 +76,8 @@ public class ImageProcessor {
         int width = original.getWidth(null);
         int height = original.getHeight(null);
 
-        BufferedImage bufferedImage = new BufferedImage(height, 
-                width, BufferedImage.TYPE_INT_RGB);
+        BufferedImage bufferedImage = new BufferedImage(
+                height, width, BufferedImage.TYPE_INT_RGB);
         
         Graphics2D g2 = bufferedImage.createGraphics();
         if(clockwise) {

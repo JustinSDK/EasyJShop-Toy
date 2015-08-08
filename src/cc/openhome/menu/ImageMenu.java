@@ -107,7 +107,7 @@ public class ImageMenu extends JMenu {
                 KeyStroke.getKeyStroke(KeyEvent.VK_E, InputEvent.CTRL_MASK));
 
         captureMenuItem.addActionListener(e -> {
-            screenShot();
+            createScreenCapture();
         });
 
         newImageMenuItem.addActionListener(e -> {
@@ -174,14 +174,14 @@ public class ImageMenu extends JMenu {
         }
     }
 
-    private void screenShot() {
+    private void createScreenCapture() {
         mainFrame.setVisible(false);
         int option = JOptionPane.showOptionDialog(null,
                 delaySlider, "delay ? (seconds)", JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
         if (option == JOptionPane.OK_OPTION) {
             sleep(delaySlider.getValue() * 1000);
-            mainFrame.createInternalFrame("*untitled", imageCreator.capture());
+            mainFrame.createInternalFrame("*untitled", imageCreator.createScreenCapture());
         }
         mainFrame.setVisible(true);
     }

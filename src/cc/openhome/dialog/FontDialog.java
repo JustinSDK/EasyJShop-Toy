@@ -51,7 +51,7 @@ public class FontDialog {
         JPanel panel = new JPanel();
         panel.add(new JLabel("Name"));
         panel.add(fontNameComboBox);
-        panel.add(new JLabel("¡@Size"));
+        panel.add(new JLabel("ã€€Size"));
         panel.add(fontSizeSpinner);
         
         fontPanel.add(panel);

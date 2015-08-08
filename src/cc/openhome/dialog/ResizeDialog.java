@@ -66,10 +66,10 @@ public class ResizeDialog {
         resizePanel.add(resizeHeightSpinner);
         resizePanel.add(new JLabel("pixel"));
         
-        resizePanel.add(new JLabel("¡@"));
-        resizePanel.add(new JLabel("¡@"));
-        resizePanel.add(new JLabel("¡@"));
-        resizePanel.add(new JLabel("¡@"));
+        resizePanel.add(new JLabel("ã€€"));
+        resizePanel.add(new JLabel("ã€€"));
+        resizePanel.add(new JLabel("ã€€"));
+        resizePanel.add(new JLabel("ã€€"));
         
         resizePanel.add(percentBtn);
         resizePanel.add(resizePercentSpinner);
