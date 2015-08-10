@@ -193,7 +193,7 @@ public class ImageInternalFrame extends JInternalFrame {
         }
     }
 
-    public void clockwise(Function<Image, Image> func) {
+    public void rotate(Function<Image, Image> func) {
         canvas.resetRect();
         process(func);
         open();
@@ -229,7 +229,7 @@ public class ImageInternalFrame extends JInternalFrame {
         return canvas.getImage().getHeight(null);
     }
 
-    public boolean isAreaSelected() {
+    public boolean hasSelectedArea() {
         Rectangle2D rect = canvas.getSelectedRect();
         return rect.getWidth() > 0 && rect.getWidth() > 0;
     }
@@ -290,5 +290,7 @@ public class ImageInternalFrame extends JInternalFrame {
 
     public void setImageForeground(Color color) {
         canvas.setForeground(color);
-    }    
+    }
+    
+    
 }

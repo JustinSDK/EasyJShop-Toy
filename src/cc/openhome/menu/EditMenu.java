@@ -129,10 +129,10 @@ public class EditMenu extends JMenu {
             internalFrame.mirror(ImageProcessor::verticalMirror);
         });
         consumers.put(CLK_ROTATE, internalFrame -> {
-            internalFrame.clockwise(ImageProcessor::clockwise);
+            internalFrame.rotate(ImageProcessor::clockwise);
         });
         consumers.put(CT_CLK_ROTATE, internalFrame -> {
-            internalFrame.clockwise(ImageProcessor::counterClockwise);
+            internalFrame.rotate(ImageProcessor::counterClockwise);
         });
         consumers.put(SCALE_RESIZE, internalFrame -> {
             internalFrame.resizeImage(ResizeDialog.getScalePercentage());
@@ -282,18 +282,18 @@ public class EditMenu extends JMenu {
                 KeyStroke.getKeyStroke(KeyEvent.VK_K, InputEvent.CTRL_MASK));
 
         undoMenuItem.addActionListener(e -> {
-            getSelectedFrame().undo();
+            mainFrame.undoSelectedFrame();
             updateEditMenuItemBtn();
         });
 
         redoMenuItem.addActionListener(e -> {
-            getSelectedFrame().redo();
+            mainFrame.redoSelectedFrame();
             updateEditMenuItemBtn();
         });
 
         cutMenuItem.addActionListener(e -> {
             copyToClipboard();
-            getSelectedFrame().cleanSelectedArea();
+            mainFrame.cleanSelectedAreaOfSelectedFrame();
             pasteToNewMenuItem.setEnabled(true);
             updateEditMenuItemBtn();
         });
@@ -305,7 +305,7 @@ public class EditMenu extends JMenu {
         });
 
         pasteMenuItem.addActionListener(e -> {
-            getSelectedFrame().paste();
+            mainFrame.pasteToSelectedFrame();
         });
 
         pasteToNewMenuItem.addActionListener(e -> {
@@ -313,7 +313,7 @@ public class EditMenu extends JMenu {
         });
 
         cropMenuItem.addActionListener(e -> {
-            getSelectedFrame().crop();
+            mainFrame.cropSelectedFrame();
             updateEditMenuItemBtn();
         });
 
@@ -323,22 +323,22 @@ public class EditMenu extends JMenu {
         });
 
         horizontalMirrorMenuItem.addActionListener(e -> {
-            getSelectedFrame().mirror(ImageProcessor::horizontalMirror);
+            mainFrame.mirrorSelectedFrame(ImageProcessor::horizontalMirror);
             updateEditMenuItemBtn();
         });
 
         verticalMirrorMenuItem.addActionListener(e -> {
-            getSelectedFrame().mirror(ImageProcessor::verticalMirror);
+            mainFrame.mirrorSelectedFrame(ImageProcessor::verticalMirror);
             updateEditMenuItemBtn();
         });
 
         clockwiseMenuItem.addActionListener(e -> {
-            getSelectedFrame().clockwise(ImageProcessor::clockwise);
+            mainFrame.rotateSelectedFrame(ImageProcessor::clockwise);
             updateEditMenuItemBtn();
         });
 
         counterClockwiseMenuItem.addActionListener(e -> {
-            getSelectedFrame().clockwise(ImageProcessor::counterClockwise);
+            mainFrame.rotateSelectedFrame(ImageProcessor::counterClockwise);
             updateEditMenuItemBtn();
         });
 
@@ -355,7 +355,7 @@ public class EditMenu extends JMenu {
                     foreColorBox.setColor(color);
                     foreColorBox.repaint();
                     if(!mainFrame.noSelectedFrame()) {
-                        getSelectedFrame().setImageForeground(color);
+                        mainFrame.setImageForegroundOfSelected(color);
                     }
                 }
             }
@@ -368,7 +368,7 @@ public class EditMenu extends JMenu {
                     backColorBox.setColor(color);
                     backColorBox.repaint();
                     if(!mainFrame.noSelectedFrame()) {
-                        getSelectedFrame().setImageBackground(color);
+                        mainFrame.setImageBackgroundOfSelected(color);
                     }
                 }
             }
@@ -398,7 +398,7 @@ public class EditMenu extends JMenu {
 
         cutBtn.addActionListener(e -> {
             copyToClipboard();
-            getSelectedFrame().cleanSelectedArea();
+            mainFrame.cleanSelectedAreaOfSelectedFrame();
             pasteToNewMenuItem.setEnabled(true);
             updateEditMenuItemBtn();
         });
@@ -411,11 +411,11 @@ public class EditMenu extends JMenu {
 
         pasteBtn.addActionListener(e -> {
             editMode = MainFrame.PasteMode;
-            getSelectedFrame().paste();
+            mainFrame.pasteToSelectedFrame();
         });
 
         cropBtn.addActionListener(e -> {
-            getSelectedFrame().crop();
+            mainFrame.cropSelectedFrame();
             updateEditMenuItemBtn();
         });
 
@@ -442,10 +442,10 @@ public class EditMenu extends JMenu {
             setPasteEnabled(false);
         } else {
             setResizeMirrorRotateBatchEnabled(true);
-            setCutCopyCropEnabled(getSelectedFrame().isAreaSelected());
+            setCutCopyCropEnabled(mainFrame.hasSelectedAreaInSelectedFrame()); 
             setPasteEnabled(ClipboardHelper.getImageFromClipboard() != null);
-            undoMenuItem.setEnabled(getSelectedFrame().isUndoable());
-            redoMenuItem.setEnabled(getSelectedFrame().isRedoable());
+            undoMenuItem.setEnabled(mainFrame.isSelectedFrameUndoable());
+            redoMenuItem.setEnabled(mainFrame.isSelectedFrameRedoable());
         }
     }
 
@@ -474,7 +474,7 @@ public class EditMenu extends JMenu {
     }
 
     private void copyToClipboard() {
-        Image image = getSelectedFrame().copySelectedImage();
+        Image image = mainFrame.copySelectedAreaOfSelectedFrame(); 
         transferableImage.setImage(image);
         ClipboardHelper.imageToClipboard(transferableImage);
     }
@@ -484,14 +484,15 @@ public class EditMenu extends JMenu {
     }
 
     private void resize() {
+        Dimension dimension = mainFrame.getDimensionOfSelectedFrame();
         int option = ResizeDialog.showDialog(null, "Resize Information",
-                getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
+                (int) dimension.getWidth(), (int) dimension.getHeight(), mainFrame.smallLogo);
 
         if (option == JOptionPane.OK_OPTION) {
             if (ResizeDialog.isPercentage()) {
-                getSelectedFrame().resizeImage(ResizeDialog.getScalePercentage());
+                mainFrame.resizeSelectedFrameByPercent(); 
             } else {
-                getSelectedFrame().resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
+                mainFrame.resizeSelectedFrameByWidthHeight();
             }
         }
     }
@@ -513,15 +514,12 @@ public class EditMenu extends JMenu {
     }
 
     private void batchResize() {
+        Dimension dimension = mainFrame.getDimensionOfSelectedFrame();
         int option = ResizeDialog.showDialog(null, "Resize Information",
-                getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight(), mainFrame.smallLogo);
+                (int) dimension.getWidth(), (int) dimension.getHeight(), mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
             mainFrame.forEachInternalFrame(consumers.get(ResizeDialog.isPercentage() ? SCALE_RESIZE : WH_RESIZE));
         }
-    }
-
-    protected ImageInternalFrame getSelectedFrame() {
-        return (ImageInternalFrame) mainFrame.getSelectedFrame();
     }
 
     public int getBrushValue() {
