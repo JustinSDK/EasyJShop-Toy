@@ -218,7 +218,7 @@ public class EditMenu extends JMenu {
         toolBar.addSeparator();
 
         brushSpinner = new JSpinner();
-        brushSpinner.setValue(new Integer(10));
+        brushSpinner.setValue(10);
         brushSpinner.setToolTipText("Brush width");
         toolBar.add(brushSpinner);
 

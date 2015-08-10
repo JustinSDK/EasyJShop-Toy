@@ -1,6 +1,5 @@
 package cc.openhome.frame;
 
-import cc.openhome.util.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Color;
 import java.awt.Component;

@@ -201,6 +201,6 @@ public class MainFrame extends JFrame {
     }
 
     public void saveImageAsFileOfSelectedFrame() {
-            getSelectedFrame().saveImageAsFile(); 
+        getSelectedFrame().saveImageAsFile();
     }
 }
