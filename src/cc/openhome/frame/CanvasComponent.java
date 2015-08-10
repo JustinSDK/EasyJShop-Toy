@@ -335,7 +335,7 @@ public class CanvasComponent extends JComponent {
         fakeImage = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_RGB);
     }
 
-    public Image getImage() {
+    private Image getImage() {
         return image;
     }
 
@@ -523,4 +523,12 @@ public class CanvasComponent extends JComponent {
     public BufferedImage getImageAsBufferedImage() {
         return ImageProcessor.toBufferedImage(image);
     }
+    
+    public Dimension getImageDimension() {
+        return new Dimension(getImage().getWidth(null), getImage().getHeight(null));
+    }
+    
+    public Image copySelectedImage() {
+        return ImageProcessor.copyRectImage(getImage(), getSelectedRect());
+    }        
 }

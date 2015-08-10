@@ -181,7 +181,7 @@ public class MainFrame extends JFrame {
     }
 
     public Dimension getDimensionOfSelectedFrame() {
-        return new Dimension(getSelectedFrame().getImageWidth(), getSelectedFrame().getImageHeight());
+        return getSelectedFrame().getImageDimension();
     }
 
     public boolean isSelectedFrameUndoable() {

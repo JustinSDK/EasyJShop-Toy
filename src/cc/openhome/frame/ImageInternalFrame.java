@@ -4,6 +4,7 @@ import cc.openhome.util.ImageProcessor;
 import cc.openhome.menu.SavableFileFilter;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.HeadlessException;
 import java.awt.Image;
 import java.awt.geom.Rectangle2D;
@@ -220,13 +221,9 @@ public class ImageInternalFrame extends JInternalFrame {
         setModifiedTitle();
         open();
     }
-
-    public int getImageWidth() {
-        return canvas.getImage().getWidth(null);
-    }
-
-    public int getImageHeight() {
-        return canvas.getImage().getHeight(null);
+    
+    public Dimension getImageDimension() {
+        return canvas.getImageDimension();
     }
 
     public boolean hasSelectedArea() {
@@ -235,7 +232,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     public Image copySelectedImage() {
-        return ImageProcessor.copyRectImage(canvas.getImage(), canvas.getSelectedRect());
+        return canvas.copySelectedImage();
     }
 
     public void crop() {
