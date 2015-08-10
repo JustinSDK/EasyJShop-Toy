@@ -120,11 +120,11 @@ public class ImageMenu extends JMenu {
         });
 
         saveMenuItem.addActionListener(e -> {
-            mainFrame.getSelectedFrame().saveImageFile();
+            mainFrame.saveImageOfSelectedFrame();
         });
 
         saveAsMenuItem.addActionListener(e -> {
-            mainFrame.getSelectedFrame().saveImageFileAs();
+            mainFrame.saveImageAsFileOfSelectedFrame();
         });
 
         saveAllMenuItem.addActionListener(e -> {

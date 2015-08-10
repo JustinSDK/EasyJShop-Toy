@@ -108,7 +108,7 @@ public class MainFrame extends JFrame {
         return desktopPane.getSelectedFrame() == null;
     }
 
-    public ImageInternalFrame getSelectedFrame() {
+    private ImageInternalFrame getSelectedFrame() {
         return (ImageInternalFrame) desktopPane.getSelectedFrame();
     }
 
@@ -191,8 +191,16 @@ public class MainFrame extends JFrame {
     public boolean isSelectedFrameRedoable() {
         return getSelectedFrame().isRedoable();
     }
-    
+
     public boolean hasSelectedAreaInSelectedFrame() {
-        return getSelectedFrame().hasSelectedArea(); 
+        return getSelectedFrame().hasSelectedArea();
+    }
+
+    public void saveImageOfSelectedFrame() {
+        getSelectedFrame().saveImageFile();
+    }
+
+    public void saveImageAsFileOfSelectedFrame() {
+            getSelectedFrame().saveImageAsFile(); 
     }
 }

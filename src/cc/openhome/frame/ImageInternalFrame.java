@@ -121,13 +121,13 @@ public class ImageInternalFrame extends JInternalFrame {
 
     public void saveImageFile() {
         if (title.endsWith("untitled")) {
-            saveImageFileAs();
+            saveImageAsFile();
         } else if (title.startsWith("*")) {
             saveTo(new File(title));
         }
     }
 
-    public void saveImageFileAs() {
+    public void saveImageAsFile() {
         if (saveFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File file = getSelectedFile();
             if (file.exists()) {
@@ -147,7 +147,7 @@ public class ImageInternalFrame extends JInternalFrame {
                 saveTo(file);
                 break;
             case JOptionPane.NO_OPTION:
-                saveImageFileAs();
+                saveImageAsFile();
                 break;
         }
     }
