@@ -330,7 +330,7 @@ public class CanvasComponent extends JComponent {
         }
     }
 
-    public void setImage(Image image) {
+    private void setImage(Image image) {
         this.image = image;
         fakeImage = new BufferedImage(image.getWidth(this), image.getHeight(this), BufferedImage.TYPE_INT_RGB);
     }

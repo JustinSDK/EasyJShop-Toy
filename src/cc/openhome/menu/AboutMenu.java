@@ -1,6 +1,5 @@
 package cc.openhome.menu;
 
-import cc.openhome.frame.MainFrame;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
@@ -18,12 +17,12 @@ public class AboutMenu extends JMenu {
         setupEventListener();
     }
     
-    public void setupUIComponent() {
+    private void setupUIComponent() {
         setText("About");
         add(aboutEasyJShopMenuItem);
     }
     
-    public void setupEventListener() {
+    private void setupEventListener() {
         aboutEasyJShopMenuItem.setAccelerator(
                 KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
         
