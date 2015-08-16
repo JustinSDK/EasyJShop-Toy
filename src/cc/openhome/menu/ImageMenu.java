@@ -128,11 +128,11 @@ public class ImageMenu extends JMenu {
         });
 
         saveAllMenuItem.addActionListener(e -> {
-            saveAllImages();
+            mainFrame.forEachInternalFrame(MainFrame.SAVE_ALL);
         });
 
         exitMenuItem.addActionListener(e -> {
-            checkUnsavedImages();
+            mainFrame.checkUnsavedImages();
             if (mainFrame.noInternalFrame()) {
                 System.exit(0);
             }
@@ -217,40 +217,5 @@ public class ImageMenu extends JMenu {
                 }
             }
         }).start();
-    }
-
-    private void saveAllImages() {
-        mainFrame.forEachInternalFrame(internalFrame -> {
-            new Thread(() -> {
-                internalFrame.deIconified();
-                internalFrame.saveImageFile();
-            }).start();
-        });
-    }
-
-    public void checkUnsavedImages() {
-        class Operation {
-            boolean notCancelled = true;
-        }
-        Operation operation = new Operation();
-
-        mainFrame.forEachInternalFrame(internalFrame -> {
-            if (operation.notCancelled) {
-                if (internalFrame.getTitle().startsWith("*")) {
-                    internalFrame.deIconified();
-                    int option = JOptionPane.showOptionDialog(null,
-                            internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, mainFrame.smallLogo, null, null);
-                    switch (option) {
-                        case JOptionPane.CANCEL_OPTION:
-                            operation.notCancelled = false;
-                            break;
-                        case JOptionPane.YES_OPTION:
-                            internalFrame.saveImageFile();
-                    }
-                }
-                internalFrame.close();
-            }
-        });
     }
 }

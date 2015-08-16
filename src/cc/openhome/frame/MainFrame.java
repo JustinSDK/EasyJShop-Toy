@@ -10,6 +10,8 @@ import cc.openhome.menu.AboutMenu;
 import cc.openhome.menu.EditMenu;
 import cc.openhome.menu.ImageMenu;
 import cc.openhome.util.ImageProcessor;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -21,6 +23,15 @@ public class MainFrame extends JFrame {
     public final static int TextMode = 3;
     public final static int ViewMode = 4;
 
+    public static final int RESIZE = 0;
+    public static final int HZ_MIRROR = 1;
+    public static final int VT_MIRROR = 2;
+    public static final int CLK_ROTATE = 3;
+    public static final int CT_CLK_ROTATE = 4;
+    public static final int SCALE_RESIZE = 5;
+    public static final int WH_RESIZE = 6;
+    public static final int SAVE_ALL = 7;
+
     private JDesktopPane desktopPane;
 
     private ImageMenu imageMenu = new ImageMenu(this);
@@ -28,6 +39,35 @@ public class MainFrame extends JFrame {
 
     private ImageIcon icon = new ImageIcon(MainFrame.class.getResource("../images/appIcon.gif"));
     public ImageIcon smallLogo = new ImageIcon(MainFrame.class.getResource("../images/smallLogo.gif"));
+
+    private Map<Integer, Consumer<ImageInternalFrame>> consumers = new HashMap<>();
+
+    {
+        consumers.put(HZ_MIRROR, internalFrame -> {
+            internalFrame.mirror(ImageProcessor::horizontalMirror);
+        });
+        consumers.put(VT_MIRROR, internalFrame -> {
+            internalFrame.mirror(ImageProcessor::verticalMirror);
+        });
+        consumers.put(CLK_ROTATE, internalFrame -> {
+            internalFrame.rotate(ImageProcessor::clockwise);
+        });
+        consumers.put(CT_CLK_ROTATE, internalFrame -> {
+            internalFrame.rotate(ImageProcessor::counterClockwise);
+        });
+        consumers.put(SCALE_RESIZE, internalFrame -> {
+            internalFrame.resizeImage(ResizeDialog.getScalePercentage());
+        });
+        consumers.put(WH_RESIZE, internalFrame -> {
+            internalFrame.resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
+        });
+        consumers.put(SAVE_ALL, internalFrame -> {
+            new Thread(() -> {
+                internalFrame.deIconified();
+                internalFrame.saveImageFile();
+            }).start();
+        });
+    }
 
     public ImageMenu getImageMenu() {
         return imageMenu;
@@ -71,7 +111,7 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                imageMenu.checkUnsavedImages();
+                checkUnsavedImages();
                 if (noInternalFrame()) {
                     System.exit(0);
                 }
@@ -79,9 +119,27 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public void forEachInternalFrame(Consumer<ImageInternalFrame> consumer) {
+    public void forEachInternalFrame(int action) {
         for (JInternalFrame internalFrame : desktopPane.getAllFrames()) {
-            consumer.accept((ImageInternalFrame) internalFrame);
+            consumers.get(action).accept((ImageInternalFrame) internalFrame);
+        }
+    }
+
+    public void checkUnsavedImages() {
+        for (JInternalFrame internalFrame : desktopPane.getAllFrames()) {
+            if (internalFrame.getTitle().startsWith("*")) {
+                ((ImageInternalFrame) internalFrame).deIconified();
+                int option = JOptionPane.showOptionDialog(null,
+                        internalFrame.getTitle().substring(1) + " is unsaved, save?", "save?", JOptionPane.YES_NO_CANCEL_OPTION,
+                        JOptionPane.QUESTION_MESSAGE, smallLogo, null, null);
+                switch (option) {
+                    case JOptionPane.CANCEL_OPTION:
+                        return;
+                    case JOptionPane.YES_OPTION:
+                        ((ImageInternalFrame) internalFrame).saveImageFile();
+                }
+            }
+            ((ImageInternalFrame) internalFrame).close();
         }
     }
 

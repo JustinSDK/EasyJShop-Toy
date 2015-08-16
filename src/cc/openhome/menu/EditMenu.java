@@ -32,21 +32,8 @@ import cc.openhome.util.ClipboardHelper;
 import cc.openhome.util.ImageProcessor;
 import cc.openhome.util.TransferableImage;
 import cc.openhome.frame.ColorDemoBox;
-import cc.openhome.frame.ImageInternalFrame;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Consumer;
 
 public class EditMenu extends JMenu {
-
-    private static final int RESIZE = 0;
-    private static final int HZ_MIRROR = 1;
-    private static final int VT_MIRROR = 2;
-    private static final int CLK_ROTATE = 3;
-    private static final int CT_CLK_ROTATE = 4;
-    private static final int SCALE_RESIZE = 5;
-    private static final int WH_RESIZE = 6;
-
     private TransferableImage transferableImage;
 
     private ImageIcon selectIcon, brushIcon, textIcon, viewIcon,
@@ -74,8 +61,6 @@ public class EditMenu extends JMenu {
     private int editMode;
 
     private MainFrame mainFrame;
-
-    private Map<Integer, Consumer<ImageInternalFrame>> consumers = new HashMap<>();
 
     public EditMenu(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
@@ -121,25 +106,6 @@ public class EditMenu extends JMenu {
         copyIcon = new ImageIcon(EditMenu.class.getResource("../images/copy.gif"));
         pasteIcon = new ImageIcon(EditMenu.class.getResource("../images/paste.gif"));
         cropIcon = new ImageIcon(EditMenu.class.getResource("../images/crop.gif"));
-
-        consumers.put(HZ_MIRROR, internalFrame -> {
-            internalFrame.mirror(ImageProcessor::horizontalMirror);
-        });
-        consumers.put(VT_MIRROR, internalFrame -> {
-            internalFrame.mirror(ImageProcessor::verticalMirror);
-        });
-        consumers.put(CLK_ROTATE, internalFrame -> {
-            internalFrame.rotate(ImageProcessor::clockwise);
-        });
-        consumers.put(CT_CLK_ROTATE, internalFrame -> {
-            internalFrame.rotate(ImageProcessor::counterClockwise);
-        });
-        consumers.put(SCALE_RESIZE, internalFrame -> {
-            internalFrame.resizeImage(ResizeDialog.getScalePercentage());
-        });
-        consumers.put(WH_RESIZE, internalFrame -> {
-            internalFrame.resizeImage(ResizeDialog.getPixelWidth(), ResizeDialog.getPixelHeight());
-        });
     }
 
     private void setupUIComponent() {
@@ -504,10 +470,10 @@ public class EditMenu extends JMenu {
 
         if (option == JOptionPane.OK_OPTION) {
             int selected = batchComboBox.getSelectedIndex();
-            if (selected == RESIZE) {
+            if (selected == MainFrame.RESIZE) {
                 batchResize();
             } else {
-                mainFrame.forEachInternalFrame(consumers.get(selected));
+                mainFrame.forEachInternalFrame(selected);
             }
         }
 
@@ -518,7 +484,7 @@ public class EditMenu extends JMenu {
         int option = ResizeDialog.showDialog(null, "Resize Information",
                 (int) dimension.getWidth(), (int) dimension.getHeight(), mainFrame.smallLogo);
         if (option == JOptionPane.OK_OPTION) {
-            mainFrame.forEachInternalFrame(consumers.get(ResizeDialog.isPercentage() ? SCALE_RESIZE : WH_RESIZE));
+            mainFrame.forEachInternalFrame(ResizeDialog.isPercentage() ? MainFrame.SCALE_RESIZE : MainFrame.WH_RESIZE);
         }
     }
 
