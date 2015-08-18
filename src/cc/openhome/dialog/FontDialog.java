@@ -14,14 +14,8 @@ import javax.swing.JPanel;
 
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 
 public class FontDialog {
     private static JPanel fontPanel;
@@ -41,7 +35,7 @@ public class FontDialog {
         
         fontNameComboBox = new JComboBox(fontNames);
         fontSizeSpinner = new JSpinner();
-        fontSizeSpinner.setValue(new Integer(12));
+        fontSizeSpinner.setValue(12);
 
         boldBox = new JCheckBox("Bold");
         italicBox = new JCheckBox("Italic");
@@ -67,32 +61,22 @@ public class FontDialog {
     }
     
     private static void setEventListener() {
-        fontSizeSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if(((Integer) fontSizeSpinner.getValue()).intValue() <= 0) {
-                    fontSizeSpinner.setValue(new Integer(1));
-                }
+        fontSizeSpinner.addChangeListener(e -> {
+            if(((Integer) fontSizeSpinner.getValue()) <= 0) {
+                fontSizeSpinner.setValue(1);
             }
         });
         
-        fontNameComboBox.addItemListener(new ItemListener() {
-
-            public void itemStateChanged(ItemEvent e) {
-                changeTextFont();
-            }
-            
+        fontNameComboBox.addItemListener(e -> {
+            changeTextFont();
         });
         
-        boldBox.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                changeTextFont();
-            }
+        boldBox.addActionListener(e -> {
+            changeTextFont();
         });
         
-        italicBox.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                changeTextFont();
-            }
+        italicBox.addActionListener(e -> {
+            changeTextFont();
         });
     }
     
@@ -119,7 +103,7 @@ public class FontDialog {
     }
     
     public static int getFontSize() {
-        return ((Integer) fontSizeSpinner.getValue()).intValue();
+        return ((Integer) fontSizeSpinner.getValue());
     }
     
     public static String getInputText() {
@@ -135,7 +119,7 @@ public class FontDialog {
     }
     
     private static int getFontStyle() {
-        int fontStyle = 0;
+        int fontStyle;
         if(boldBox.isSelected() && italicBox.isSelected()) {
             fontStyle = Font.BOLD + Font.ITALIC;
         }

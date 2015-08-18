@@ -2,8 +2,6 @@ package cc.openhome.dialog;
 
 import java.awt.Component;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
@@ -13,8 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 public class ResizeDialog {
     private static JPanel resizePanel;
@@ -77,68 +73,58 @@ public class ResizeDialog {
     }
     
     private static void setEventListener() {
-        resizePercentSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if(((Integer) resizePercentSpinner.getValue()).intValue() <= 0) {
-                    resizePercentSpinner.setValue(new Integer(1));
-                }
+        resizePercentSpinner.addChangeListener(e -> {
+            if(((Integer) resizePercentSpinner.getValue()) <= 0) {
+                resizePercentSpinner.setValue(1);
             }
         });
         
-        resizeWidthSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if(((Integer) resizeWidthSpinner.getValue()).intValue() <= 0) {
-                    resizeWidthSpinner.setValue(new Integer(1));
-                }
+        resizeWidthSpinner.addChangeListener(e -> {
+            if(((Integer) resizeWidthSpinner.getValue()) <= 0) {
+                resizeWidthSpinner.setValue(1);
+            }
+            
+            if(lockRatioBox.isSelected() && !resizeLocker) {
+                resizeLocker = true;
                 
-                if(lockRatioBox.isSelected() && !resizeLocker) {
-                    resizeLocker = true;
-                    
-                    int value1 = ((Integer) resizeWidthSpinner.getValue()).intValue();
-                    double diff1 = value1 - imageWidth;
-                    double diff2 = (imageHeight / imageWidth) * diff1;
-                    int value2 = (int) (imageHeight + diff2);
-                    resizeHeightSpinner.setValue(new Integer(value2));
-                    resizeLocker = false;
-                }
+                int value1 = ((Integer) resizeWidthSpinner.getValue());
+                double diff1 = value1 - imageWidth;
+                double diff2 = (imageHeight / imageWidth) * diff1;
+                int value2 = (int) (imageHeight + diff2);
+                resizeHeightSpinner.setValue(value2);
+                resizeLocker = false;
             }
         });
         
-        resizeHeightSpinner.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-                if(((Integer) resizeHeightSpinner.getValue()).intValue() <= 0) {
-                    resizeHeightSpinner.setValue(new Integer(1));
-                }
+        resizeHeightSpinner.addChangeListener(e -> {
+            if(((Integer) resizeHeightSpinner.getValue()) <= 0) {
+                resizeHeightSpinner.setValue(1);
+            }
+            
+            if(lockRatioBox.isSelected() && !resizeLocker) {
+                resizeLocker = true;
                 
-                if(lockRatioBox.isSelected() && !resizeLocker) {
-                    resizeLocker = true;
-                    
-                    int value1 = ((Integer) resizeHeightSpinner.getValue()).intValue();
-                    double diff1 = value1 - imageHeight;
-                    double diff2 = (imageWidth / imageHeight) * diff1;
-                    int value2 = (int) (imageWidth + diff2);
-                    resizeWidthSpinner.setValue(new Integer(value2));
-                    resizeLocker = false;
-                }
+                int value1 = ((Integer) resizeHeightSpinner.getValue());
+                double diff1 = value1 - imageHeight;
+                double diff2 = (imageWidth / imageHeight) * diff1;
+                int value2 = (int) (imageWidth + diff2);
+                resizeWidthSpinner.setValue(value2);
+                resizeLocker = false;
             }
         });
         
-        customWidthHeightBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                resizePercentSpinner.setEnabled(false);
-                resizeWidthSpinner.setEnabled(true);
-                resizeHeightSpinner.setEnabled(true);
-                lockRatioBox.setEnabled(true);
-            }
+        customWidthHeightBtn.addActionListener(e -> {
+            resizePercentSpinner.setEnabled(false);
+            resizeWidthSpinner.setEnabled(true);
+            resizeHeightSpinner.setEnabled(true);
+            lockRatioBox.setEnabled(true);
         });
         
-        percentBtn.addActionListener(new ActionListener() {           
-            public void actionPerformed(ActionEvent e) {
-                resizeWidthSpinner.setEnabled(false);
-                resizeHeightSpinner.setEnabled(false);
-                lockRatioBox.setEnabled(false);
-                resizePercentSpinner.setEnabled(true);
-            }
+        percentBtn.addActionListener(e -> {
+            resizeWidthSpinner.setEnabled(false);
+            resizeHeightSpinner.setEnabled(false);
+            lockRatioBox.setEnabled(false);
+            resizePercentSpinner.setEnabled(true);
         });
         
     }
@@ -151,8 +137,8 @@ public class ResizeDialog {
         imageWidth = imWidth;
         imageHeight = imHeight;
         
-        resizeWidthSpinner.setValue(new Integer(imWidth));
-        resizeHeightSpinner.setValue(new Integer(imHeight));
+        resizeWidthSpinner.setValue(imWidth);
+        resizeHeightSpinner.setValue(imHeight);
         
         return JOptionPane.showOptionDialog(component, 
                 resizePanel, title, JOptionPane.OK_CANCEL_OPTION,
@@ -160,15 +146,15 @@ public class ResizeDialog {
     }
 
     public static int getScalePercentage() {
-        return ((Integer) resizePercentSpinner.getValue()).intValue();
+        return ((Integer) resizePercentSpinner.getValue());
     }
     
     public static int getPixelWidth() {
-        return ((Integer) resizeWidthSpinner.getValue()).intValue();
+        return ((Integer) resizeWidthSpinner.getValue());
     }
     
     public static int getPixelHeight() {
-        return ((Integer) resizeHeightSpinner.getValue()).intValue();
+        return ((Integer) resizeHeightSpinner.getValue());
     }
     
     public static boolean isPercentage() {
