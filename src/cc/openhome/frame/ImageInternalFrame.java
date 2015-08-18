@@ -163,7 +163,7 @@ public class ImageInternalFrame extends JInternalFrame {
     }
 
     private void saveTo(File file) {
-        saveImage(canvas.getImageAsBufferedImage(), file); 
+        saveImage(canvas.getBufferedImage(), file); 
         setTitle(file.toString());
     }
 

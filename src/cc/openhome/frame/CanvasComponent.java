@@ -520,7 +520,7 @@ public class CanvasComponent extends JComponent {
         setImage(ImageProcessor.resize(getImage(), width, height));
     }
 
-    public BufferedImage getImageAsBufferedImage() {
+    public BufferedImage getBufferedImage() {
         return ImageProcessor.toBufferedImage(image);
     }
     

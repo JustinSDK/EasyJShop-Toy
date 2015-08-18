@@ -69,11 +69,11 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public ImageMenu getImageMenu() {
+    private ImageMenu getImageMenu() {
         return imageMenu;
     }
 
-    public EditMenu getEditMenu() {
+    private EditMenu getEditMenu() {
         return editMenu;
     }
 
